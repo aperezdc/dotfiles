@@ -1,0 +1,36 @@
+[alias]
+	st = status
+	ci = commit
+	co = checkout
+	br = branch -a
+	logs = log --stat
+	logl = log --abbrev-commit --pretty=oneline
+	logp = log --abbrev-commit --patch-with-stat
+	logg = log --abbrev-commit --pretty=oneline --all --decorate --graph
+	todo = grep -E '(FIXME|TODO) '
+	diffs = diff --patch-with-stat
+	format-patch = -M -C
+
+	# apple-pick taken from http://joeshaw.org/2010/06/22/667
+	apple-pick = !sh -c 'git rev-list --reverse "$@" | xargs -n1 git cherry-pick' -
+[color]
+	branch = auto
+	diff = auto
+	status = auto
+[merge]
+	stat = true
+	tool = vimdiff
+[pack]
+	threads = 0
+[sendemail]
+	chainreplyto = false
+	suppressfrom = true
+[format]
+	numbered = auto
+[push]
+	default = tracking
+[user]
+	email = aperez@igalia.com
+	name = Adrian Perez
+[rebase]
+	autosquash = true

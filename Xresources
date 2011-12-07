@@ -1,0 +1,15 @@
+
+XTerm*vt100.toolBar: false
+XTerm*vt100.allowBoldFonts: true
+XTerm*vt100.background: black
+XTerm*vt100.foreground: grey90
+XTerm*vt100.cursorColor: green
+XTerm*vt100.font: -*-unifont-medium-*-*-*-16-*-*-*-*-*-iso10646-1
+
+UXTerm*vt100.toolBar: false
+UXTerm*vt100.allowBoldFonts: true
+UXTerm*vt100.background: black
+UXTerm*vt100.foreground: grey90
+UXTerm*vt100.cursorColor: green
+UXTerm*vt100.font: -*-unifont-medium-*-*-*-16-*-*-*-*-*-iso10646-1
+

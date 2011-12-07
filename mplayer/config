@@ -1,0 +1,9 @@
+[default]
+# Write your default config options here!
+
+vf=screenshot
+fixed-vo=1
+framedrop=1
+ass=1
+ao=pulse,alsa
+vo=gl_nosw,xv,x11
