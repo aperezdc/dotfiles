@@ -1,5 +1,14 @@
 # vim:ft=sh
 
+if [[ -z ${__XINIT_CK_SESSION} && -x /usr/bin/ck-launch-session ]]
+then
+	echo "Starting ConsoleKit session..."
+	export __XINIT_CK_SESSION=1
+	exec /usr/bin/ck-launch-session /bin/bash ~/.xinitrc
+else
+	unset __XINIT_CK_SESSION
+fi
+
 cwd=$(pwd)
 
 if [ -r ~/.Xresources ] ; then
