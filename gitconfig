@@ -13,6 +13,12 @@
 
 	# apple-pick taken from http://joeshaw.org/2010/06/22/667
 	apple-pick = !sh -c 'git rev-list --reverse "$@" | xargs -n1 git cherry-pick' -
+
+	# ribbon/catchup taken from
+	# http://gitready.com/advanced/2011/10/21/ribbon-and-catchup-reading-new-commits.html
+	ribbon = tag --force _ribbon origin/master
+	catchup = log --patch --reverse --topo-order _ribbon..origin/master
+
 [color]
 	branch = auto
 	diff = auto
