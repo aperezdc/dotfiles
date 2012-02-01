@@ -1,3 +1,4 @@
+# vim: ft=cfg
 [alias]
 	st = status
 	ci = commit
@@ -18,6 +19,10 @@
 	# http://gitready.com/advanced/2011/10/21/ribbon-and-catchup-reading-new-commits.html
 	ribbon = tag --force _ribbon origin/master
 	catchup = log --patch --reverse --topo-order _ribbon..origin/master
+	# ...and some extras by me
+	catchups = log --stat --reverse --topo-order _ribbon..origin/master
+	catchupl = log --abbrev-commit --pretty=oneline --reverse --topo-order _ribbon..origin/master
+	catchupg = log --abbrev-commit --pretty=oneline --all --decorate --graph _ribbon..origin/master
 
 [color]
 	branch = auto
