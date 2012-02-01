@@ -1,9 +1,9 @@
 [default]
-# Write your default config options here!
-
+stop-xscreensaver=1
 vf=screenshot
 fixed-vo=1
 framedrop=1
 ass=1
 ao=pulse,alsa
-vo=gl_nosw,xv,x11
+vo=vaapi,xv,gl_nosw,x11
+lavdopts=threads=4
