@@ -36,12 +36,15 @@ bindkey -M menuselect "\e[6~" forward-word
 bindkey -M menuselect "\e"    send-break
 
 # Bind Delete/Begin/End for Zsh setups that do not include those by default
+# (screen, tmux, rxvt...)
 bindkey "^[OH"  beginning-of-line
 bindkey "^[[H"  beginning-of-line
 bindkey "^A"    beginning-of-line
+bindkey "[1~" beginning-of-line
 bindkey "^[OF"  end-of-line
 bindkey "^[[F"  end-of-line
 bindkey "^E"    end-of-line
+bindkey "[4~" end-of-line
 bindkey "^[[3~" delete-char
 
 # Set a bunch of options :-)
@@ -54,6 +57,7 @@ unsetopt menu_complete auto_remove_slash auto_menu list_ambiguous \
 	     pushd_to_home
 
 # Use completion cache
+[[ -d ~/.zsh/cache ]] && mkdir -p ~/.zsh/cache
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path ~/.zsh/cache
 
@@ -163,7 +167,6 @@ alias -- '..'='cd ..'
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 alias clip='xclip -selection clipboard'
-alias pmo='bugz --connection pmo'
 
 # Local binaries directory
 if [ -d "${HOME}/.local/bin" ] ; then
