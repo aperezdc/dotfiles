@@ -5,5 +5,5 @@ fixed-vo=1
 framedrop=1
 ass=1
 ao=pulse,alsa
-vo=vaapi,xv,gl_nosw,x11
+vo=xv,vaapi,gl_nosw,x11
 lavdopts=threads=4
