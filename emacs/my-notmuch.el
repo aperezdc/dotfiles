@@ -6,7 +6,7 @@
 ;;	notmuch-command
 ;;	"/home/aperez/.local/bin/notmuch-locked")
 
-(setq notmuch-address-command        "/usr/bin/addrlookup")
+(setq notmuch-address-command        "/home/aperez/.local/bin/notmuch-addrlookup")
 (setq message-kill-buffer-on-exit    t)
 (setq mail-specify-envelope-from     t)
 (setq message-sendmail-envelope-from 'header)
