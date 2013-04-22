@@ -56,10 +56,11 @@ setopt prompt_subst pushd_silent auto_param_slash auto_list \
 unsetopt menu_complete auto_remove_slash auto_menu list_ambiguous \
 	     pushd_to_home
 
-# Use completion cache
+# Make completion faster: use cache and do not do partial matches
 [[ -d ~/.zsh/cache ]] && mkdir -p ~/.zsh/cache
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path ~/.zsh/cache
+zstyle ':completion:*' accept-exact '*(N)'
 
 zstyle ':completion:*:descriptions' format '%U%B%d%b%u'
 zstyle ':completion:*:warnings' format '%BNo matching %b%d'
@@ -91,10 +92,10 @@ fi
 # Some fine-tuning
 zstyle ':completion:*' squeeze-slashes true
 zstyle ':completion:*' list-prompt "%BMatch %m (%p)%b"
-zstyle ':completion:*' menu yes=long select=long interactive
+zstyle ':completion:*' menu yes=long select=2 interactive
 zstyle ':completion:*:processes' command 'ps -au$USER -o pid,user,args'
 zstyle ':completion:*:processes-names' command 'ps -au$USER -o command'
-zstyle ':completion:*:*:(^rm):*:*files' ignored-patterns '*?.o' '*?.c~' '*?.old' '*?.pro'
+zstyle ':completion:*:*:(^rm):*:*files' ignored-patterns '*?.o' '*?.c~' '*?.old'
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
 zstyle ':completion:*:killall:*' force-list always
 zstyle ':completion:*:kill:*' force-list always
@@ -173,14 +174,73 @@ if [ -d "${HOME}/.local/bin" ] ; then
 	PATH="${PATH}:${HOME}/.local/bin"
 fi
 
-# Mark exports
-export PATH
+if [[ -d /home/devel/WebKit/Tools/Scripts ]] ; then
+	PATH="$PATH:/home/devel/WebKit/Tools/Scripts"
+fi
 
 # Python startup file
 if [ -r "${HOME}/.startup.py" ] ; then
 	export PYTHONSTARTUP="${HOME}/.startup.py"
 fi
 
-export EMAIL="aperez@igalia.com"
-export NAME="Adrian Perez"
+# Python virtualenvwrapper
+if [ -r /usr/bin/virtualenvwrapper.sh ] ; then
+	export WORKON_HOME=~/.venv.d
+	#export VIRTUALENV_DISTRIBUTE=1
+	if [ ! -d "${WORKON_HOME}" ] ; then
+		mkdir -p "${WORKON_HOME}"
+	fi
+	# Prefer the lazy-loaded version of the script
+	if [ -r /usr/bin/virtualenvwrapper_lazy.sh ] ; then
+		. /usr/bin/virtualenvwrapper_lazy.sh
+	else
+		. /usr/bin/virtualenvwrapper.sh
+	fi
+fi
 
+export EMAIL='aperez@igalia.com'
+export NAME='Adrian Perez'
+export CCACHE_COMPRESS=1
+
+for i in vim zile nano pico ; do
+	i=$(whence -p vim)
+	if [[ -x ${i} ]] ; then
+		export EDITOR=${i}
+		break
+	fi
+done
+
+if [[ -x /usr/bin/ccache ]] ; then
+	if [[ -d /usr/lib/ccache/bin ]] ; then
+		PATH="/usr/lib/ccache/bin:$PATH"
+	fi
+	if [[ -d /home/devel/.ccache ]] ; then
+		export CCACHE_DIR=/home/devel/.ccache
+	fi
+fi
+
+# Mark exports
+export PATH
+
+
+if [[ -r /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]] ; then
+	ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
+	source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+	ZSH_HIGHLIGHT_STYLES[dollar-double-quoted-argument]='fg=magenta,bold'
+	ZSH_HIGHLIGHT_STYLES[double-quoted-argument]='fg=magenta,bold'
+	ZSH_HIGHLIGHT_STYLES[single-quoted-argument]='fg=magenta,bold'
+	ZSH_HIGHLIGHT_STYLES[single-hyphen-option]='fg=cyan'
+	ZSH_HIGHLIGHT_STYLES[double-hyphen-option]='fg=cyan'
+	ZSH_HIGHLIGHT_STYLES[back-quoted-argument]='fg=magenta'
+	ZSH_HIGHLIGHT_STYLES[commandseparator]='fg=red,bold'
+	ZSH_HIGHLIGHT_STYLES[hashed-command]='fg=yellow,bold'
+	ZSH_HIGHLIGHT_STYLES[reserved-word]='fg=bold'
+	ZSH_HIGHLIGHT_STYLES[unknown-token]='bg=brown'
+	ZSH_HIGHLIGHT_STYLES[precommand]='fg=yellow,bold,underline'
+	ZSH_HIGHLIGHT_STYLES[function]='fg=yellow,bold'
+	ZSH_HIGHLIGHT_STYLES[globbing]='fg=cyan,bold'
+	ZSH_HIGHLIGHT_STYLES[command]='fg=yellow,bold'
+	ZSH_HIGHLIGHT_STYLES[builtin]='fg=yellow,bold'
+	ZSH_HIGHLIGHT_STYLES[alias]='fg=yellow,bold'
+	#ZSH_HIGHLIGHT_STYLES[path]='fg=underline'
+fi
