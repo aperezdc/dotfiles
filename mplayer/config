@@ -1,9 +1,29 @@
+# vim: filetype=cfg
+#
 [default]
+msgcolor=1
+msgmodule=1
 stop-xscreensaver=1
 vf=screenshot
 fixed-vo=1
 framedrop=1
-ass=1
 ao=pulse,alsa
-vo=xv,vaapi,gl_nosw,x11
+vo=vaapi,gl_nosw,xv,x11
+#vo=xv,vaapi,gl_nosw,x11
 lavdopts=threads=4
+use-filedir-conf=1
+ass=1
+ass-hinting=2
+ass-color=FFFFFF00
+ass-border-color=00000000
+#ass-font-scale=1.7
+embeddedfonts=1
+fontconfig=1
+ffactor=0.35
+#subfont="Museo Sans"
+#subfont="Delicious Heavy"
+#subfont="Open Sans"
+subfont="Lato Bold"
+subfont-autoscale=2
+spuaa=4
+subcp=utf-8
