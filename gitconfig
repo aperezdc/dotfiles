@@ -24,6 +24,13 @@
 	catchupl = log --abbrev-commit --pretty=oneline --reverse --topo-order _ribbon..origin/master
 	catchupg = log --abbrev-commit --pretty=oneline --all --decorate --graph _ribbon..origin/master
 
+	# snapshot/assume/unassume/assumed taken from
+	# http://blog.apiaxle.com/post/handy-git-tips-to-stop-you-getting-fired/
+	snapshot = !git stash save "snapshot: $(date)" && git stash apply "stash@{0}"
+	assume   = update-index --assume-unchanged
+	unassume = update-index --no-assume-unchanged
+	assumed  = "!git ls-files -v | grep ^h | cut -c 3-"
+
 [color]
 	branch = auto
 	diff = auto
@@ -45,3 +52,16 @@
 	name = Adrian Perez
 [rebase]
 	autosquash = true
+	stat = true
+[core]
+	autocrlf = input
+[rerere]
+	enabled = true
+[pull]
+	rebase = true
+[pager]
+	log  = diff-highlight | less -r
+	show = diff-highlight | less -r
+	diff = diff-highlight | less -r
+[diff]
+	algorithm = patience
