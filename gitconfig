@@ -4,9 +4,9 @@
 	ci = commit
 	co = checkout
 	br = branch -a
-	logs = log --stat
-	logl = log --abbrev-commit --pretty=oneline
-	logp = log --abbrev-commit --patch-with-stat
+	logs = log --stat --decorate
+	logl = log --abbrev-commit --pretty=oneline --decorate
+	logp = log --abbrev-commit --patch-with-stat --decorate
 	logg = log --abbrev-commit --pretty=oneline --all --decorate --graph
 	todo = grep -E '(FIXME|TODO) '
 	diffs = diff --patch-with-stat
