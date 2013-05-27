@@ -115,11 +115,11 @@ zstyle ':vcs_info:*:prompt:*' formats       "${FMT_BRANCH} "
 zstyle ':vcs_info:*:prompt:*' nvcsformats   ""
 
 case ${TERM} in
-	screen | xterm* | gnome-terminal)
+	screen* | xterm* | gnome-terminal)
 		function precmd {
 			vcs_info 'prompt'
 			print -Pn "\e]0;%n@%m: %~\a"
-			[[ ${TERM} = screen* ]] && echo -ne "\ekzsh\e\\"
+			[[ -n ${TMUX} || ${TERM} = screen* ]] && printf '\033k%s\033\\' "${SHELL##*/}"
 		}
 	;;
 	*)
@@ -129,11 +129,15 @@ case ${TERM} in
 	;;
 esac
 
-if [[ ${TERM} = screen* ]] ; then
+if [[ -n ${TMUX} || ${TERM} = screen* ]] ; then
 	preexec () {
 		local CMD=${1[(wr)^(*=*|sudo|-*)]}
-		echo -ne "\ek$CMD\e\\"
+		printf '\033k%s\033\\' "${CMD}"
 	}
+fi
+
+if [[ ${COLORTERM} = gnome-terminal ]] ; then
+	export TERM='xterm-256color'
 fi
 
 PROMPT=$'%B%{%(!.$fg[red].$fg[green])%}%m %b${vcs_info_msg_0_}%{$fg[blue]%}%B%1~ %{$fg[default]%}%{%(?.$fg[blue].%B$fg[red])%}%# %{$fg[default]%}%b'
