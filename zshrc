@@ -1,6 +1,10 @@
 # The following lines were added by compinstall
 zstyle :compinstall filename '/home/aperez/.zshrc'
 
+if [[ -d ~/.zsh/functions ]] ; then
+	fpath=( ${fpath} ~/.zsh/functions )
+fi
+
 autoload -Uz compinit
 compinit
 
@@ -114,6 +118,19 @@ zstyle ':vcs_info:*:prompt:*' actionformats "${FMT_BRANCH}${FMT_ACTION} "
 zstyle ':vcs_info:*:prompt:*' formats       "${FMT_BRANCH} "
 zstyle ':vcs_info:*:prompt:*' nvcsformats   ""
 
+# Workaround for the Git file names completion, which can be very
+# slow for # large repositories (e.g. the Linux kernel sources).
+# Source: http://www.zsh.org/mla/workers/2011/msg00502.html
+
+# map alt-, to complete files
+zle -C complete-files complete-word _generic
+zstyle ':completion:complete-files:*' completer _files
+bindkey '^[,' complete-files
+
+# Disable Git automatic file completion -- it is slow.
+#__git_files(){}
+
+
 case ${TERM} in
 	screen* | xterm* | gnome-terminal)
 		function precmd {
@@ -134,15 +151,11 @@ if [[ -n ${TMUX} || ${TERM} = screen* ]] ; then
 		local CMD=${1[(wr)^(*=*|sudo|-*)]}
 		printf '\033k%s\033\\' "${CMD}"
 	}
-fi
-
-if [[ ${COLORTERM} = gnome-terminal ]] ; then
+elif [[ ${COLORTERM} = gnome-terminal || ${COLORTERM} = drop-down-terminal ]] ; then
 	export TERM='xterm-256color'
 fi
 
-PROMPT=$'%B%{%(!.$fg[red].$fg[green])%}%m %b${vcs_info_msg_0_}%{$fg[blue]%}%B%1~ %{$fg[default]%}%{%(?.$fg[blue].%B$fg[red])%}%# %{$fg[default]%}%b'
-
-unset FMT_BRANCH FMT_ACTION
+PROMPT=$'%{%B%(!.$fg[red].$fg[green])%}%m%{%b%} ${vcs_info_msg_0_}%{%B$fg[blue]%}%1~ %{%(?.$fg[blue].%B$fg[red])%}%# %{%b%k%f%}'
 
 # Devtodo
 #
@@ -172,6 +185,7 @@ alias -- '..'='cd ..'
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 alias clip='xclip -selection clipboard'
+alias sprunge='curl -s -S -F "sprunge=<-" http://sprunge.us'
 
 # Local binaries directory
 if [ -d "${HOME}/.local/bin" ] ; then
