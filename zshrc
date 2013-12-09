@@ -151,7 +151,7 @@ if [[ -n ${TMUX} || ${TERM} = screen* ]] ; then
 		local CMD=${1[(wr)^(*=*|sudo|-*)]}
 		printf '\033k%s\033\\' "${CMD}"
 	}
-elif [[ ${COLORTERM} = gnome-terminal || ${COLORTERM} = drop-down-terminal ]] ; then
+elif [[ ${COLORTERM} = gnome-terminal || ${COLORTERM} = drop-down-terminal || -n ${VTE_VERSION} ]] ; then
 	export TERM='xterm-256color'
 fi
 
