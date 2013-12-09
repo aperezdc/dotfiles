@@ -4,6 +4,7 @@
 	ci = commit
 	co = checkout
 	br = branch -a
+	cp = cherry-pick
 	logs = log --stat --decorate
 	logl = log --abbrev-commit --pretty=oneline --decorate
 	logp = log --abbrev-commit --patch-with-stat --decorate
@@ -49,7 +50,7 @@
 	default = tracking
 [user]
 	email = aperez@igalia.com
-	name = Adrian Perez
+	name = Adrian Perez de Castro
 [rebase]
 	autosquash = true
 	stat = true
