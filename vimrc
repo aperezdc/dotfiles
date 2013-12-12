@@ -16,6 +16,14 @@
 let g:email = "aperez@igalia.com"
 let g:user  = "Adrian Perez"
 
+call vundle#rc()
+Bundle 'Valloric/YouCompleteMe'
+Bundle 'aperezdc/vim-template'
+Bundle 'jamessan/vim-gnupg'
+Bundle 'szw/vim-powerline'
+Bundle 'juvenn/mustache.vim'
+Bundle 'myusuf3/numbers.vim'
+
 " Set options {{{1
 set nocompatible			 " Use advanced features not found in Vi
 set tabstop=2				 " Set tabstops to 2 spaces

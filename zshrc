@@ -188,7 +188,7 @@ alias clip='xclip -selection clipboard'
 alias sprunge='curl -s -S -F "sprunge=<-" http://sprunge.us'
 
 # Local binaries directory
-if [ -d "${HOME}/.local/bin" ] ; then
+if [[ -d ${HOME}/.local/bin ]] ; then
 	PATH="${PATH}:${HOME}/.local/bin"
 fi
 
