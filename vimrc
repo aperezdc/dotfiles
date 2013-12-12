@@ -1,6 +1,4 @@
-" If you prefer the old-style vim functionalty, add 'runtime! vimrc_example.vim'
-" Or better yet, read /usr/share/vim/vim72/vimrc_example.vim or the vim manual
-" and configure vim to your own liking!
+
 
 "    ___ ___                      ___ ___ __ __
 "   |   Y   .-----.--------.-----|   Y   |__|  |_
@@ -42,7 +40,7 @@ set viminfo+=n~/.viminfo	 " Name of the viminfo file
 set whichwrap+=[,],<,>		 " Allow arrow keys to wrap lines
 set nowrap					 " Don't wrap long lines
 set showmode				 " Print the current mode in the last line
-set nottyfast             	 " Lots of console stuff that may slow down Vim
+set ttyfast             	 " Lots of console stuff that may slow down Vim
 set noshowfulltag			 " Do not show full prototype of tags on completion
 set showcmd					 " Show commands as they are typed
 set formatoptions+=cqron1 	 " Some useful formatting options
@@ -60,6 +58,12 @@ set nobackup
 set tags=tags;/
 set nofsync
 set nosol
+" set mouse=a
+set shortmess+=a
+" set ttymouse=xterm2
+set noshowmode
+set number
+set grepprg=ack\ -H\ --nocolor
 
 
 if has("cscope")
@@ -95,10 +99,18 @@ if has("wildmenu")
 	set wildignore=*.o,*.cm[ioax],*.ppu,*.core,*~,core,#*#
 endif
 
-" Configure DetectIndent plugin }}}1{{{1
+" Configure plugins }}}1{{{1
 
 let g:detectindent_preferred_expandtab = 1
 let g:detectindent_preferred_indent    = 4
+
+"let g:ycm_min_num_of_chars_for_completion = 3
+"let g:ycm_collect_identifiers_from_tags_files = 1
+"let g:ycm_seed_identifiers_with_syntax = 1
+"let g:ycm_add_preview_to_completeopt = 1
+"let g:ycm_autoclose_preview_window_after_completion = 0
+"let g:ycm_autoclose_preview_window_after_insertion = 1
+"let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
 
 " Configure file-explorer }}}1{{{1
 
@@ -139,35 +151,16 @@ if has("autocmd")
 	autocmd FileType html setlocal filetype=xml | let xml_use_xhtml=1
 	autocmd FileType python setlocal expandtab tabstop=4 shiftwidth=4
 	autocmd FileType bzr setlocal expandtab
+	autocmd FileType lua setlocal expandtab shiftwidth=2 tabstop=2
 	autocmd FileType rst setlocal expandtab tabstop=2 shiftwidth=2
 	autocmd FileType objc setlocal expandtab tabstop=4 shiftwidth=4 cinoptions+=(0
 	autocmd FileType cpp setlocal expandtab tabstop=4 shiftwidth=4 cinoptions+=(0
 	autocmd FileType c setlocal expandtab tabstop=4 shiftwidth=4 cinoptions+=(0
+	autocmd FileType d setlocal expandtab tabstop=4 shiftwidth=4 cinoptions+=(0
 
 	"autocmd FileType c setlocal expandtab cinoptions+=t0(0{1s>2sn-1s^-1s
 	"autocmd FileType cpp setlocal expandtab cinoptions+=t0(0{1s>2sn-1s^-1s
 	"autocmd FileType objc setlocal expandtab cinoptions+=t0(0{1s>2sn-1s^-1s
-
-	" Java 'tuning'. {{{
-	autocmd FileType java setlocal errorformat=
-				\%-G%.%#build.xml:%.%#,
-				\%-G%.%#warning:\ %.%#,
-				\%-G%\\C%.%#EXPECTED%.%#,
-				\%f:%l:\ %#%m,
-				\C:%f:%l:\ %m,
-				\%DEntering:\ %f\ %\\=,
-				\%ECaused\ by:%[%^:]%#:%\\=\ %\\=%m,
-				\%ERoot\ cause:%[%^:]%#:%\\=\ %\\=%m,
-				\%Ecom.%[%^:]%#:%\\=\ %\\=%m,
-				\%Eorg.%[%^:]%#:%\\=\ %\\=%m,
-				\%Ejava.%[%^:]%#:%\\=\ %\\=%m,
-				\%Ejunit.%[%^:]%#:%\\=\ %\\=%m,
-				\%-Z%\\C\ at\ com.mypkg.%.%#.test%[A-Z]%.%#(%f:%l)\ %\\=,
-				\%-Z%\\C\ at\ com.mypkg.%.%#.setUp(%f:%l)\ %\\=,
-				\%-Z%\\C\ at\ com.mypkg.%.%#.tearDown(%f:%l)\ %\\=,
-				\%-Z%^\ %#%$,
-				\%-C%.%#,
-				\%-G%.%#
 
 	" Define abbreviations for Java™ mode.
 	autocmd FileType java
@@ -265,19 +258,26 @@ if has("autocmd")
 	autocmd BufReadPost,BufNewFile ~/[mM]ail*/* setf mail |
 				\ setlocal fo+=2 sw=4 ts=4 fenc=latin1
 
+	" Tup build system
+	autocmd BufNewFile,BufRead Tupfile,*.tup
+				\ setf tup
+
 	" Use Enter key to navigate help links.
 	autocmd FileType help nmap <buffer> <Return> <C-]>
+
+	" Make ESC return to command mode faster while in edit mode
+	if ! has('gui_running')
+		set ttimeoutlen=10
+		augroup FastEscape
+			autocmd!
+			au InsertEnter * set timeoutlen=0
+			au InsertLeave * set timeoutlen=1000
+		augroup END
+	endif
+	
 endif
 
 " Syntax highlighting (bwahahaha!)   }}}1{{{1
-if has("syntax") || has("gui_running")
-	syntax on
-	if has("gui_running")
-		colorscheme torte
-	else
-		colorscheme elflord
-	endif
-endif
 
 " Some more highlighting stuff. The first one matches whitespace at end of
 " lines (we don't really like them) and the second one matches tabs, so we
@@ -321,10 +321,57 @@ if &term =~ "xterm"
 	if has("title")
 		set title
 	endif
-	"if exists("&t_SI")
-	"	let &t_SI = "\<Esc>]12;lightgoldenrod\x7"
-	"	let &t_EI = "\<Esc>]12;grey80\x7"
-	"endif
+endif
+
+if &term =~ "screen"
+	if has("title")
+		set title
+	endif
+
+	map  <silent> [1;5D <C-Left>
+	map  <silent> [1;5C <C-Right>
+	lmap <silent> [1;5D <C-Left>
+	lmap <silent> [1;5C <C-Right>
+	imap <silent> [1;5D <C-Left>
+	imap <silent> [1;5C <C-Right>
+endif
+
+if has("syntax") || has("gui_running")
+	syntax on
+	if has("gui_running")
+		colorscheme twilight
+		set guifont=PragmataPro\ 12
+		set guifontwide=VL\ Gothic
+		" colorscheme lucius
+		" LuciusWhiteHighContrast
+		set cursorline
+		let g:Powerline_symbols = 'unicode'
+	else
+		colorscheme elflord
+		let g:Powerline_symbols = 'compatible'
+
+		if &term =~ "xterm-256color" || &term =~ "screen-256color" || $COLORTERM =~ "gnome-terminal"
+			"let g:Powerline_symbols = 'fancy'
+			set t_Co=256
+			set t_AB=[48;5;%dm
+			set t_AF=[38;5;%dm
+			set cursorline
+		else
+			let g:Powerline_colorscheme = 'solarized16'
+		endif
+		if &term =~ "st-256color"
+			set t_Co=256
+			set cursorline
+		endif
+
+		highlight CursorLine   NONE
+		highlight CursorLine   ctermbg=235
+		highlight CursorLineNr ctermbg=235 ctermfg=246
+		highlight LineNr       ctermbg=234 ctermfg=238
+
+		"colorscheme lucius
+		"LuciusBlackHighContrast
+	endif
 endif
 
 " Let Vim be picky about syntax, so we are reported of glitches visually.
@@ -501,8 +548,7 @@ map <silent> <S-F2> :runtime syntax/doxygen.vim<CR>
 
 
 " F3 -> Toggle line numbers
-map  <F3>   :set nu!<CR>
-imap <F3>   <ESC>:set nu!<CR>i
+nnoremap <F3> :NumbersToggle<CR>
 
 " F4 -> Toggle secondary matches
 map  <silent> <F4>   :call <SID>Toggle2Match()<CR>
