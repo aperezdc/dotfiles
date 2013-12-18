@@ -1,0 +1,39 @@
+#! /bin/bash
+#
+# notmuch-launch
+# Copyright (C) 2012 Adrian Perez <aperez@igalia.com>
+#
+# Distributed under terms of the MIT license.
+#
+
+PATH="${PATH}:${HOME}/.local/bin"
+export PATH
+
+windowid=''
+while read -a wmline ; do
+	if [[ ${wmline[2]} = Notmuch.Notmuch ]] ; then
+		wmctrl -s ${wmline[1]}  # Switch to window desktop
+		wmctrl -a ${wmline[0]}  # Activate & raise window
+		exit 0
+	fi
+done < <( wmctrl -l -x )
+
+
+emacs --name Notmuch --no-splash -f notmuch &
+
+tries=10
+windowid=''
+while [[ -z ${windowid} && ${tries} -gt 0 ]] ; do
+	sleep 0.75
+	while read -a wmline ; do
+		if [[ ${wmline[2]} = Notmuch.Emacs ]] ; then
+			windowid=${wmline[0]}
+		fi
+	done < <( wmctrl -l -x )
+	(( tries-- ))
+done
+
+if [[ -n ${windowid} ]] ; then
+	xsetclasshint ${windowid} Notmuch Notmuch
+fi
+

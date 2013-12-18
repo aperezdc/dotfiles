@@ -1,0 +1,15 @@
+[Desktop Entry]
+Hidden=false
+Name[en_GB]=Notmuch
+Exec=/home/aperez/.local/bin/notmuch-launch
+Icon=internet-mail
+Comment[en_GB]=Read e-mail
+Type=Application
+NoDisplay=false
+Version=1.0
+StartupNotify=false
+StartupWMClass=Notmuch
+Comment=Read e-mail
+Categories=Internet;Office;
+Terminal=false
+Name=Notmuch
