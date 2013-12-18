@@ -1,0 +1,4 @@
+#! /bin/sh
+
+exec scp "$@" root@petibonum.igalia.com:/var/www/apt.igalia.com/incoming
+
