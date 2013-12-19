@@ -192,8 +192,8 @@ if [[ -d ${HOME}/.local/bin ]] ; then
 	PATH="${PATH}:${HOME}/.local/bin"
 fi
 
-if [[ -d /home/devel/WebKit/Tools/Scripts ]] ; then
-	PATH="$PATH:/home/devel/WebKit/Tools/Scripts"
+if [[ -d /home/aperez/devel/WebKit/Tools/Scripts ]] ; then
+	PATH="$PATH:/home/aperez/devel/WebKit/Tools/Scripts"
 fi
 
 # Python startup file
