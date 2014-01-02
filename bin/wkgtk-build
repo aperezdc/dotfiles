@@ -1,0 +1,17 @@
+#! /bin/bash
+#
+# wkgtk-build
+# Copyright (C) 2014 Adrian Perez <aperez@igalia.com>
+#
+# Distributed under terms of the MIT license.
+#
+
+export CC=clang
+export CXX=clang++
+exec build-webkit \
+	--gtk \
+	--no-svg \
+	--no-webkit1 \
+	--disable-gtk-doc \
+	--disable-introspection
+
