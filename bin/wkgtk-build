@@ -13,5 +13,6 @@ exec build-webkit \
 	--no-svg \
 	--no-webkit1 \
 	--disable-gtk-doc \
-	--disable-introspection
+	--disable-introspection \
+	"$@"
 
