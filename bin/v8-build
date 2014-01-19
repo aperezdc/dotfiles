@@ -6,13 +6,18 @@
 # Distributed under terms of the MIT license.
 #
 
+: ${CLANG:=1}
+
 if [[ $# -eq 0 ]] ; then
     args=( x64.debug )
 else
     args=( "$@" )
 fi
 
-export CC='clang -ferror-limit=1'
-export CXX='clang++ -ferror-limit=1'
-export GYP_DEFINES='clang=1'
+if [[ -n ${CLANG} && ${CLANG} -ne 0 ]] ; then
+	export CC='clang -ferror-limit=1'
+	export CXX='clang++ -ferror-limit=1'
+	export GYP_DEFINES='clang=1'
+fi
+
 exec make console=readline werror=no -j4 "${args[@]}"
