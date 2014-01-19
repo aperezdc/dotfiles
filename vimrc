@@ -21,6 +21,12 @@ Bundle 'jamessan/vim-gnupg'
 Bundle 'szw/vim-powerline'
 Bundle 'juvenn/mustache.vim'
 Bundle 'myusuf3/numbers.vim'
+Bundle 'vim-scripts/gtk-vim-syntax'
+Bundle 'scrooloose/syntastic'
+Bundle 'rainux/vim-vala'
+Bundle 'mileszs/ack.vim'
+Bundle 'othree/xml.vim'
+Bundle 'rking/ag.vim'
 
 " Set options {{{1
 set nocompatible			 " Use advanced features not found in Vi
@@ -101,16 +107,24 @@ endif
 
 " Configure plugins }}}1{{{1
 
+let g:xml_syntax_folding = 1
+
 let g:detectindent_preferred_expandtab = 1
 let g:detectindent_preferred_indent    = 4
 
 "let g:ycm_min_num_of_chars_for_completion = 3
-"let g:ycm_collect_identifiers_from_tags_files = 1
-"let g:ycm_seed_identifiers_with_syntax = 1
-"let g:ycm_add_preview_to_completeopt = 1
-"let g:ycm_autoclose_preview_window_after_completion = 0
-"let g:ycm_autoclose_preview_window_after_insertion = 1
+let g:ycm_collect_identifiers_from_tags_files = 1
+let g:ycm_seed_identifiers_with_syntax = 1
+let g:ycm_add_preview_to_completeopt = 1
+let g:ycm_autoclose_preview_window_after_completion = 0
+let g:ycm_autoclose_preview_window_after_insertion = 1
 "let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
+let g:ycm_extra_conf_globlist = ['/home/aperez/devel/*']
+
+let g:syntastic_error_symbol = '✗'
+let g:syntastic_warning_symbol = '⚠'
+let g:syntastic_style_error_symbol = '»»'
+let g:syntastic_style_warning_symbol = '»'
 
 " Configure file-explorer }}}1{{{1
 
@@ -147,7 +161,9 @@ filetype indent plugin on
 if has("autocmd")
 	" Tune defaults for some particular file types.
 	autocmd FileType *html,xml setlocal matchpairs+=<:>
-	autocmd FileType xhtml,xml let xml_use_xhtml=1
+	autocmd FileType xhtml,xml
+				\ let xml_use_xhtml=1 |
+				\ setlocal foldmethod=syntax
 	autocmd FileType html setlocal filetype=xml | let xml_use_xhtml=1
 	autocmd FileType python setlocal expandtab tabstop=4 shiftwidth=4
 	autocmd FileType bzr setlocal expandtab
@@ -487,6 +503,7 @@ endfunction
 map __ ZZ
 
 " A bit of commoddity to jump through source files using tags!
+map <C-J> :YcmCompleter GoToDefinitionElseDeclaration<CR>
 map <C-T> <C-]>
 map <C-P> :pop<CR>
 
