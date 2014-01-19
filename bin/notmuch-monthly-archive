@@ -1,0 +1,70 @@
+#! /bin/bash
+#
+# notmuch-monthly-archive
+# Copyright (C) 2014 Adrian Perez <aperez@igalia.com>
+#
+# Distributed under terms of the MIT license.
+#
+set -e
+
+
+get_previous_month ()
+{
+	local -i year=$1 month=$2
+
+	if [[ $(( month-- )) -eq 1 ]] ; then
+		(( year-- ))
+		month=12
+	fi
+	echo "${year} ${month}"
+}
+
+ensure_maildir_folders ()
+{
+	if [[ -d $1/cur ]] ; then
+		return
+	fi
+
+	mkdir -p "$1"/{tmp,cur,new}
+	ensure_maildir_folders "${1%.*}"
+}
+
+declare -i year month prev_year prev_month
+declare archive_folder=''
+declare date_range=''
+declare path=''
+
+printf -v year  '%(%Y)T'  -1
+printf -v month '%(%-m)T' -1
+read prev_year prev_month < <( get_previous_month ${year} ${month} )
+
+
+while true ; do
+	date_range=$(printf 'date:%i-%02i-01..%i-%02i-01' \
+	             ${prev_year} ${prev_month} ${year} ${month})
+
+	archive_folder=$(printf '%s/.mail/Archives.%i.%i-%02i' \
+	                 "${HOME}" ${prev_year} ${prev_year} ${prev_month})
+
+	ensure_maildir_folders "${archive_folder}"
+
+	got_messages=false
+	while read -r path ; do
+		[[ -f ${path} ]] || continue
+		got_messages=true
+		safecat "${archive_folder}/tmp" "${archive_folder}/cur" < "${path}"
+		rm -f "${path}"
+	done < <( notmuch search --output=files "${date_range}" \
+		        and not "folder:${archive_folder}" \
+		        and not \( tag:inbox or tag:unread or tag:sent \) ) \
+		   > /dev/null
+
+	# No messages were archived for the previous month, there is nothing left to do.
+	${got_messages} || break
+
+	# Archive messages from the previous month
+	year=${prev_year}
+	month=${prev_month}
+	read prev_year prev_month < <( get_previous_month ${year} ${month} )
+done
+notmuch new
