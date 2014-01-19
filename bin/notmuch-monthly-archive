@@ -61,6 +61,7 @@ while true ; do
 
 	# No messages were archived for the previous month, there is nothing left to do.
 	${got_messages} || break
+	echo "Archived messages under ${archive_folder}"
 
 	# Archive messages from the previous month
 	year=${prev_year}
