@@ -7,11 +7,19 @@
 #
 
 : ${CLANG:=1}
+: ${ICECC:=0}
 
 if [[ $# -eq 0 ]] ; then
     args=( x64.debug )
 else
     args=( "$@" )
+fi
+
+if [[ -n ${ICECC} && ${ICECC} -ne 0 ]] ; then
+	export CCACHE_PREFIX=/usr/lib/icecream/bin/icecc
+	makej="-j15"
+else
+	makej="-j4"
 fi
 
 if [[ -n ${CLANG} && ${CLANG} -ne 0 ]] ; then
@@ -20,4 +28,4 @@ if [[ -n ${CLANG} && ${CLANG} -ne 0 ]] ; then
 	export GYP_DEFINES='clang=1'
 fi
 
-exec make console=readline werror=no -j4 "${args[@]}"
+exec make console=readline werror=no ${makej} "${args[@]}"
