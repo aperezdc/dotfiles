@@ -7,6 +7,8 @@
 #
 set -e
 
+declare -r maildir="$HOME/.mail"
+
 
 get_previous_month ()
 {
@@ -29,6 +31,12 @@ ensure_maildir_folders ()
 	ensure_maildir_folders "${1%.*}"
 }
 
+maildir_flags ()
+{
+	local flags=${1##*:}
+	[[ ${flags} == $1 ]] || printf "%s\n" "${flags}"
+}
+
 declare -i year month prev_year prev_month
 declare archive_folder=''
 declare date_range=''
@@ -40,19 +48,35 @@ read prev_year prev_month < <( get_previous_month ${year} ${month} )
 
 
 while true ; do
-	date_range=$(printf 'date:%i-%02i-01..%i-%02i-01' \
-	             ${prev_year} ${prev_month} ${year} ${month})
+	printf -v date_range 'date:%i-%02i-01..%i-%02i-01' \
+		${prev_year} ${prev_month} ${year} ${month}
+	printf -v archive_folder 'Archives.%i.%i-%02i' \
+		${prev_year} ${prev_year} ${prev_month}
 
-	archive_folder=$(printf '%s/.mail/Archives.%i.%i-%02i' \
-	                 "${HOME}" ${prev_year} ${prev_year} ${prev_month})
-
-	ensure_maildir_folders "${archive_folder}"
+	ensure_maildir_folders "${maildir}/${archive_folder}"
 
 	got_messages=false
 	while read -r path ; do
 		[[ -f ${path} ]] || continue
 		got_messages=true
-		safecat "${archive_folder}/tmp" "${archive_folder}/cur" < "${path}"
+		#
+		# In order to move a message to the archive folder, try first to
+		# hardlink with the same file name, which will keep the Maildir
+		# flags intact. If that fails (because a file with the same name
+		# exists), then revert to move it it the directory using safecat,
+		# and the re-adding the flags.
+		#
+		if ! ln -t "${maildir}/${archive_folder}/cur" "${path}" 2> /dev/null
+		then
+			dest_filename=$(safecat "${maildir}/${archive_folder}/tmp" \
+				                      "${maildir}/${archive_folder}/cur" \
+				                    < "${path}")
+			flags=$(maildir_flags)
+			if [[ -n ${flags} && -n ${dest_filename} ]] ; then
+				mv -T "${maildir}/${archive_folder}/cur/${dest_filename}" \
+					    "${maildir}/${archive_folder}/cur/${dest_filename}:${flags}"
+			fi
+		fi
 		rm -f "${path}"
 	done < <( notmuch search --output=files "${date_range}" \
 		        and not "folder:${archive_folder}" \
