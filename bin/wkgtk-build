@@ -6,11 +6,21 @@
 # Distributed under terms of the MIT license.
 #
 
+# Common build options
+declare -r build_options=(
+	--gtk
+	--no-svg
+	--no-webkit1
+)
+
+# Detect whether we are building inside jhbuild, to adjust paths accordingly
+if [[ -n ${JHBUILD_PREFIX} ]] ; then
+	build_options=( "${build_options[@]}" "--prefix=${JHBUILD_PREFIX}" )
+	if [[ -n ${JHBUILD_LIBDIR} ]] ; then
+		build_options=( "${build_options[@]}" "--libdir=${JHBUILD_LIBDIR}" )
+	fi
+fi
+
 export CC=clang
 export CXX=clang++
-exec build-webkit \
-	--gtk \
-	--no-svg \
-	--no-webkit1 \
-	"$@"
-
+exec build-webkit "${build_options[@]}" "$@"
