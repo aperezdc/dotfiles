@@ -126,6 +126,8 @@ let g:syntastic_warning_symbol = '⚠'
 let g:syntastic_style_error_symbol = '»»'
 let g:syntastic_style_warning_symbol = '»'
 
+let g:syntastic_python_pylint_args = '-d W0311'
+
 " Configure file-explorer }}}1{{{1
 
 let g:explVertical     = 1       " Split windows in vertical.
