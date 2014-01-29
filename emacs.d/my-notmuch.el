@@ -14,83 +14,43 @@
 ;;(add-hook 'message-setup-hook
 ;;					'(lambda () (footnote-mode t)))
 
-(define-key notmuch-search-mode-map "d"
+(define-key notmuch-common-keymap "d"
 						(lambda ()
-							"toggle deleted tag for thread"
+							"Toggle deleted tag for thread/message"
 							(interactive)
 							(if (member "deleted" (notmuch-search-get-tags))
-								(notmuch-search-tag "-deleted")
+								(notmuch-search-tag '("-deleted"))
 								(notmuch-search-tag '("+deleted" "-inbox" "-unread")))))
 
-(define-key notmuch-show-mode-map "d"
+(define-key notmuch-common-keymap "j"
 						(lambda ()
-							"toggle deleted tag for message"
-							(interactive)
-							(if (member "deleted" (notmuch-show-get-tags))
-								(notmuch-show-tag "-deleted")
-								(notmuch-show-tag '("+deleted" "-inbox" "-unread")))))
-
-(define-key notmuch-search-mode-map "j"
-						(lambda ()
-							"toggle the spam (junk) tag for thread"
+							"Toggle the spam (junk) tag for thread/message"
 							(interactive)
 							(if (member "spam" (notmuch-search-get-tags))
-								(notmuch-search-tag "-spam")
+								(notmuch-search-tag '("-spam"))
 								(notmuch-search-tag '("+spam" "-ham" "-inbox" "-unread")))))
 
-(define-key notmuch-show-mode-map "j"
+(define-key notmuch-common-keymap "H"
 						(lambda ()
-							"toggle the spam (junk) tag for message"
-							(interactive)
-							(if (member "spam" (notmuch-show-get-tags))
-								(notmuch-show-tag "-spam")
-								(notmuch-show-tag '("+spam" "-ham" "-inbox" "-unread")))))
-
-(define-key notmuch-search-mode-map "H"
-						(lambda ()
-							"toggle the ham tag for thread"
+							"Toggle the ham tag for thread/message"
 							(interactive)
 							(if (member "ham" (notmuch-search-get-tags))
-								(notmuch-search-tag "-ham")
+								(notmuch-search-tag '("-ham"))
 								(notmuch-search-tag '("+ham" "-spam")))))
 
-(define-key notmuch-show-mode-map "H"
+(define-key notmuch-common-keymap "F"
 						(lambda ()
-							"toggle the ham tag for message"
-							(interactive)
-							(if (member "ham" (notmuch-show-get-tags))
-								(notmuch-show-tag "-ham")
-								(notmuch-show-tag '("+ham" "-ham")))))
-
-(define-key notmuch-search-mode-map "F"
-						(lambda ()
-							"toggle the flagged tag for thread"
+							"Toggle the flagged tag for thread/message"
 							(interactive)
 							(if (member "flagged" (notmuch-search-get-tags))
-								(notmuch-search-tag "-flagged")
-								(notmuch-search-tag "+flagged"))))
+								(notmuch-search-tag '("-flagged"))
+								(notmuch-search-tag '("+flagged")))))
 
-(define-key notmuch-show-mode-map "F"
+(define-key notmuch-common-keymap "i"
 						(lambda ()
-							"toggle the flagged tag for message"
-							(interactive)
-							(if (member "flagged" (notmuch-show-get-tags))
-								(notmuch-show-tag "-flagged")
-								(notmuch-show-tag "+flagged"))))
-
-(define-key notmuch-search-mode-map "i"
-						(lambda ()
-							"toggle the ignore tag for thread"
+							"Toggle the ignore tag for thread/message"
 							(interactive)
 							(if (member "ignore" (notmuch-search-get-tags))
-								(notmuch-search-tag "-ignore")
+								(notmuch-search-tag '("-ignore"))
 								(notmuch-search-tag '("+ignore" "-inbox" "-unread")))))
-
-(define-key notmuch-show-mode-map "i"
-						(lambda ()
-							"toggle the ignore tag for message"
-							(interactive)
-							(if (member "ignore" (notmuch-show-get-tags))
-								(notmuch-show-tag "-ignore")
-								(notmuch-show-tag '("+ignore" "-inbox" "-unread")))))
 
