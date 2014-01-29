@@ -7,7 +7,7 @@
 #
 
 # Common build options
-declare -r build_options=(
+declare -a build_options=(
 	--gtk
 	--no-svg
 	--no-webkit1
@@ -23,4 +23,6 @@ fi
 
 export CC=clang
 export CXX=clang++
+export PKG_CONFIG_PATH
+set -x
 exec build-webkit "${build_options[@]}" "$@"
