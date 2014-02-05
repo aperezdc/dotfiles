@@ -9,7 +9,6 @@
 # Common build options
 declare -a build_options=(
 	--gtk
-	--no-svg
 	--no-webkit1
 )
 
