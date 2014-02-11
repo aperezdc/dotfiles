@@ -126,7 +126,7 @@ let g:syntastic_warning_symbol = '⚠'
 let g:syntastic_style_error_symbol = '»»'
 let g:syntastic_style_warning_symbol = '»'
 
-let g:syntastic_python_pylint_args = '-d W0311'
+let g:syntastic_python_pylint_args = '--indent-string="    "'
 
 " Configure file-explorer }}}1{{{1
 
