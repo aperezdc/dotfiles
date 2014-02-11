@@ -155,7 +155,28 @@ elif [[ ${COLORTERM} = gnome-terminal || ${COLORTERM} = drop-down-terminal || -n
 	export TERM='xterm-256color'
 fi
 
-PROMPT=$'%{%B%(!.$fg[red].$fg[green])%}%m%{%b%} ${vcs_info_msg_0_}%{%B$fg[blue]%}%1~ %{%(?.$fg[blue].%B$fg[red])%}%# %{%b%k%f%}'
+# Put the prefix of the jhbuild environment in the prompt
+zsh_jhbuild_info=''
+if [[ -n ${JHBUILD_PREFIX} ]] ; then
+	zsh_jhbuild_info=" %{$fg[green]%}jhbuild%{%b%}:%{$fg[magenta]%}${JHBUILD_PREFIX}%{%b%}"
+fi
+
+# Try to detect whether inside a chroot and add it to the prompt
+zsh_chroot_info=''
+if [[ -n ${DEBIAN_CHROOT} ]] ; then
+	zsh_chroot_info=${DEBIAN_CHROOT}
+elif [[ -n ${CHROOT_NAME} ]] ; then
+	zsh_chroot_info=${CHROOT_NAME}
+elif [[ -n ${CHROOT} ]] ; then
+	zsh_chroot_info=${CHROOT}
+fi
+
+if [[ -n ${zsh_chroot_info} ]] ; then
+	zsh_chroot_info=" %{$fg[green]%}chroot%{%b%}:%{$fg[magenta]%}${zsh_chroot_info}%{%b%}"
+fi
+
+# Final PROMPT setting
+PROMPT=$'%{%B%(!.$fg[red].$fg[green])%}%m%{%b%}${zsh_chroot_info}${zsh_jhbuild_info} ${vcs_info_msg_0_}%{%B$fg[blue]%}%1~ %{%(?.$fg[blue].%B$fg[red])%}%# %{%b%k%f%}'
 
 # Devtodo
 #
