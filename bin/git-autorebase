@@ -1,0 +1,26 @@
+#! /bin/bash
+#
+# git-autorebase
+# Copyright (C) 2014 Adrian Perez <aperez@igalia.com>
+#
+# Distributed under terms of the MIT license.
+#
+set -e
+
+current_branch=$(git symbolic-ref HEAD)
+current_branch=${current_branch#refs/heads/}
+branch=${1:-${current_branch}}
+
+if [[ ${branch} != ${current_branch} ]] ; then
+	git checkout "${branch}"
+	git autorebase
+	git checkout "${current_branch}"
+else
+	parent_branch=$(git config "autorebase.${current_branch}" || true)
+	if [[ -n ${parent_branch} ]] ; then
+		git checkout "${parent_branch}"
+		git autorebase
+		git checkout "${current_branch}"
+		git rebase "${parent_branch}"
+	fi
+fi
