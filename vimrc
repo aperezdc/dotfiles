@@ -15,7 +15,9 @@ let g:email = "aperez@igalia.com"
 let g:user  = "Adrian Perez"
 
 call vundle#rc()
-Bundle 'Valloric/YouCompleteMe'
+if has("python")
+	Bundle 'Valloric/YouCompleteMe'  " YCM requires Python
+endif
 Bundle 'aperezdc/vim-template'
 Bundle 'jamessan/vim-gnupg'
 Bundle 'szw/vim-powerline'
