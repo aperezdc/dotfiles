@@ -7,6 +7,52 @@
 #
 set -e
 
+show_usage ()
+{
+	cat 1>&2 <<-EOF
+	usage: git autorebase [branch]
+
+	Automatically rebases the named branch (or the current branch if none
+	given) against its configured "parent branch". Parent branches can have
+	other parents in turn, and the whole chain of branches will be rebased
+	recursively. For example, after starting a feature branch another branch
+	can be started off it. While in "master":
+
+	  git autobranch new-feature && hackety-hack
+	  git autobranch sub-branch && hackety-hack
+
+	At this point the tree of branches looks like this:
+
+	  master
+	   ╰─► new-feature
+	        ╰─► sub-branch ── active branch
+
+	When the "master" branch is updated with upstream changes, the branch
+	"new-feature" has to be rebased against "master", and "sub-branch" has
+	to be rebased against "new-feature". Using "git autorebase" will do
+	precisely that. In this scenario, it is equivalent to:
+
+	  git checkout new-feature && git rebase master
+	  git checkout sub-branch && git rebase new-feature
+
+	The "git autobranch" command can be used to create branches with an
+	associated parent branch, and to show the configured parents of local
+	branches.
+	EOF
+}
+
+for arg in "$@" ; do
+	if [[ ${arg} = -h || ${arg} = -? ]] ; then
+		show_usage
+		exit 0
+	fi
+done
+
+if [[ $# -ne 0 && $# -ne 1 ]] ; then
+	show_usage
+	exit 1
+fi
+
 current_branch=$(git symbolic-ref HEAD)
 current_branch=${current_branch#refs/heads/}
 branch=${1:-${current_branch}}
