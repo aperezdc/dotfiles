@@ -23,8 +23,8 @@ else
 fi
 
 if [[ -n ${CLANG} && ${CLANG} -ne 0 ]] ; then
-	export CC='clang -ferror-limit=1'
-	export CXX='clang++ -ferror-limit=1'
+	export CC='clang -ferror-limit=1 -Qunused-arguments'
+	export CXX='clang++ -ferror-limit=1 -Qunused-arguments'
 	export GYP_DEFINES='clang=1'
 fi
 
