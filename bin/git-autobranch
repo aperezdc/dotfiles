@@ -1,0 +1,84 @@
+#! /bin/bash
+#
+# git-autorebase
+# Copyright (C) 2014 Adrian Perez <aperez@igalia.com>
+#
+# Distributed under terms of the MIT license.
+#
+set -e
+
+current_branch=$(git symbolic-ref HEAD)
+current_branch=${current_branch#refs/heads/}
+
+show_usage ()
+{
+	cat 1>&2 <<-EOF
+	usage: git autobranch [branch [parent]]
+
+	Without arguments, a list of parents for local branches is displayed:
+
+	  git autobranch
+
+	Passing current branch name as argument, the parent of the current
+	branch is shown:
+
+	  git autobranch current-branch
+
+	Passing a name other than the current branch creates a new branch with
+	that name, sets the current branch as the parent, and checks out the
+	newly-created branch:
+
+	  git checkout master
+	  git autobranch new-branch-name
+
+	Passing the current branch name and an additional argument changes
+	the parent branch for the current branch:
+
+	  git autobranch current-branch parent-branch
+
+	EOF
+}
+
+# Check for -h/-? and show the usage text
+for arg in "$@" ; do
+	if [[ ${arg} = -h || ${arg} = -? ]] ; then
+		show_usage
+		exit 0
+	fi
+done
+
+if [[ $# -eq 0 ]] ; then
+	# No arguments, print the auto{branch,rebase}-tracked branches
+	while read -r line ; do
+		if [[ ${line} = autorebase.* ]] ; then
+			line=${line#autorebase.}
+			read branch parent <<< "${line/=/ }"
+			if [[ ${branch} = ${current_branch} ]] ; then
+				echo "[0;32m${branch}[1;1m ${parent}[0;0m"
+			else
+				echo "${branch}[1;1m ${parent}[0;0m"
+			fi
+		fi
+	done < <(	git config --local --list )
+	exit 0
+fi
+
+branch=$1
+if [[ ${branch} = ${current_branch} ]] ; then
+	if [[ $# -eq 1 ]] ; then
+		# Show current parent branch
+		parent=$(git config --local "autorebase.${branch}" || true)
+		[[ -n ${parent} ]] || exit 1
+		echo "${parent}"
+	elif [[ $# -eq 2 ]] ; then
+		# Set parent branch
+		git config --local "autorebase.${branch}" "$2"
+	else
+		show_usage
+		exit 1
+	fi
+	exit 0
+fi
+
+git config --local "autorebase.${branch}" "${current_branch}"
+git checkout -b "${branch}"
