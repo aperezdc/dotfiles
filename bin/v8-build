@@ -28,4 +28,14 @@ if [[ -n ${CLANG} && ${CLANG} -ne 0 ]] ; then
 	export GYP_DEFINES='clang=1'
 fi
 
-exec make console=readline werror=no ${makej} "${args[@]}"
+exec make \
+	console=readline \
+	werror=no \
+	disassembler=on \
+	objectprint=on \
+	verifyheap=on \
+	extrachecks=on \
+	gdbjit=on \
+	debuggersupport=on \
+	deprecationwarnings=on \
+	${makej} "${args[@]}"
