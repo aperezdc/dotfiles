@@ -16,7 +16,7 @@ let g:user  = "Adrian Perez"
 
 call vundle#rc()
 if has("python")
-	Bundle 'Valloric/YouCompleteMe'  " YCM requires Python
+	Bundle 'Valloric/YouCompleteMe'
 endif
 Bundle 'aperezdc/vim-template'
 Bundle 'jamessan/vim-gnupg'
