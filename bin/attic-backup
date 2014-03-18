@@ -1,0 +1,48 @@
+#! /bin/bash
+set -e
+
+args=(
+	/home/aperez
+	--exclude=/home/aperez/Templates
+	--exclude=/home/aperez/Public
+	--exclude=/home/aperez/Music
+	--exclude=/home/aperez/Downloads
+	--exclude=/home/aperez/pictures
+	--exclude=/home/aperez/Pictures
+	--exclude=/home/aperez/Movies
+	--exclude=/home/aperez/tmp
+	--exclude=/home/aperez/nobackup
+	--exclude=/home/aperez/devel/WebKit
+	--exclude=/home/aperez/devel/v8
+	--exclude=/home/aperez/devel/epiphany
+	--exclude=/home/aperez/devel/mozilla-central
+	--exclude=/home/aperez/nobackup
+	--exclude=/home/aperez/.dotfiles
+	--exclude=/home/aperez/.ccache
+	--exclude=/home/aperez/.cache
+	--exclude=/home/aperez/.thumbnails
+	--exclude=/home/aperez/.local
+	--exclude=/home/aperez/.mail
+	--exclude='*.flv'
+	--exclude='*.wmv'
+	--exclude='*.avi'
+	--exclude='*.mp4'
+	--exclude='*.m4a'
+	--exclude='*.m4v'
+	--exclude='*.mpg'
+	--exclude='*.mkv'
+	--exclude='*.ogg'
+	--exclude='*.oga'
+	--exclude='*.ogv'
+	--exclude='*.mp3'
+	--exclude='*.flac'
+)
+
+: ${REPO:=/run/media/aperez/fozzie/backup.attic}
+: ${HOST:=$(hostname)}
+: ${BACKUP_NAME:=${HOST}-$(date '+%Y-%m-%d')}
+
+echo "Backing up to ${REPO}::${BACKUP_NAME}"
+ionice -c 3 attic create --stats "${REPO}::${BACKUP_NAME}" "${args[@]} --do-not-cross-mountpoints"
+echo "Pruning old backups..."
+ionice -c 3 attic prune -v "${REPO}" --keep-daily=7 --keep-weekly=4 --keep-monthly=6
