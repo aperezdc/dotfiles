@@ -20,8 +20,9 @@ if [[ -n ${JHBUILD_PREFIX} ]] ; then
 	fi
 fi
 
-export CC=clang
-export CXX=clang++
-export PKG_CONFIG_PATH
+: ${CC:='clang -Qunused-arguments'}
+: ${CXX:='clang++ -Qunused-arguments'}
+
+export PKG_CONFIG_PATH CC CXX
 set -x
 exec build-webkit "${build_options[@]}" "$@"
