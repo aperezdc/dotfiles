@@ -52,6 +52,7 @@
  '(fringe-mode (quote (nil . 0)) nil (fringe))
  '(ibus-python-shell-command-name "python2")
  '(mail-host-address "kaze")
+ '(menu-bar-mode nil)
  '(message-send-mail-function (quote message-send-mail-with-sendmail))
  '(message-tool-bar (quote message-tool-bar-gnome))
  '(mm-text-html-renderer (quote w3m-standalone))
