@@ -20,11 +20,13 @@ if has("python")
 endif
 Bundle 'aperezdc/vim-template'
 Bundle 'jamessan/vim-gnupg'
-Bundle 'szw/vim-powerline'
+Bundle 'jayferd/ragel.vim'
 Bundle 'juvenn/mustache.vim'
 Bundle 'myusuf3/numbers.vim'
 Bundle 'vim-scripts/gtk-vim-syntax'
+Bundle 'airblade/vim-gitgutter'
 Bundle 'scrooloose/syntastic'
+Bundle 'bling/vim-airline'
 Bundle 'rainux/vim-vala'
 Bundle 'mileszs/ack.vim'
 Bundle 'othree/xml.vim'
@@ -70,7 +72,6 @@ set nosol
 set shortmess+=a
 " set ttymouse=xterm2
 set noshowmode
-set number
 set grepprg=ack\ -H\ --nocolor
 
 
@@ -329,12 +330,6 @@ function <SID>Toggle2Match()
 endfunction
 
 
-" Change colors of completion popup for Vim 7.
-highlight Pmenu      ctermbg=grey ctermfg=black
-highlight PmenuSel   cterm=bold,reverse ctermbg=black ctermfg=yellow
-highlight PmenuSbar  ctermbg=blue
-highlight PmenuThumb ctermfg=lightblue
-
 " When under xterm and compatible terminals, use titles if available and
 " change cursor color depending on active mode.
 if &term =~ "xterm"
@@ -356,6 +351,22 @@ if &term =~ "screen"
 	imap <silent> [1;5C <C-Right>
 endif
 
+if !exists('g:airline_symbols')
+	let g:airline_symbols = {}
+endif
+
+let g:airline_powerline_fonts = 0
+" let g:airline_left_sep = '▒'
+" let g:airline_right_sep = '▒'
+let g:airline_left_sep = ''
+let g:airline_right_sep = ''
+let g:airline_symbols.branch = ''
+let g:airline_symbols.readonly = ''
+let g:airline_symbols.linenr = ''
+let g:airline_symbols.paste = 'ϱ'
+let g:airline_symbols.whitespace = '⍆'
+let g:airline_theme = 'powerlineish'
+
 if has("syntax") || has("gui_running")
 	syntax on
 	if has("gui_running")
@@ -365,10 +376,8 @@ if has("syntax") || has("gui_running")
 		" colorscheme lucius
 		" LuciusWhiteHighContrast
 		set cursorline
-		let g:Powerline_symbols = 'unicode'
 	else
 		colorscheme elflord
-		let g:Powerline_symbols = 'compatible'
 
 		if &term =~ "xterm-256color" || &term =~ "screen-256color" || $COLORTERM =~ "gnome-terminal"
 			"let g:Powerline_symbols = 'fancy'
@@ -388,6 +397,7 @@ if has("syntax") || has("gui_running")
 		highlight CursorLine   ctermbg=235
 		highlight CursorLineNr ctermbg=235 ctermfg=246
 		highlight LineNr       ctermbg=234 ctermfg=238
+		highlight SignColumn   ctermbg=234
 
 		"colorscheme lucius
 		"LuciusBlackHighContrast
