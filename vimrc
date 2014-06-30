@@ -18,6 +18,7 @@ call vundle#rc()
 if has("python")
 	Bundle 'Valloric/YouCompleteMe'
 endif
+Plugin 'nsf/gocode', {'rtp': 'vim/'}
 Bundle 'aperezdc/vim-template'
 Bundle 'jamessan/vim-gnupg'
 Bundle 'jayferd/ragel.vim'
@@ -27,6 +28,8 @@ Bundle 'vim-scripts/gtk-vim-syntax'
 Bundle 'airblade/vim-gitgutter'
 Bundle 'scrooloose/syntastic'
 Bundle 'bling/vim-airline'
+Bundle 'ledger/vim-ledger'
+Bundle 'majutsushi/tagbar'
 Bundle 'rainux/vim-vala'
 Bundle 'mileszs/ack.vim'
 Bundle 'othree/xml.vim'
@@ -128,8 +131,11 @@ let g:syntastic_error_symbol = '✗'
 let g:syntastic_warning_symbol = '⚠'
 let g:syntastic_style_error_symbol = '»»'
 let g:syntastic_style_warning_symbol = '»'
+let g:syntastic_always_populate_loc_list = 1
 
 let g:syntastic_python_pylint_args = '--indent-string="    "'
+
+let g:ctrlp_cmd = 'CtrlPLastMode'
 
 " Configure file-explorer }}}1{{{1
 
@@ -519,7 +525,7 @@ map __ ZZ
 " A bit of commoddity to jump through source files using tags!
 map <C-J> :YcmCompleter GoToDefinitionElseDeclaration<CR>
 map <C-T> <C-]>
-map <C-P> :pop<CR>
+map <C-S-T> :pop<CR>
 
 " }}}1 Autocomplete with <TAB> (AJ) {{{1
 
@@ -567,16 +573,9 @@ map <Space> /
 map <C-n> :bnext<CR>
 map <C-b> :bprev<CR>
 
-" Go to next unfilled field of a RFC822 message.
-map! <C-g> <ESC>/: ?$<ESC>A
-
 " F2 -> Save file
 map  <F2>   :w!<CR>
 imap <F2>   <ESC>:w!<CR>a
-
-" Shift+F2 -> Enable doxygen mode.
-map <silent> <S-F2> :runtime syntax/doxygen.vim<CR>
-
 
 " F3 -> Toggle line numbers
 nnoremap <F3> :NumbersToggle<CR>
@@ -601,11 +600,9 @@ map  <C-S-Right> <ESC>:bnext<CR>
 map <silent> <F9>  :previous!<CR>
 map <silent> <F10> :next!<CR>
 
-"inoremap <silent> <F11> :call VimCommanderToggle()<CR>
+nmap <silent> <F11> :TagbarToggle<CR>
+nmap <silent> <F12> :TagbarOpenAutoClose<CR>
 
-" F12 -> Save all and exit
-map  <F12>  :xa!<CR>
-map! <F12>  <ESC>:xa!<CR>
 
 " Map Ctrl-Fxx key combos so they do activate buffers.
 map <C-F1>  :buffer 1<cr>
