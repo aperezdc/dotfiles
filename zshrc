@@ -208,6 +208,12 @@ alias grep='grep --color=auto'
 alias clip='xclip -selection clipboard'
 alias sprunge='curl -s -S -F "sprunge=<-" http://sprunge.us'
 
+# Golang environment and binaries directory
+if [[ -x /usr/bin/go && -d ${HOME}/go ]] ; then
+	export GOPATH="${HOME}/go"
+	PATH="${PATH}:${HOME}/go/bin"
+fi
+
 # Local binaries directory
 if [[ -d ${HOME}/.local/bin ]] ; then
 	PATH="${PATH}:${HOME}/.local/bin"
