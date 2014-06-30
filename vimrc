@@ -175,7 +175,6 @@ if has("autocmd")
 	autocmd FileType xhtml,xml
 				\ let xml_use_xhtml=1 |
 				\ setlocal foldmethod=syntax
-	autocmd FileType html setlocal filetype=xml | let xml_use_xhtml=1
 	autocmd FileType python setlocal expandtab tabstop=4 shiftwidth=4
 	autocmd FileType bzr setlocal expandtab
 	autocmd FileType lua setlocal expandtab shiftwidth=2 tabstop=2
