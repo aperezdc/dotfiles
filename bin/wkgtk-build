@@ -22,6 +22,18 @@ fi
 : ${CC:='clang -Qunused-arguments'}
 : ${CXX:='clang++ -Qunused-arguments'}
 
-export PKG_CONFIG_PATH CC CXX
+if [[ ${CXX} = *clang++\ * && -z ${NO_LIBCXX} ]] ; then
+	CXXFLAGS='-stdlib=libc++'
+	LDFLAGS='-stdlib=libc++ -lc++abi'
+fi
+
+cat <<EOF
+CC      : ${CC}
+CXX     : ${CXX}
+CXXFLAGS: ${CXXFLAGS}
+LDFLAGS : ${LDFLAGS}
+EOF
+
+export PKG_CONFIG_PATH CC CXX CXXFLAGS LDFLAGS
 set -x
 exec build-webkit "${build_options[@]}" "$@"
