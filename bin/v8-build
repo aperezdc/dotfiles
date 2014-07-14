@@ -8,6 +8,7 @@
 
 : ${CLANG:=1}
 : ${ICECC:=0}
+: ${ASAN:=0}
 
 if [[ $# -eq 0 ]] ; then
     args=( x64.debug )
@@ -22,20 +23,45 @@ else
 	makej="-j4"
 fi
 
-if [[ -n ${CLANG} && ${CLANG} -ne 0 ]] ; then
-	export CC='clang -ferror-limit=1 -Qunused-arguments'
-	export CXX='clang++ -ferror-limit=1 -Qunused-arguments'
-	export GYP_DEFINES='clang=1'
+if [[ -n ${ASAN} && ${ASAN} -ne 0 ]] ; then
+	CLANG=/usr/bin
+	export ASAN_SYMBOLIZER_PATH="$CLANG/llvm-symbolizer"
+	export CXX="$CLANG/clang++ -fsanitize=address -ferror-limit=1 -Qunused-arguments -stdlib=libc++"
+	export CXX_host=${CXX}
+	export LINK="$CLANG/clang++ -fsanitize=address -stdlib=libc++ -lc++abi"
+	export CXXFLAGS="-O1 -fno-omit-frame-pointer -g"
+	export CXXFLAGS_host=${CXXFLAGS}
+	asan="asan=${CLANG}/clang++"
+elif [[ -n ${CLANG} && ${CLANG} -ne 0 ]] ; then
+	export CC='clang -ferror-limit=1 -Qunused-arguments -stdlib=libc++'
+	export CXX='clang++ -ferror-limit=1 -Qunused-arguments -stdlib=libc++'
+	export LINK='clang++ -stdlib=libc++ -lc++abi'
+	export GYP_DEFINES="${GYP_DEFINES} clang=1"
+	werror='werror=no'
 fi
 
+cat <<EOF
+
+CLANG ..... : ${CLANG}
+ICECC ..... : ${ICECC}
+ASAN ...... : ${ASAN}
+CC ........ : ${CC}
+CXX ....... : ${CXX}
+CXXFLAGS .. : ${CXXFLAGS}
+LINK ...... : ${LINK}
+GYP_DEFINES : ${GYP_DEFINES}
+
+EOF
+
+set -x
 exec make \
 	console=readline \
-	werror=no \
 	disassembler=on \
 	objectprint=on \
 	verifyheap=on \
 	extrachecks=on \
 	gdbjit=on \
-	debuggersupport=on \
 	deprecationwarnings=on \
+	${asan} \
+	${werror} \
 	${makej} "${args[@]}"
