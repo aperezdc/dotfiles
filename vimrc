@@ -618,6 +618,10 @@ map <C-F7>  :buffer 7<cr>
 map <C-F8>  :buffer 8<cr>
 map <C-F9>  :buffer 9<cr>
 
+" clang-format, see http://clang.llvm.org/docs/ClangFormat.html
+map <C-K> :pyf /usr/share/clang/clang-format.py<CR>
+imap <C-K> <ESC>:pyf /usr/share/clang/clang-format.py<CR>i
+
 " }}}1
 
 runtime! macros/matchit.vim
