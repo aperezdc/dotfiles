@@ -9,7 +9,6 @@
 # Common build options
 declare -a build_options=(
 	--gtk
-	--no-webkit1
 )
 
 # Detect whether we are building inside jhbuild, to adjust paths accordingly
