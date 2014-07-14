@@ -1,16 +1,16 @@
 # vim: filetype=cfg
 [default]
-msgcolor=yes
-msgmodule=yes
+msg-color=yes
+msg-module=yes
 framedrop=yes
 use-filedir-conf=yes
 embeddedfonts=yes
-ass=yes
-osd-font=Lato
-sub-text-font=Lato
+sub-ass=yes
+osd-font="Clear Sans"
+sub-text-font="Clear Sans"
 ass-hinting=native
 screenshot-format=png
-ao=pulse,alsa
+#ao=pulse,alsa
 vo=vaapi,opengl,xv,wayland,sdl,x11
 hwdec=auto
 #vo=xv,opengl,wayland,sdl,x11
