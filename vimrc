@@ -14,7 +14,7 @@
 let g:email = "aperez@igalia.com"
 let g:user  = "Adrian Perez"
 
-call vundle#rc()
+call vundle#begin()
 if has("python")
 	Plugin 'Valloric/YouCompleteMe'
 endif
@@ -38,6 +38,7 @@ Plugin 'rainux/vim-vala'
 Plugin 'othree/xml.vim'
 Plugin 'sjl/gundo.vim'
 Plugin 'rking/ag.vim'
+call vundle#end()
 
 " Set options {{{1
 set nocompatible			 " Use advanced features not found in Vi
