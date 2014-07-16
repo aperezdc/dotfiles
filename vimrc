@@ -16,28 +16,28 @@ let g:user  = "Adrian Perez"
 
 call vundle#rc()
 if has("python")
-	Bundle 'Valloric/YouCompleteMe'
+	Plugin 'Valloric/YouCompleteMe'
 endif
 Plugin 'nsf/gocode', {'rtp': 'vim/'}
-Bundle 'aperezdc/vim-template'
-Bundle 'jamessan/vim-gnupg'
-Bundle 'jayferd/ragel.vim'
-Bundle 'juvenn/mustache.vim'
-Bundle 'kien/ctrlp.vim'
-Bundle 'vim-scripts/gtk-vim-syntax'
-Bundle 'airblade/vim-gitgutter'
-Bundle 'scrooloose/syntastic'
-Bundle 'tpope/vim-surround'
-Bundle 'bling/vim-airline'
-Bundle 'ledger/vim-ledger'
-Bundle 'majutsushi/tagbar'
-Bundle 'gcmt/wildfire.vim'
-"Bundle 'Shougo/unite.vim'
-Bundle 'rainux/vim-vala'
-"Bundle 'mileszs/ack.vim'
-Bundle 'othree/xml.vim'
-Bundle 'sjl/gundo.vim'
-Bundle 'rking/ag.vim'
+Plugin 'aperezdc/vim-template'
+Plugin 'jamessan/vim-gnupg'
+Plugin 'jayferd/ragel.vim'
+Plugin 'juvenn/mustache.vim'
+Plugin 'kien/ctrlp.vim'
+Plugin 'vim-scripts/gtk-vim-syntax'
+Plugin 'airblade/vim-gitgutter'
+Plugin 'scrooloose/syntastic'
+Plugin 'tpope/vim-surround'
+Plugin 'bling/vim-airline'
+Plugin 'ledger/vim-ledger'
+Plugin 'majutsushi/tagbar'
+Plugin 'gcmt/wildfire.vim'
+"Plugin 'Shougo/unite.vim'
+Plugin 'rainux/vim-vala'
+"Plugin 'mileszs/ack.vim'
+Plugin 'othree/xml.vim'
+Plugin 'sjl/gundo.vim'
+Plugin 'rking/ag.vim'
 
 " Set options {{{1
 set nocompatible			 " Use advanced features not found in Vi
