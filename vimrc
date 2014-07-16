@@ -140,6 +140,26 @@ let g:syntastic_always_populate_loc_list = 1
 
 let g:syntastic_python_pylint_args = '--indent-string="    "'
 
+let g:syntastic_c_compiler = 'clang'
+let g:syntastic_c_compiler_options = ' -std=gnu99'
+let g:syntastic_c_check_header=1
+let g:syntastic_c_auto_refresh_includes=1
+
+let g:syntastic_cpp_compiler = 'clang++'
+let g:syntastic_cpp_compiler_options = ' -std=c++1y -stdlib=libc++ '
+let g:syntastic_cpp_check_header=1
+let g:syntastic_cpp_auto_refresh_includes=1
+
+let g:syntastic_objc_compiler = 'clang'
+let g:syntastic_objc_compiler_options = ' -fobjc '
+let g:syntastic_objc_check_header=1
+let g:syntastic_objc_auto_refresh_includes=1
+
+let g:syntastic_objcpp_compiler = 'clang++'
+let g:syntastic_objcpp_compiler_options = ' -std=c++11y -stdlib=libc++ -fobjc '
+let g:syntastic_objcpp_check_header=1
+let g:syntastic_objcpp_auto_refresh_includes=1
+
 let g:ctrlp_cmd = 'CtrlPLastMode'
 
 " Configure file-explorer }}}1{{{1
