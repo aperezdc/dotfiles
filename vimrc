@@ -1,47 +1,55 @@
+" Thing: Adrian's Vim configuration file. This one is important!
+" Author: Adrian Perez de Castro <aperez@igalia.com>
+" License: Distributed under terms of the MIT license
 
-
-"    ___ ___                      ___ ___ __ __
-"   |   Y   .-----.--------.-----|   Y   |__|  |_
-"   |.  1   |  _  |        |  -__|.  1  /|  |   _|
-"   |.  _   |_____|__|__|__|_____|.  _  \|__|____|
-"   |:  |   |                    |:  |   \
-"   |::.|:. |  Set-up ~yourself  |::.| .  )
-"   `--- ---'                    `--- ---'
-"
-"   Vim configuration file. This one is important!
-"
+if has("vim_starting")
+	set nocompatible
+	set runtimepath+=~/.vim/bundle/neobundle.vim
+endif
+filetype indent plugin on
 
 let g:email = "aperez@igalia.com"
 let g:user  = "Adrian Perez"
 
-call vundle#begin()
-if has("python")
-	Plugin 'Valloric/YouCompleteMe'
-endif
-Plugin 'nsf/gocode', {'rtp': 'vim/'}
-Plugin 'aperezdc/vim-template'
-Plugin 'jamessan/vim-gnupg'
-Plugin 'jayferd/ragel.vim'
-Plugin 'juvenn/mustache.vim'
-Plugin 'kien/ctrlp.vim'
-Plugin 'vim-scripts/gtk-vim-syntax'
-Plugin 'airblade/vim-gitgutter'
-Plugin 'scrooloose/syntastic'
-Plugin 'tpope/vim-surround'
-Plugin 'bling/vim-airline'
-Plugin 'ledger/vim-ledger'
-Plugin 'majutsushi/tagbar'
-Plugin 'gcmt/wildfire.vim'
-"Plugin 'Shougo/unite.vim'
-Plugin 'rainux/vim-vala'
-"Plugin 'mileszs/ack.vim'
-Plugin 'othree/xml.vim'
-Plugin 'sjl/gundo.vim'
-Plugin 'rking/ag.vim'
-call vundle#end()
+" CamelCaseMotion has to be configured before sourcing
+map <S-W> <Plug>CamelCaseMotion_w
+map <S-B> <Plug>CamelCaseMotion_b
+map <S-E> <Plug>CamelCaseMotion_e
 
-" Set options {{{1
-set nocompatible			 " Use advanced features not found in Vi
+call neobundle#begin(expand('~/.vim/bundle/'))
+NeoBundleFetch 'Shougo/neobundle.vim'
+if has("python")
+	NeoBundle 'Valloric/YouCompleteMe',
+				\ {'build': {
+				\   'unix': './install.sh --clang-completer --system-libclang'
+				\ }}
+endif
+NeoBundle 'nsf/gocode', {'rtp': 'vim/'}
+NeoBundle 'aperezdc/vim-template'
+NeoBundle 'jamessan/vim-gnupg'
+NeoBundle 'jayferd/ragel.vim'
+NeoBundle 'juvenn/mustache.vim'
+NeoBundle 'vim-scripts/gtk-vim-syntax'
+NeoBundle 'airblade/vim-gitgutter'
+NeoBundle 'scrooloose/syntastic'
+NeoBundle 'tpope/vim-surround'
+NeoBundle 'bling/vim-airline'
+NeoBundle 'ledger/vim-ledger'
+NeoBundle 'majutsushi/tagbar'
+NeoBundle 'gcmt/wildfire.vim'
+NeoBundle 'noahfrederick/vim-hemisu'
+NeoBundle 'Shougo/vimproc.vim', {'build': {'unix': 'make'}}
+NeoBundle 'Shougo/unite.vim'
+NeoBundle 'Shougo/unite-help'
+NeoBundle 'Shougo/unite-outline'
+NeoBundle 'Shougo/neomru.vim'
+NeoBundle 'Shougo/CamelCaseMotion'
+NeoBundle 'rainux/vim-vala'
+NeoBundle 'othree/xml.vim'
+NeoBundle 'sjl/gundo.vim'
+NeoBundle 'rking/ag.vim'
+call neobundle#end()
+
 set tabstop=2				 " Set tabstops to 2 spaces
 set smarttab                 " Use smart tabs... we are not as dumb!
 set shiftwidth=2			 " Set indentation shift-width to 2 spaces
@@ -66,7 +74,6 @@ set showmatch				 " Show matching parens
 set textwidth=76             " Text is 76 columns wide
 set backspace=2              " Backspace always useable in insert mode
 set fileformats=unix,mac,dos " Allows automatic line-end detection.
-set grepprg=grep\ -nH\ $*    " Make grep always print the file name.
 set ignorecase
 set infercase
 set lazyredraw
@@ -76,17 +83,13 @@ set nobackup
 set tags=tags;/
 set nofsync
 set nosol
-" set mouse=a
 set shortmess+=a
-" set ttymouse=xterm2
 set noshowmode
-set grepprg=ack\ -H\ --nocolor
-
+set grepprg=ag\ --noheading\ --nocolor\ --nobreak
 
 if has("cscope")
 	set cscopetag                " Use cscope for tags, too.
 	set cscopetagorder=0         " Prefer cscope over tags.
-
 	set nocsverb
 	if filereadable("cscope.out")
 		cs add cscope.out
@@ -96,33 +99,31 @@ if has("cscope")
 	set csverb
 endif
 
-
 if has("linebreak")
 	set linebreak 		 	 " Break on `breakat' chars when linewrapping is on.
 	set showbreak=+          " Prepend `+' to wrapped lines
 endif
 
 if has("folding")
-	"set foldminlines=5 		 " Don't fold stuff with less lines
-	set foldmethod=indent 	 " Use syntax-aware folding
-	set nofoldenable 		 " Don't enable automatic folding!
+	set foldminlines=5 		 " Don't fold stuff with less lines
+	set foldmethod=syntax 	 " Use syntax-aware folding
+	set nofoldenable 		 " Don't enable folding by default
 endif
 
 if has("wildmenu")
 	set wildmenu           	 " Show completions on menu over cmdline
 	set wildchar=<TAB>     	 " Navigate wildmenu with tabs
-
-	" Ignore backups and misc files for wilcompletion
 	set wildignore=*.o,*.cm[ioax],*.ppu,*.core,*~,core,#*#
 endif
 
-" Configure plugins }}}1{{{1
-
+" Plugin: XML
 let g:xml_syntax_folding = 1
 
+" Plugin: DetectIndent
 let g:detectindent_preferred_expandtab = 1
 let g:detectindent_preferred_indent    = 4
 
+" Plugin: YouCompleteMe
 "let g:ycm_min_num_of_chars_for_completion = 3
 let g:ycm_collect_identifiers_from_tags_files = 1
 let g:ycm_seed_identifiers_with_syntax = 1
@@ -132,6 +133,7 @@ let g:ycm_autoclose_preview_window_after_insertion = 1
 "let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
 let g:ycm_extra_conf_globlist = ['/home/aperez/devel/*']
 
+" Plugin: Syntastic
 let g:syntastic_error_symbol = '✗'
 let g:syntastic_warning_symbol = '⚠'
 let g:syntastic_style_error_symbol = '»»'
@@ -160,26 +162,48 @@ let g:syntastic_objcpp_compiler_options = ' -std=c++11y -stdlib=libc++ -fobjc '
 let g:syntastic_objcpp_check_header=1
 let g:syntastic_objcpp_auto_refresh_includes=1
 
-let g:ctrlp_cmd = 'CtrlPLastMode'
+" Unite: General settings
+let g:unite_enable_start_insert = 1
+call unite#custom#profile('default', 'context', { 'prompt': '% ' })
+call unite#filters#matcher_default#use(['matcher_fuzzy'])
 
-" Configure file-explorer }}}1{{{1
+" Unite: Emulate CtrlP
+nnoremap <C-p> :Unite file_rec/async -buffer-name=files -no-split<cr>
+nnoremap <leader>f :Unite file_rec/async -buffer-name=files -no-split<cr>
+nnoremap <leader>F :Unite file_rec/git:--cached:--others:--exclude-standard -buffer-name=git-files -no-split<cr>
+nnoremap <leader>d :UniteWithBufferDir buffer bookmark file/async -buffer-name=dir-files<cr>
+nnoremap <leader>m :Unite neomru/file -buffer-name=mru<cr>
+nnoremap <leader>b :Unite buffer -buffer-name=buffers<cr>
+nnoremap <leader>J :Unite jump -buffer-name=jumplist<cr>
 
-let g:explVertical     = 1       " Split windows in vertical.
-let g:explSplitRight   = 1       " Put new opened windows at right.
-let g:explWinSize      = 80      " New windows are 80 columns wide.
-let g:explDetailedHelp = 0       " We don't need detailed help.
-let g:explSortBy       = 'name'  " Sort files by their names.
-let g:explDirsFirst    = 0       " Mix files and directories.
+" Unite: Ag/Ack/Grep
+if executable('ag')
+	let g:unite_source_grep_command = 'ag'
+	let g:unite_source_grep_default_opts = '-i --line-numbers --nocolor --nogroup --noheading'
+	let g:unite_source_grep_recursive_opt = ''
+elseif executable('ack')
+	let g:unite_source_grep_command = 'ack'
+	let g:unite_source_grep_default_opts = '-i --no-heading --no-color -k -H'
+	let g:unite_source_grep_recursive_opt = ''
+endif
+nnoremap <leader>g :Unite grep:.<cr>
 
-" Hide some kinds of files in file-explorer windows.
-let g:explHideFiles  = '^\.,\.gz,\.exe,\.o,\.cm[oxia],\.zip,\.bz2'
+" Plugin: Airline
+let g:airline_powerline_fonts = 0
+" let g:airline_left_sep = '▒'
+" let g:airline_right_sep = '▒'
+let g:airline_left_sep = ''
+let g:airline_right_sep = ''
 
-" Options for the SVN-Command plugin    }}}1{{{1
-
-let SVNCommandEdit = 'split'        " Split instead of opening a new buffer.
-let SVNCommandEnableBufferSetup = 1 " Set per-buffer SVNRevision/SVNBranch
-
-" Some folding/unfolding misc mappings  }}}1{{{1
+if !exists('g:airline_symbols')
+	let g:airline_symbols = {}
+endif
+let g:airline_symbols.branch = ''
+let g:airline_symbols.readonly = ''
+let g:airline_symbols.linenr = ''
+let g:airline_symbols.paste = 'ϱ'
+let g:airline_symbols.whitespace = '⍆'
+let g:airline_theme = 'powerlineish'
 
 if has("folding")
 	map , zj
@@ -191,15 +215,10 @@ if has("folding")
 	"map <C-v> zA
 endif
 
-" Filetyping and autocommands  }}}1{{{1
-filetype indent plugin on
-
 if has("autocmd")
 	" Tune defaults for some particular file types.
 	autocmd FileType *html,xml setlocal matchpairs+=<:>
-	autocmd FileType xhtml,xml
-				\ let xml_use_xhtml=1 |
-				\ setlocal foldmethod=syntax
+	autocmd FileType xhtml,xml let xml_use_xhtml=1
 	autocmd FileType python setlocal expandtab tabstop=4 shiftwidth=4
 	autocmd FileType bzr setlocal expandtab
 	autocmd FileType lua setlocal expandtab shiftwidth=2 tabstop=2
@@ -222,41 +241,6 @@ if has("autocmd")
 				\ iab cls+ public class|
 				\ iab bool boolean|
 				\ iab unsigned int
-	" }}}
-	" TeX error mode. {{{
-	" (Note: this is *cumbersome*.)
-	"
-	autocmd FileType tex setlocal makeprg=
-				\\pdflatex\ \\\\nonstopmode\ \\\\input\\{%} |
-				\ setlocal errorformat=
-				\%E!\ LaTeX\ %trror:\ %m,
-				\%E!\ %m,
-				\%+WLaTeX\ %.%#Warning:\ %.%#line\ %l%.%#,
-				\%+W%.%#\ at\ lines\ %l--%*\\d,
-				\%WLaTeX\ %.%#Warning:\ %m,
-				\%Cl.%l\ %m,
-				\%+C\ \ %m.,
-				\%+C%.%#-%.%#,
-				\%+C%.%#[]%.%#,
-				\%+C[]%.%#,
-				\%+C%.%#%[{}\\]%.%#,
-				\%+C<%.%#>%.%#,
-				\%C\ \ %m,
-				\%-GSee\ the\ LaTeX%m,
-				\%-GType\ \ H\ <return>%m,
-				\%-G\ ...%.%#,
-				\%-G%.%#\ (C)\ %.%#,
-				\%-G(see\ the\ transcript%.%#),
-				\%-G\\s%#,
-				\%+O(%f)%r,
-				\%+P(%f%r,
-				\%+P\ %\\=(%f%r,
-				\%+P%*[^()](%f%r,
-				\%+P[%\\d%[^()]%#(%f%r,
-				\%+Q)%r,
-				\%+Q%*[^()])%r,
-				\%+Q[%\\d%*[^()])%r
-	" }}}
 
 	" Jump to the last edited position in the file being loaded (if available)
 	" in the ~/.viminfo file, I really love this =)
@@ -328,8 +312,6 @@ if has("autocmd")
 	
 endif
 
-" Syntax highlighting (bwahahaha!)   }}}1{{{1
-
 " Some more highlighting stuff. The first one matches whitespace at end of
 " lines (we don't really like them) and the second one matches tabs, so we
 " are aware of them visually ;-)
@@ -359,20 +341,16 @@ function <SID>Toggle2Match()
 	endif
 endfunction
 
-
 " When under xterm and compatible terminals, use titles if available and
 " change cursor color depending on active mode.
-if &term =~ "xterm"
+if &term =~ "xterm" || &term =~ "screen" || &term =~ "tmux"
 	if has("title")
 		set title
 	endif
 endif
 
+" Some fixups for Screen, which has those messed up in most versions
 if &term =~ "screen"
-	if has("title")
-		set title
-	endif
-
 	map  <silent> [1;5D <C-Left>
 	map  <silent> [1;5C <C-Right>
 	lmap <silent> [1;5D <C-Left>
@@ -380,22 +358,6 @@ if &term =~ "screen"
 	imap <silent> [1;5D <C-Left>
 	imap <silent> [1;5C <C-Right>
 endif
-
-if !exists('g:airline_symbols')
-	let g:airline_symbols = {}
-endif
-
-let g:airline_powerline_fonts = 0
-" let g:airline_left_sep = '▒'
-" let g:airline_right_sep = '▒'
-let g:airline_left_sep = ''
-let g:airline_right_sep = ''
-let g:airline_symbols.branch = ''
-let g:airline_symbols.readonly = ''
-let g:airline_symbols.linenr = ''
-let g:airline_symbols.paste = 'ϱ'
-let g:airline_symbols.whitespace = '⍆'
-let g:airline_theme = 'powerlineish'
 
 if has("syntax") || has("gui_running")
 	syntax on
@@ -410,13 +372,10 @@ if has("syntax") || has("gui_running")
 		colorscheme elflord
 
 		if &term =~ "xterm-256color" || &term =~ "screen-256color" || $COLORTERM =~ "gnome-terminal"
-			"let g:Powerline_symbols = 'fancy'
 			set t_Co=256
 			set t_AB=[48;5;%dm
 			set t_AF=[38;5;%dm
 			set cursorline
-		else
-			let g:Powerline_colorscheme = 'solarized16'
 		endif
 		if &term =~ "st-256color"
 			set t_Co=256
@@ -445,7 +404,6 @@ let python_space_errors  = 1
 let python_highlight_all = 1
 let g:sql_type_default   = 'mysql'
 
-" Multibyte support   }}}1{{{1
 " Set up things for UTF-8 text editing by default, if multibyte
 " support was compiled in. Let Linux consoles be Latin-1.
 if has("multi_byte")
@@ -455,8 +413,6 @@ if has("multi_byte")
 	endif
 endif
 
-
-" Functions and Commands   }}}1{{{1
 " Autocorrect some usually-mispelled commands
 command! -nargs=0 -bang Q q<bang>
 command! -bang W write<bang>
@@ -542,17 +498,15 @@ function EncodeEntities()
 	call cursor(l:rowPos, l:colPos)
 endfunction
 
-" }}}2
-
+" Exit swiftly
 map __ ZZ
 
-" A bit of commoddity to jump through source files using tags!
+" A bit of commoddity to jump through source files using tags
 map <C-J> :YcmCompleter GoToDefinitionElseDeclaration<CR>
 map <C-T> <C-]>
 map <C-S-T> :pop<CR>
 
-" }}}1 Autocomplete with <TAB> (AJ) {{{1
-
+" Autocomplete with <TAB> (AJ)
 function InsertTabWrapper()
 	let col = col('.') - 1
 	if !col || getline('.')[col - 1] !~ '\k'
@@ -561,34 +515,8 @@ function InsertTabWrapper()
 		return "\<c-p>"
 	endif
 endfunction
-
 inoremap <Tab>   <C-R>=InsertTabWrapper()<CR>
 inoremap <S-Tab> <C-P>
-
-let g:OmniCpp_MayCompleteScope = 1
-
-" This one works in Gnome-Terminal map omnicomplete in insert mode
-imap     <NL>    <C-X><C-O>
-
-if has("autocmd") && exists("+omnifunc")
-	autocmd FileType *
-				\ if &omnifunc == "" |
-				\ 	setlocal omnifunc=syntaxcomplete#Complete |
-				\ endif
-endif
-
-
-" }}}1 Python documentation {{{1
-
-command -nargs=1 PyHelp :call ShowPyDoc("<args>")
-function ShowPyDoc(module)
-	:execute ":new"
-	:execute ":read ! pydoc " . a:module
-	:execute ":0"
-	setlocal readonly buftype=nowrite filetype=man
-endfunction
-
-" }}}1 Key Mappings {{{1
 
 " Start searching with spacebar.
 map <Space> /
@@ -627,24 +555,11 @@ map <silent> <F10> :next!<CR>
 nmap <silent> <F11> :TagbarToggle<CR>
 nmap <silent> <F12> :TagbarOpenAutoClose<CR>
 
-
-" Map Ctrl-Fxx key combos so they do activate buffers.
-map <C-F1>  :buffer 1<cr>
-map <C-F2>  :buffer 2<cr>
-map <C-F3>  :buffer 3<cr>
-map <C-F4>  :buffer 4<cr>
-map <C-F5>  :buffer 5<cr>
-map <C-F6>  :buffer 6<cr>
-map <C-F7>  :buffer 7<cr>
-map <C-F8>  :buffer 8<cr>
-map <C-F9>  :buffer 9<cr>
-
 " clang-format, see http://clang.llvm.org/docs/ClangFormat.html
 map <C-K> :pyf /usr/share/clang/clang-format.py<CR>
 imap <C-K> <ESC>:pyf /usr/share/clang/clang-format.py<CR>i
 
-" }}}1
-
 runtime! macros/matchit.vim
+NeoBundleCheck
 
-" vim:ts=4:sw=4:foldmethod=marker:foldenable:foldminlines=1:fenc=utf-8
+" vim:ts=4:sw=4:fenc=utf-8
