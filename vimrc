@@ -35,19 +35,18 @@ NeoBundle 'scrooloose/syntastic'
 NeoBundle 'tpope/vim-surround'
 NeoBundle 'bling/vim-airline'
 NeoBundle 'ledger/vim-ledger'
-NeoBundle 'majutsushi/tagbar'
 NeoBundle 'gcmt/wildfire.vim'
 NeoBundle 'noahfrederick/vim-hemisu'
 NeoBundle 'Shougo/vimproc.vim', {'build': {'unix': 'make'}}
 NeoBundle 'Shougo/unite.vim'
 NeoBundle 'Shougo/unite-help'
 NeoBundle 'Shougo/unite-outline'
+NeoBundle 'osyo-manga/unite-quickfix'
 NeoBundle 'Shougo/neomru.vim'
 NeoBundle 'Shougo/CamelCaseMotion'
 NeoBundle 'rainux/vim-vala'
 NeoBundle 'othree/xml.vim'
 NeoBundle 'sjl/gundo.vim'
-NeoBundle 'rking/ag.vim'
 call neobundle#end()
 
 set tabstop=2				 " Set tabstops to 2 spaces
@@ -168,13 +167,20 @@ call unite#custom#profile('default', 'context', { 'prompt': '% ' })
 call unite#filters#matcher_default#use(['matcher_fuzzy'])
 
 " Unite: Emulate CtrlP
-nnoremap <C-p> :Unite file_rec/async -buffer-name=files -no-split<cr>
-nnoremap <leader>f :Unite file_rec/async -buffer-name=files -no-split<cr>
-nnoremap <leader>F :Unite file_rec/git:--cached:--others:--exclude-standard -buffer-name=git-files -no-split<cr>
-nnoremap <leader>d :UniteWithBufferDir buffer bookmark file/async -buffer-name=dir-files<cr>
-nnoremap <leader>m :Unite neomru/file -buffer-name=mru<cr>
-nnoremap <leader>b :Unite buffer -buffer-name=buffers<cr>
-nnoremap <leader>J :Unite jump -buffer-name=jumplist<cr>
+nnoremap <silent> <C-p> :Unite file_rec/async -buffer-name=files -no-split<cr>
+nnoremap <silent> <leader>f :Unite file_rec/async -buffer-name=files -no-split<cr>
+nnoremap <silent> <leader>F :Unite file_rec/git:--cached:--others:--exclude-standard -buffer-name=git-files<cr>
+nnoremap <silent> <leader>d :UniteWithBufferDir buffer bookmark file/async -buffer-name=dir-files<cr>
+nnoremap <silent> <leader>m :Unite neomru/file -buffer-name=mru<cr>
+nnoremap <silent> <leader>b :Unite buffer<cr>
+nnoremap <silent> <leader>J :Unite jump<cr>
+
+" Unite: Outline (TagBar-alike)
+nnoremap <silent> <leader>o :Unite outline<cr>
+nnoremap <silent> <leader>O :Unite outline -no-split<cr>
+
+" Unite: QuickFix
+nnoremap <silent> <leader>q :Unite quickfix<cr>
 
 " Unite: Ag/Ack/Grep
 if executable('ag')
@@ -186,7 +192,7 @@ elseif executable('ack')
 	let g:unite_source_grep_default_opts = '-i --no-heading --no-color -k -H'
 	let g:unite_source_grep_recursive_opt = ''
 endif
-nnoremap <leader>g :Unite grep:.<cr>
+nnoremap <silent> <leader>g :Unite grep:.<cr>
 
 " Plugin: Airline
 let g:airline_powerline_fonts = 0
