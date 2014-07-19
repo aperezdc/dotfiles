@@ -24,19 +24,21 @@ if has("python")
 				\   'unix': './install.sh --clang-completer --system-libclang'
 				\ }}
 endif
+"NeoBundle 'nanotech/jellybeans.vim'
+NeoBundle 'jonathanfilip/vim-lucius'
 NeoBundle 'nsf/gocode', {'rtp': 'vim/'}
 NeoBundle 'aperezdc/vim-template'
 NeoBundle 'jamessan/vim-gnupg'
 NeoBundle 'jayferd/ragel.vim'
 NeoBundle 'juvenn/mustache.vim'
 NeoBundle 'vim-scripts/gtk-vim-syntax'
-NeoBundle 'airblade/vim-gitgutter'
 NeoBundle 'scrooloose/syntastic'
 NeoBundle 'tpope/vim-surround'
 NeoBundle 'bling/vim-airline'
+NeoBundle 'tpope/vim-fugitive'
+NeoBundle 'airblade/vim-gitgutter'
 NeoBundle 'ledger/vim-ledger'
 NeoBundle 'gcmt/wildfire.vim'
-NeoBundle 'noahfrederick/vim-hemisu'
 NeoBundle 'Shougo/vimproc.vim', {'build': {'unix': 'make'}}
 NeoBundle 'Shougo/unite.vim'
 NeoBundle 'Shougo/unite-help'
@@ -44,10 +46,13 @@ NeoBundle 'Shougo/unite-outline'
 NeoBundle 'osyo-manga/unite-quickfix'
 NeoBundle 'Shougo/neomru.vim'
 NeoBundle 'Shougo/CamelCaseMotion'
+NeoBundle 'terryma/vim-multiple-cursors'
+NeoBundle 'Raimondi/delimitMate'
 NeoBundle 'rainux/vim-vala'
 NeoBundle 'othree/xml.vim'
 NeoBundle 'sjl/gundo.vim'
 call neobundle#end()
+NeoBundleCheck
 
 set tabstop=2				 " Set tabstops to 2 spaces
 set smarttab                 " Use smart tabs... we are not as dumb!
@@ -123,14 +128,14 @@ let g:detectindent_preferred_expandtab = 1
 let g:detectindent_preferred_indent    = 4
 
 " Plugin: YouCompleteMe
-"let g:ycm_min_num_of_chars_for_completion = 3
 let g:ycm_collect_identifiers_from_tags_files = 1
 let g:ycm_seed_identifiers_with_syntax = 1
 let g:ycm_add_preview_to_completeopt = 1
-let g:ycm_autoclose_preview_window_after_completion = 0
-let g:ycm_autoclose_preview_window_after_insertion = 1
-"let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
+"let g:ycm_min_num_of_chars_for_completion = 3
+"let g:ycm_autoclose_preview_window_after_completion = 0
+"let g:ycm_autoclose_preview_window_after_insertion = 1
 let g:ycm_extra_conf_globlist = ['/home/aperez/devel/*']
+let g:ycm_filetype_blacklist = { 'unite': 1 }
 
 " Plugin: Syntastic
 let g:syntastic_error_symbol = '✗'
@@ -162,7 +167,9 @@ let g:syntastic_objcpp_check_header=1
 let g:syntastic_objcpp_auto_refresh_includes=1
 
 " Unite: General settings
+let g:unite_update_time = 200
 let g:unite_enable_start_insert = 1
+let g:unite_source_file_mru_limit = 1000
 call unite#custom#profile('default', 'context', { 'prompt': '% ' })
 call unite#filters#matcher_default#use(['matcher_fuzzy'])
 
@@ -195,20 +202,19 @@ endif
 nnoremap <silent> <leader>g :Unite grep:.<cr>
 
 " Plugin: Airline
-let g:airline_powerline_fonts = 0
-" let g:airline_left_sep = '▒'
-" let g:airline_right_sep = '▒'
-let g:airline_left_sep = ''
-let g:airline_right_sep = ''
-
-if !exists('g:airline_symbols')
-	let g:airline_symbols = {}
-endif
-let g:airline_symbols.branch = ''
-let g:airline_symbols.readonly = ''
-let g:airline_symbols.linenr = ''
-let g:airline_symbols.paste = 'ϱ'
-let g:airline_symbols.whitespace = '⍆'
+let g:airline_powerline_fonts = 1
+"let g:airline_left_sep = '▒'
+"let g:airline_right_sep = '▒'
+"let g:airline_left_sep = ''
+"let g:airline_right_sep = ''
+"if !exists('g:airline_symbols')
+"	let g:airline_symbols = {}
+"endif
+"let g:airline_symbols.branch = ''
+"let g:airline_symbols.readonly = ''
+"let g:airline_symbols.linenr = ''
+"let g:airline_symbols.paste = 'ϱ'
+"let g:airline_symbols.whitespace = '⍆'
 let g:airline_theme = 'powerlineish'
 
 if has("folding")
@@ -371,8 +377,6 @@ if has("syntax") || has("gui_running")
 		colorscheme twilight
 		set guifont=PragmataPro\ 12
 		set guifontwide=VL\ Gothic
-		" colorscheme lucius
-		" LuciusWhiteHighContrast
 		set cursorline
 	else
 		colorscheme elflord
@@ -393,9 +397,6 @@ if has("syntax") || has("gui_running")
 		highlight CursorLineNr ctermbg=235 ctermfg=246
 		highlight LineNr       ctermbg=234 ctermfg=238
 		highlight SignColumn   ctermbg=234
-
-		"colorscheme lucius
-		"LuciusBlackHighContrast
 	endif
 endif
 
@@ -454,56 +455,6 @@ command -nargs=0 EolMac2Unix    call ExecuteInPlace("%s/\\r/\\n/g")
 command -nargs=0 EolUnix2Mac    call ExecuteInPlace("%s/$/\\r/g")
 command -nargs=0 EolUnix2DOS    call ExecuteInPlace("%s/$/\\r\\n/g")
 
-" Encode and decode some (spanish) HTML entities. {{{2
-
-function DecodeEntities()
-	let l:rowPos = line(".")
-	let l:colPos = col(".")
-
-	" Lowercase accented vowels.
-	silent! execute "%s/&aacute;/á/g"
-	silent! execute "%s/&eacute;/é/g"
-	silent! execute "%s/&iacute;/í/g"
-	silent! execute "%s/&oacute;/ó/g"
-	silent! execute "%s/&uacute;/ú/g"
-	" Uppercase accented vowels.
-	silent! execute "%s/&Aacute;/Á/g"
-	silent! execute "%s/&Eacute;/É/g"
-	silent! execute "%s/&Iacute;/Í/g"
-	silent! execute "%s/&Oacute;/Ó/g"
-	silent! execute "%s/&Uacute;/Ú/g"
-	" Some other characters
-	silent! execute "%s/&ntilde;/ñ/g"
-	silent! execute "%s/&Ntilde;/Ñ/g"
-	silent! execute "%s/&quot;/\""
-
-	call cursor(l:rowPos, l:colPos)
-endfunction
-
-function EncodeEntities()
-	let l:rowPos = line(".")
-	let l:colPos = col(".")
-
-	" Lowercase accented vowels.
-	silent! execute "%s/á/&aacute;/g"
-	silent! execute "%s/é/&eacute;/g"
-	silent! execute "%s/í/&iacute;/g"
-	silent! execute "%s/ó/&oacute;/g"
-	silent! execute "%s/ú/&uacute;/g"
-	" Uppercase accented vowels.
-	silent! execute "%s/Á/&Aacute;/g"
-	silent! execute "%s/É/&Eacute;/g"
-	silent! execute "%s/Í/&Iacute;/g"
-	silent! execute "%s/Ó/&Oacute;/g"
-	silent! execute "%s/Ú/&Uacute;/g"
-	" Some other characters
-	silent! execute "%s/ñ/&ntilde;/g"
-	silent! execute "%s/Ñ/&Ntilde;/g"
-	silent! execute "%s/\"/&quot;"
-
-	call cursor(l:rowPos, l:colPos)
-endfunction
-
 " Exit swiftly
 map __ ZZ
 
@@ -527,10 +478,6 @@ inoremap <S-Tab> <C-P>
 " Start searching with spacebar.
 map <Space> /
 
-" Easy navegation for multiple loaded buffers.
-map <C-n> :bnext<CR>
-map <C-b> :bprev<CR>
-
 " F2 -> Save file
 map  <F2>   :w!<CR>
 imap <F2>   <ESC>:w!<CR>a
@@ -552,20 +499,13 @@ map  <F6>   :cl!<CR>
 map  <F7>   :cp!<CR>
 map  <F8>   :cn!<CR>
 
-map  <C-S-Left>  <ESC>:bprev<CR>
-map  <C-S-Right> <ESC>:bnext<CR>
-
 map <silent> <F9>  :previous!<CR>
 map <silent> <F10> :next!<CR>
-
-nmap <silent> <F11> :TagbarToggle<CR>
-nmap <silent> <F12> :TagbarOpenAutoClose<CR>
 
 " clang-format, see http://clang.llvm.org/docs/ClangFormat.html
 map <C-K> :pyf /usr/share/clang/clang-format.py<CR>
 imap <C-K> <ESC>:pyf /usr/share/clang/clang-format.py<CR>i
 
 runtime! macros/matchit.vim
-NeoBundleCheck
 
 " vim:ts=4:sw=4:fenc=utf-8
