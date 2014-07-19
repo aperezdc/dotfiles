@@ -52,7 +52,6 @@ NeoBundle 'rainux/vim-vala'
 NeoBundle 'othree/xml.vim'
 NeoBundle 'sjl/gundo.vim'
 call neobundle#end()
-NeoBundleCheck
 
 set tabstop=2				 " Set tabstops to 2 spaces
 set smarttab                 " Use smart tabs... we are not as dumb!
@@ -174,10 +173,10 @@ call unite#custom#profile('default', 'context', { 'prompt': '% ' })
 call unite#filters#matcher_default#use(['matcher_fuzzy'])
 
 " Unite: Emulate CtrlP
-nnoremap <silent> <C-p> :Unite file_rec/async -buffer-name=files -no-split<cr>
-nnoremap <silent> <leader>f :Unite file_rec/async -buffer-name=files -no-split<cr>
+nnoremap <silent> <C-p> :Unite file_rec/async -buffer-name=files<cr>
+nnoremap <silent> <leader>f :Unite file_rec/async file/new -buffer-name=files<cr>
 nnoremap <silent> <leader>F :Unite file_rec/git:--cached:--others:--exclude-standard -buffer-name=git-files<cr>
-nnoremap <silent> <leader>d :UniteWithBufferDir buffer bookmark file/async -buffer-name=dir-files<cr>
+nnoremap <silent> <leader>d :Unite buffer bookmark file/async -buffer-name=dir-files<cr>
 nnoremap <silent> <leader>m :Unite neomru/file -buffer-name=mru<cr>
 nnoremap <silent> <leader>b :Unite buffer<cr>
 nnoremap <silent> <leader>J :Unite jump<cr>
@@ -216,6 +215,16 @@ let g:airline_powerline_fonts = 1
 "let g:airline_symbols.paste = 'ϱ'
 "let g:airline_symbols.whitespace = '⍆'
 let g:airline_theme = 'powerlineish'
+
+" Plugin: GitGutter
+let g:gitgutter_sign_column_always = 1
+nmap gh <Plug>GitGutterNextHunk
+nmap gH <Plug>GitGutterPrevHunk
+nmap gs <Plug>GitGutterStageHunk
+nmap gR <Plug>GitGutterRevertHunk
+nmap gd <Plug>GitGutterPreviewHunk
+
+" End of configuration for (most) plug-ins
 
 if has("folding")
 	map , zj
@@ -507,5 +516,6 @@ map <C-K> :pyf /usr/share/clang/clang-format.py<CR>
 imap <C-K> <ESC>:pyf /usr/share/clang/clang-format.py<CR>i
 
 runtime! macros/matchit.vim
+NeoBundleCheck
 
 " vim:ts=4:sw=4:fenc=utf-8
