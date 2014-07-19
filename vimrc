@@ -173,20 +173,20 @@ call unite#custom#profile('default', 'context', { 'prompt': '% ' })
 call unite#filters#matcher_default#use(['matcher_fuzzy'])
 
 " Unite: Emulate CtrlP
-nnoremap <silent> <C-p> :Unite file_rec/async -buffer-name=files<cr>
-nnoremap <silent> <leader>f :Unite file_rec/async file/new -buffer-name=files<cr>
-nnoremap <silent> <leader>F :Unite file_rec/git:--cached:--others:--exclude-standard -buffer-name=git-files<cr>
-nnoremap <silent> <leader>d :Unite buffer bookmark file/async -buffer-name=dir-files<cr>
-nnoremap <silent> <leader>m :Unite neomru/file -buffer-name=mru<cr>
-nnoremap <silent> <leader>b :Unite buffer<cr>
-nnoremap <silent> <leader>J :Unite jump<cr>
+nnoremap <silent> <C-p> :<C-u>Unite file_rec/async -buffer-name=files<cr>
+nnoremap <silent> <leader>f :<C-u>Unite file_rec/async file/new -buffer-name=files<cr>
+nnoremap <silent> <leader>F :<C-u>Unite file_rec/git:--cached:--others:--exclude-standard -buffer-name=git-files<cr>
+nnoremap <silent> <leader>d :<C-u>Unite buffer bookmark file/async -buffer-name=dir-files<cr>
+nnoremap <silent> <leader>m :<C-u>Unite neomru/file -buffer-name=mru<cr>
+nnoremap <silent> <leader>b :<C-u>Unite buffer<cr>
+nnoremap <silent> <leader>J :<C-u>Unite jump<cr>
 
 " Unite: Outline (TagBar-alike)
-nnoremap <silent> <leader>o :Unite outline<cr>
-nnoremap <silent> <leader>O :Unite outline -no-split<cr>
+nnoremap <silent> <leader>o :<C-u>Unite outline<cr>
+nnoremap <silent> <leader>O :<C-u>Unite outline -no-split<cr>
 
 " Unite: QuickFix
-nnoremap <silent> <leader>q :Unite quickfix<cr>
+nnoremap <silent> <leader>q :<C-u>Unite quickfix<cr>
 
 " Unite: Ag/Ack/Grep
 if executable('ag')
@@ -198,7 +198,10 @@ elseif executable('ack')
 	let g:unite_source_grep_default_opts = '-i --no-heading --no-color -k -H'
 	let g:unite_source_grep_recursive_opt = ''
 endif
-nnoremap <silent> <leader>g :Unite grep:.<cr>
+nnoremap <silent> <leader>g :<C-u>Unite grep:.<cr>
+
+" Unite: Open last-used Unite buffer
+nnoremap <silent> <leader>L :<C-u>UniteResume<cr>
 
 " Plugin: Airline
 let g:airline_powerline_fonts = 1
