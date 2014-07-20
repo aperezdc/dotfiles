@@ -166,9 +166,24 @@ let g:syntastic_objcpp_auto_refresh_includes=1
 " Unite: General settings
 let g:unite_update_time = 200
 let g:unite_enable_start_insert = 1
+let g:unite_enable_short_source_names = 1
 let g:unite_source_file_mru_limit = 1000
 call unite#custom#profile('default', 'context', { 'prompt': '% ' })
 call unite#filters#matcher_default#use(['matcher_fuzzy'])
+
+autocmd FileType unite call s:unite_enter_buffer()
+function s:unite_enter_buffer()
+	nmap <buffer> <ESC> <Plug>(unite_insert_enter)
+	imap <buffer> <ESC> <Plug>(unite_exit)
+	nmap <buffer> <tab> <Plug>(unite_loop_cursor_down)
+	nmap <buffer> <s-tab> <Plug>(unite_loop_cursor_up)
+	imap <buffer> <c-a> <Plug>(unite_choose_action)
+	imap <buffer> <Tab> <Plug>(unite_insert_leave)
+	imap <buffer> <C-w> <Plug>(unite_delete_backward_word)
+	imap <buffer> <C-u> <Plug>(unite_delete_backward_path)
+	nmap <buffer> <C-r> <Plug>(unite_redraw)
+	imap <buffer> <C-r> <Plug>(unite_redraw)
+endfunction
 
 " Unite: Emulate CtrlP
 nnoremap <silent> <C-p> :<C-u>Unite file_rec/async -buffer-name=Files<cr>
