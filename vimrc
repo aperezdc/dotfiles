@@ -31,7 +31,6 @@ NeoBundle 'jayferd/ragel.vim'
 NeoBundle 'juvenn/mustache.vim'
 NeoBundle 'vim-scripts/gtk-vim-syntax'
 NeoBundle 'scrooloose/syntastic'
-NeoBundle 'tpope/vim-surround'
 NeoBundle 'bling/vim-airline'
 NeoBundle 'tpope/vim-fugitive'
 NeoBundle 'airblade/vim-gitgutter'
@@ -128,11 +127,11 @@ let g:detectindent_preferred_indent    = 4
 let g:ycm_collect_identifiers_from_tags_files = 1
 let g:ycm_seed_identifiers_with_syntax = 1
 let g:ycm_add_preview_to_completeopt = 1
-"let g:ycm_min_num_of_chars_for_completion = 3
-"let g:ycm_autoclose_preview_window_after_completion = 0
-"let g:ycm_autoclose_preview_window_after_insertion = 1
+let g:ycm_min_num_of_chars_for_completion = 4
+let g:ycm_min_num_identifier_candidate_chars = 6
+let g:ycm_enable_diagnostic_signs = 0
 let g:ycm_extra_conf_globlist = ['/home/aperez/devel/*']
-let g:ycm_filetype_blacklist = { 'unite': 1 }
+let g:ycm_filetype_blacklist = { 'unite': 1, 'qf': 1 }
 
 " Plugin: Syntastic
 let g:syntastic_error_symbol = '✗'
@@ -166,7 +165,6 @@ let g:syntastic_objcpp_auto_refresh_includes=1
 " Unite: General settings
 let g:unite_update_time = 200
 let g:unite_enable_start_insert = 1
-let g:unite_enable_short_source_names = 1
 let g:unite_source_file_mru_limit = 1000
 call unite#custom#profile('default', 'context', { 'prompt': '% ' })
 call unite#filters#matcher_default#use(['matcher_fuzzy'])
