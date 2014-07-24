@@ -87,6 +87,10 @@ set shortmess+=a
 set noshowmode
 set grepprg=ag\ --noheading\ --nocolor\ --nobreak
 
+if has("mouse_sgr")
+	set ttymouse=sgr
+endif
+
 if has("cscope")
 	set cscopetag                " Use cscope for tags, too.
 	set cscopetagorder=0         " Prefer cscope over tags.
