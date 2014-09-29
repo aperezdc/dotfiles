@@ -27,7 +27,6 @@ endif
 NeoBundle 'nsf/gocode', {'rtp': 'vim/'}
 NeoBundle 'aperezdc/vim-template'
 NeoBundle 'jamessan/vim-gnupg'
-NeoBundle 'jayferd/ragel.vim'
 NeoBundle 'juvenn/mustache.vim'
 NeoBundle 'vim-scripts/gtk-vim-syntax'
 NeoBundle 'scrooloose/syntastic'
@@ -38,14 +37,12 @@ NeoBundle 'ledger/vim-ledger'
 NeoBundle 'gcmt/wildfire.vim'
 NeoBundle 'Shougo/vimproc.vim', {'build': {'unix': 'make'}}
 NeoBundle 'Shougo/unite.vim'
-NeoBundle 'Shougo/unite-help'
 NeoBundle 'Shougo/unite-outline'
 NeoBundle 'osyo-manga/unite-quickfix'
 NeoBundle 'Shougo/neomru.vim'
-NeoBundle 'Shougo/CamelCaseMotion'
+NeoBundle 'bkad/CamelCaseMotion'
 NeoBundle 'terryma/vim-multiple-cursors'
-NeoBundle 'Raimondi/delimitMate'
-NeoBundle 'rainux/vim-vala'
+NeoBundle 'ervandew/supertab'
 NeoBundle 'othree/xml.vim'
 NeoBundle 'sjl/gundo.vim'
 call neobundle#end()
@@ -67,7 +64,7 @@ set whichwrap+=[,],<,>		 " Allow arrow keys to wrap lines
 set nowrap					 " Don't wrap long lines
 set showmode				 " Print the current mode in the last line
 set ttyfast             	 " Lots of console stuff that may slow down Vim
-set noshowfulltag			 " Do not show full prototype of tags on completion
+set showfulltag			     " Do not show full prototype of tags on completion
 set showcmd					 " Show commands as they are typed
 set formatoptions+=cqron1 	 " Some useful formatting options
 set showmatch				 " Show matching parens
@@ -94,18 +91,6 @@ if has("mouse")
 	endif
 endif
 
-if has("cscope")
-	set cscopetag                " Use cscope for tags, too.
-	set cscopetagorder=0         " Prefer cscope over tags.
-	set nocsverb
-	if filereadable("cscope.out")
-		cs add cscope.out
-	elseif $CSCOPE_DB != ""
-		cs add $CSCOPE_DB
-	endif
-	set csverb
-endif
-
 if has("linebreak")
 	set linebreak 		 	 " Break on `breakat' chars when linewrapping is on.
 	set showbreak=+          " Prepend `+' to wrapped lines
@@ -126,19 +111,20 @@ endif
 " Plugin: XML
 let g:xml_syntax_folding = 1
 
-" Plugin: DetectIndent
-let g:detectindent_preferred_expandtab = 1
-let g:detectindent_preferred_indent    = 4
+" Plugin: SuperTab
+let g:SuperTabDefaultCompletionType = 'context'
+autocmd FileType *
+			\ if &omnifunc != '' |
+			\ 	call SuperTabChain(&omnifunc, "<c-p>") |
+			\ endif
 
 " Plugin: YouCompleteMe
 let g:ycm_collect_identifiers_from_tags_files = 1
 let g:ycm_seed_identifiers_with_syntax = 1
 let g:ycm_add_preview_to_completeopt = 1
-let g:ycm_min_num_of_chars_for_completion = 4
-let g:ycm_min_num_identifier_candidate_chars = 6
 let g:ycm_enable_diagnostic_signs = 0
 let g:ycm_extra_conf_globlist = ['/home/aperez/devel/*']
-let g:ycm_filetype_blacklist = { 'unite': 1, 'qf': 1 }
+let g:ycm_filetype_blacklist = { 'unite': 1, 'qf': 1, 'notmuch-folders': 1 }
 
 " Plugin: Syntastic
 let g:syntastic_error_symbol = '✗'
@@ -190,8 +176,7 @@ function s:unite_enter_buffer()
 	imap <buffer> <C-r> <Plug>(unite_redraw)
 endfunction
 
-" Unite: Emulate CtrlP
-nnoremap <silent> <C-p> :<C-u>Unite file_rec/async -buffer-name=Files<cr>
+" Unite: CtrlP-alike behavior and variations
 nnoremap <silent> <leader>f :<C-u>Unite file_rec/async file/new -buffer-name=Files<cr>
 nnoremap <silent> <leader>F :<C-u>Unite file_rec/git:--cached:--others:--exclude-standard file/new -buffer-name=Files\ (Git)<cr>
 nnoremap <silent> <leader>d :<C-u>Unite buffer bookmark file/async -buffer-name=Files\ (misc)<cr>
@@ -223,12 +208,12 @@ nnoremap <silent> <leader>g :<C-u>Unite grep:. -buffer-name=Find<cr>
 nnoremap <silent> <leader>L :<C-u>UniteResume<cr>
 
 " Plugin: Airline
-let g:airline_powerline_fonts = 1
 "let g:airline_left_sep = '▒'
 "let g:airline_right_sep = '▒'
 "let g:airline_left_sep = ''
 "let g:airline_right_sep = ''
-let g:airline_theme = 'powerlineish'
+let g:airline_powerline_fonts = 1
+let g:airline_theme = 'bubblegum'
 
 " Plugin: GitGutter
 let g:gitgutter_sign_column_always = 1
@@ -252,30 +237,16 @@ endif
 
 if has("autocmd")
 	" Tune defaults for some particular file types.
+	autocmd FileType javascript setlocal expandtab
 	autocmd FileType *html,xml setlocal matchpairs+=<:>
 	autocmd FileType xhtml,xml let xml_use_xhtml=1
 	autocmd FileType python setlocal expandtab tabstop=4 shiftwidth=4
-	autocmd FileType bzr setlocal expandtab
 	autocmd FileType lua setlocal expandtab shiftwidth=2 tabstop=2
 	autocmd FileType rst setlocal expandtab tabstop=2 shiftwidth=2
-	autocmd FileType objc setlocal expandtab tabstop=4 shiftwidth=4 cinoptions+=(0
-	autocmd FileType cpp setlocal expandtab tabstop=4 shiftwidth=4 cinoptions+=(0
-	autocmd FileType c setlocal expandtab tabstop=4 shiftwidth=4 cinoptions+=(0
-	autocmd FileType d setlocal expandtab tabstop=4 shiftwidth=4 cinoptions+=(0
-
-	"autocmd FileType c setlocal expandtab cinoptions+=t0(0{1s>2sn-1s^-1s
-	"autocmd FileType cpp setlocal expandtab cinoptions+=t0(0{1s>2sn-1s^-1s
-	"autocmd FileType objc setlocal expandtab cinoptions+=t0(0{1s>2sn-1s^-1s
-
-	" Define abbreviations for Java™ mode.
-	autocmd FileType java
-				\ iab Jmain public static void main(String [] args)|
-				\ iab const- private static final|
-				\ iab const+ public static final|
-				\ iab cls- private class|
-				\ iab cls+ public class|
-				\ iab bool boolean|
-				\ iab unsigned int
+	autocmd FileType objc setlocal expandtab cinoptions+=(0
+	autocmd FileType cpp setlocal expandtab cinoptions+=(0
+	autocmd FileType c setlocal expandtab cinoptions+=(0
+	autocmd FileType d setlocal expandtab cinoptions+=(0
 
 	" Jump to the last edited position in the file being loaded (if available)
 	" in the ~/.viminfo file, I really love this =)
@@ -283,27 +254,6 @@ if has("autocmd")
 				\ if line("'\"") > 0 && line("'\"") <= line("$") |
 				\		execute "normal g'\"" |
 				\ endif
-
-	" Set ChangeLog mode for GNU Arch revision logs.
-	autocmd BufReadPost *++log.*
-				\ setf changelog |
-				\ setlocal formatoptions+=a
-
-	" Set QML mode
-	autocmd BufReadPost,BufNewFile *.qml
-				\ setf qml
-
-	" Set XML mode for Zope 3.x ZCML configuration files.
-	autocmd BufReadPost,BufNewFile *.zcml
-				\ setf xml | setlocal expandtab ts=4 sw=2
-
-	" Set XHTML mode for Zope Page Templates (ZPT).
-	autocmd BufReadPost,BufNewFile *.pt,*.zpt
-				\ setf xml | setlocal expandtab ts=4 sw=2 | let xml_use_xhtml=1
-
-	" Set JSP mode for .jspx and .jspf file suffixes.
-	autocmd BufReadPost,BufNewFile *.jsp*
-				\ setf xml | setlocal expandtab ts=4 sw=2
 
 	" Set PO mode for POT gettext templates, too.
 	autocmd BufEnter *.pot
@@ -319,18 +269,8 @@ if has("autocmd")
 	" System headers usually are designed to be viewed with 8-space tabs
 	autocmd BufReadPost /usr/include/* setlocal ts=8 sw=8
 
-	" Linux sources, kernel-style with 8 spaces per tab
-	autocmd BufReadPost,BufNewFile /usr/src/linux* setlocal ts=8 sw=8
-
-	" Mail editing.
-	autocmd BufNewFile,BufReadPost *etpan*
-				\ setlocal ft=mail fo+=a2 ts=4 sw=4 fenc=latin1
-	autocmd BufReadPost,BufNewFile ~/[mM]ail*/* setf mail |
-				\ setlocal fo+=2 sw=4 ts=4 fenc=latin1
-
 	" Tup build system
-	autocmd BufNewFile,BufRead Tupfile,*.tup
-				\ setf tup
+	autocmd BufNewFile,BufRead Tupfile,*.tup setf tup
 
 	" Use Enter key to navigate help links.
 	autocmd FileType help nmap <buffer> <Return> <C-]>
@@ -352,29 +292,6 @@ endif
 " are aware of them visually ;-)
 highlight WhitespaceEOL ctermbg=red guibg=red
 match WhitespaceEOL /\s\+$/
-
-highlight Tabs cterm=underline,bold term=bold,underline ctermfg=darkgrey
-
-let g:using2match = 0
-highlight WideColumns ctermbg=grey ctermfg=black guibg=grey
-
-function <SID>Toggle2Match()
-	if g:using2match == 0
-		2match Tabs /\t\+/
-		let g:using2match = 1
-		echo "2match - Highlighting tabs"
-	else
-		if g:using2match == 1
-			2match WideColumns /\%>80v.\+/
-			let g:using2match = 2
-			echo "2match - Highlighting long lines"
-		else
-			2match
-			let g:using2match = 0
-			echo "2match - disabled"
-		endif
-	endif
-endfunction
 
 " When under xterm and compatible terminals, use titles if available and
 " change cursor color depending on active mode.
@@ -484,19 +401,9 @@ map __ ZZ
 " A bit of commoddity to jump through source files using tags
 map <C-J> :YcmCompleter GoToDefinitionElseDeclaration<CR>
 map <C-T> <C-]>
-map <C-S-T> :pop<CR>
+map <C-P> :pop<CR>
 
 " Autocomplete with <TAB> (AJ)
-function InsertTabWrapper()
-	let col = col('.') - 1
-	if !col || getline('.')[col - 1] !~ '\k'
-		return "\<tab>"
-	else
-		return "\<c-p>"
-	endif
-endfunction
-inoremap <Tab>   <C-R>=InsertTabWrapper()<CR>
-inoremap <S-Tab> <C-P>
 
 " Start searching with spacebar.
 map <Space> /
@@ -517,13 +424,9 @@ imap <silent> <F4>   :call <SID>Toggle2Match()<CR>
 " F7 -> Previous error
 " F8 -> Next error
 map  <F5>   :wall!<CR>:make<CR>
-imap <F5>   <ESC>:wall!<CR>:make<CR>i
 map  <F6>   :cl!<CR>
 map  <F7>   :cp!<CR>
 map  <F8>   :cn!<CR>
-
-map <silent> <F9>  :previous!<CR>
-map <silent> <F10> :next!<CR>
 
 " clang-format, see http://clang.llvm.org/docs/ClangFormat.html
 map <C-K> :pyf /usr/share/clang/clang-format.py<CR>
