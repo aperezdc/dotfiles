@@ -1,0 +1,3 @@
+[submodule "deer"]
+	path = deer
+	url = https://github.com/Vifon/deer.git

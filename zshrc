@@ -289,3 +289,7 @@ if [[ -r /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.
 	ZSH_HIGHLIGHT_STYLES[alias]='fg=yellow,bold'
 	#ZSH_HIGHLIGHT_STYLES[path]='fg=underline'
 fi
+
+if [[ -d ~/.dotfiles/deer ]] ; then
+	source ~/.dotfiles/deer/deer
+fi
