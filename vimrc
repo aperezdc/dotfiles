@@ -87,8 +87,11 @@ set shortmess+=a
 set noshowmode
 set grepprg=ag\ --noheading\ --nocolor\ --nobreak
 
-if has("mouse_sgr")
-	set ttymouse=sgr
+if has("mouse")
+	"set mouse=a
+	if has("mouse_sgr")
+		set ttymouse=sgr
+	endif
 endif
 
 if has("cscope")
