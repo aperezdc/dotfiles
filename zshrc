@@ -22,10 +22,12 @@ unsetopt beep nomatch
 bindkey -e
 # End of lines configured by zsh-newuser-install
 
+# Extra functionality
+autoload -U zmv
+
 # Initialize colors.
 autoload -U colors
 colors
-
 
 # Bind Ctrl-Left and Ctrl-Right key sequences, and AvPag/RePag for history
 bindkey "^[[1;5C" forward-word
@@ -53,10 +55,12 @@ bindkey "^[[3~" delete-char
 
 # Set a bunch of options :-)
 setopt prompt_subst pushd_silent auto_param_slash auto_list \
-	     list_rows_first hist_reduce_blanks auto_remove_slash chase_dots \
+	     hist_reduce_blanks auto_remove_slash chase_dots \
 	     pushd_ignore_dups auto_param_keys hist_ignore_all_dups \
-	     mark_dirs complete_in_word cdablevars interactive_comments \
-	     print_eight_bit always_last_prompt
+	     mark_dirs cdablevars interactive_comments glob_complete \
+	     print_eight_bit always_to_end glob warn_create_global \
+	     hash_list_all correct hash_cmds hash_dirs hash_executables_only \
+	     auto_continue check_jobs
 unsetopt menu_complete auto_remove_slash auto_menu list_ambiguous \
 	     pushd_to_home
 
@@ -136,7 +140,6 @@ case ${TERM} in
 		function precmd {
 			vcs_info 'prompt'
 			print -Pn "\e]0;%n@%m: %~\a"
-			[[ -n ${TMUX} || ${TERM} = screen* ]] && printf '\033k%s\033\\' "${SHELL##*/}"
 		}
 	;;
 	*)
@@ -146,12 +149,7 @@ case ${TERM} in
 	;;
 esac
 
-if [[ -n ${TMUX} || ${TERM} = screen* ]] ; then
-	preexec () {
-		local CMD=${1[(wr)^(*=*|sudo|-*)]}
-		printf '\033k%s\033\\' "${CMD}"
-	}
-elif [[ ${COLORTERM} = gnome-terminal || ${COLORTERM} = drop-down-terminal || -n ${VTE_VERSION} ]] ; then
+if [[ ${COLORTERM} = gnome-terminal || ${COLORTERM} = drop-down-terminal || -n ${VTE_VERSION} ]] ; then
 	export TERM='xterm-256color'
 fi
 
