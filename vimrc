@@ -23,15 +23,26 @@ if has("python")
 				\ {'build': {
 				\   'unix': './install.sh --clang-completer --system-libclang'
 				\ }}
+else
+	set completeopt-=preview
+	NeoBundle 'Shougo/neocomplete.vim'
+	"NeoBundle 'aperezdc/ccode'
+	"NeoBundle 'Shougo/neoinclude.vim'
+	"NeoBundle 'Rip-Rip/clang_complete',
+	"			\ {'build': {
+	"			\   'unix': 'make'
+	"			\ }}
 endif
 NeoBundle 'nsf/gocode', {'rtp': 'vim/'}
 NeoBundle 'aperezdc/vim-template'
 NeoBundle 'jamessan/vim-gnupg'
+NeoBundle 'cbracken/vala.vim'
 NeoBundle 'juvenn/mustache.vim'
 NeoBundle 'vim-scripts/gtk-vim-syntax'
 NeoBundle 'scrooloose/syntastic'
 NeoBundle 'bling/vim-airline'
 NeoBundle 'tpope/vim-fugitive'
+"NeoBundle 'jaxbot/browserlink.vim'
 NeoBundle 'airblade/vim-gitgutter'
 NeoBundle 'ledger/vim-ledger'
 NeoBundle 'gcmt/wildfire.vim'
@@ -45,6 +56,8 @@ NeoBundle 'terryma/vim-multiple-cursors'
 NeoBundle 'ervandew/supertab'
 NeoBundle 'othree/xml.vim'
 NeoBundle 'sjl/gundo.vim'
+NeoBundle 'calebsmith/vim-lambdify'
+NeoBundle 'haya14busa/incsearch.vim'
 call neobundle#end()
 
 set tabstop=2				 " Set tabstops to 2 spaces
@@ -73,7 +86,6 @@ set backspace=2              " Backspace always useable in insert mode
 set fileformats=unix,mac,dos " Allows automatic line-end detection.
 set ignorecase
 set infercase
-set lazyredraw
 set hidden
 set diffopt+=iwhite
 set nobackup
@@ -83,6 +95,13 @@ set nosol
 set shortmess+=a
 set noshowmode
 set grepprg=ag\ --noheading\ --nocolor\ --nobreak
+set secure
+set exrc
+set undofile                " Save undo's after file closes
+set undodir=$HOME/.vim/undo " where to save undo histories
+set undolevels=1000         " How many undos
+set undoreload=10000        " number of lines to save for undo
+
 
 if has("mouse")
 	"set mouse=a
@@ -111,20 +130,45 @@ endif
 " Plugin: XML
 let g:xml_syntax_folding = 1
 
-" Plugin: SuperTab
-let g:SuperTabDefaultCompletionType = 'context'
-autocmd FileType *
-			\ if &omnifunc != '' |
-			\ 	call SuperTabChain(&omnifunc, "<c-p>") |
-			\ endif
+" Plugin: NeoComplete
+let g:neocomplete#enable_at_startup = 1
+let g:neocomplete#enable_smart_case = 1
+let g:neocomplete#auto_completion_start_length = 3
+inoremap <expr><C-g> neocomplete#undo_completion()
+inoremap <expr><C-l> neocomplete#complete_common_string()
+inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
+inoremap <expr><BS>  neocomplete#smart_close_popup()."\<C-h>"
+inoremap <expr><C-y> neocomplete#close_popup()
+inoremap <expr><C-e> neocomplete#cancel_popup()
+inoremap <expr><Space> pumvisible() ? neocomplete#close_popup()."\<Space>" : "\<Space>"
+
+"inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
+inoremap <expr><TAB> pumvisible() ? "\<C-n>" :
+			\ <SID>neocomplete_check_bs() ? "\<TAB>" :
+			\ neocomplete#start_manual_complete()
+function! s:neocomplete_check_bs()
+	let col = col('.') - 1
+	return !col || getline('.')[col - 1] =~ '\s'
+endfunction
+
+inoremap <silent><CR> <C-R>=<SID>neocomplete_do_cr()<CR>
+function! s:neocomplete_do_cr()
+	"return neocomplete#close_popup()."\<CR>"
+	return pumvisible() ? neocomplete#close_popup() : "\<CR>"
+endfunction
 
 " Plugin: YouCompleteMe
 let g:ycm_collect_identifiers_from_tags_files = 1
 let g:ycm_seed_identifiers_with_syntax = 1
 let g:ycm_add_preview_to_completeopt = 1
+let g:ycm_auto_trigger = 1
+let g:ycm_min_num_of_chars_for_completion = 6
 let g:ycm_enable_diagnostic_signs = 0
 let g:ycm_extra_conf_globlist = ['/home/aperez/devel/*']
 let g:ycm_filetype_blacklist = { 'unite': 1, 'qf': 1, 'notmuch-folders': 1 }
+
+" Plugin: clang_complete
+let g:clang_complete_macros = 1
 
 " Plugin: Syntastic
 let g:syntastic_error_symbol = '✗'
@@ -208,12 +252,33 @@ nnoremap <silent> <leader>g :<C-u>Unite grep:. -buffer-name=Find<cr>
 nnoremap <silent> <leader>L :<C-u>UniteResume<cr>
 
 " Plugin: Airline
-"let g:airline_left_sep = '▒'
-"let g:airline_right_sep = '▒'
-"let g:airline_left_sep = ''
-"let g:airline_right_sep = ''
-let g:airline_powerline_fonts = 1
+let g:airline_powerline_fonts = 0
+let g:airline_left_sep = ''
+let g:airline_right_sep = ''
+let g:airline_symbols = {
+			\ 'linenr'     : '◢',
+			\ 'branch'     : '≣',
+			\ 'paste'      : '⟂',
+			\ 'readonly'   : '⚠',
+			\ 'whitespace' : '␥',
+			\ }
+let g:airline_mode_map = {
+			\ '__' : '-',
+			\ 'n'  : 'N',
+			\ 'i'  : 'I',
+			\ 'R'  : 'R',
+			\ 'c'  : 'C',
+			\ 'v'  : 'V',
+			\ 'V'  : 'V',
+			\ '' : 'V',
+			\ 's'  : 'S',
+			\ 'S'  : 'S',
+			\ '' : 'S',
+			\ }
 let g:airline_theme = 'bubblegum'
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#fnamemod = ':t'
+let g:airline#extensions#tabline#buffer_min_count = 2
 
 " Plugin: GitGutter
 let g:gitgutter_sign_column_always = 1
@@ -222,6 +287,12 @@ nmap gH <Plug>GitGutterPrevHunk
 nmap gs <Plug>GitGutterStageHunk
 nmap gR <Plug>GitGutterRevertHunk
 nmap gd <Plug>GitGutterPreviewHunk
+
+" Plugin: incsearch
+let g:incsearch#consistent_n_direction = 1
+map /  <Plug>(incsearch-forward)
+map ?  <Plug>(incsearch-backward)
+map g/ <Plug>(incsearch-stay)
 
 " End of configuration for (most) plug-ins
 
@@ -276,14 +347,14 @@ if has("autocmd")
 	autocmd FileType help nmap <buffer> <Return> <C-]>
 
 	" Make ESC return to command mode faster while in edit mode
-	if ! has('gui_running')
-		set ttimeoutlen=10
-		augroup FastEscape
-			autocmd!
-			au InsertEnter * set timeoutlen=0
-			au InsertLeave * set timeoutlen=1000
-		augroup END
-	endif
+	"if ! has('gui_running')
+	"	set ttimeoutlen=10
+	"	augroup FastEscape
+	"		autocmd!
+	"		au InsertEnter * set timeoutlen=0
+	"		au InsertLeave * set timeoutlen=1000
+	"	augroup END
+	"endif
 	
 endif
 
@@ -404,6 +475,16 @@ map <C-T> <C-]>
 map <C-P> :pop<CR>
 
 " Autocomplete with <TAB> (AJ)
+"function InsertTabWrapper()
+"	let col = col('.') - 1
+""	if !col || getline('.')[col - 1] !~ '\k'
+"		return "\<tab>"
+"	else
+"		return "\<c-p>"
+"	endif
+"endfunction
+"inoremap <Tab>   <C-R>=InsertTabWrapper()<CR>
+"inoremap <S-Tab> <C-P>
 
 " Start searching with spacebar.
 map <Space> /
