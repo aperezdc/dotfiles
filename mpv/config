@@ -2,7 +2,7 @@
 [default]
 msg-color=yes
 msg-module=yes
-framedrop=yes
+framedrop=vo
 use-filedir-conf=yes
 embeddedfonts=yes
 sub-ass=yes
