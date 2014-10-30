@@ -11,7 +11,8 @@ filetype indent plugin on
 let g:email = "aperez@igalia.com"
 let g:user  = "Adrian Perez"
 
-" CamelCaseMotion has to be configured before sourcing
+" Plugin: CamelCaseMotion
+" This plug-in has to be configured before sourcing
 map <S-W> <Plug>CamelCaseMotion_w
 map <S-B> <Plug>CamelCaseMotion_b
 map <S-E> <Plug>CamelCaseMotion_e
@@ -23,8 +24,8 @@ if has("python")
 				\ {'build': {
 				\   'unix': './install.sh --clang-completer --system-libclang'
 				\ }}
+	let g:using_neocomplete = 0
 else
-	set completeopt-=preview
 	NeoBundle 'Shougo/neocomplete.vim'
 	"NeoBundle 'aperezdc/ccode'
 	"NeoBundle 'Shougo/neoinclude.vim'
@@ -32,6 +33,7 @@ else
 	"			\ {'build': {
 	"			\   'unix': 'make'
 	"			\ }}
+	let g:using_neocomplete = 1
 endif
 NeoBundle 'nsf/gocode', {'rtp': 'vim/'}
 NeoBundle 'aperezdc/vim-template'
@@ -84,8 +86,11 @@ set showmatch				 " Show matching parens
 set textwidth=76             " Text is 76 columns wide
 set backspace=2              " Backspace always useable in insert mode
 set fileformats=unix,mac,dos " Allows automatic line-end detection.
+set completeopt-=preview
 set ignorecase
 set infercase
+set splitbelow
+set splitright
 set hidden
 set diffopt+=iwhite
 set nobackup
@@ -131,31 +136,39 @@ endif
 let g:xml_syntax_folding = 1
 
 " Plugin: NeoComplete
-let g:neocomplete#enable_at_startup = 1
-let g:neocomplete#enable_smart_case = 1
-let g:neocomplete#auto_completion_start_length = 3
-inoremap <expr><C-g> neocomplete#undo_completion()
-inoremap <expr><C-l> neocomplete#complete_common_string()
-inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
-inoremap <expr><BS>  neocomplete#smart_close_popup()."\<C-h>"
-inoremap <expr><C-y> neocomplete#close_popup()
-inoremap <expr><C-e> neocomplete#cancel_popup()
-inoremap <expr><Space> pumvisible() ? neocomplete#close_popup()."\<Space>" : "\<Space>"
-
-"inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
-inoremap <expr><TAB> pumvisible() ? "\<C-n>" :
-			\ <SID>neocomplete_check_bs() ? "\<TAB>" :
-			\ neocomplete#start_manual_complete()
-function! s:neocomplete_check_bs()
+function! s:completion_check_bs()
 	let col = col('.') - 1
 	return !col || getline('.')[col - 1] =~ '\s'
 endfunction
 
-inoremap <silent><CR> <C-R>=<SID>neocomplete_do_cr()<CR>
-function! s:neocomplete_do_cr()
-	"return neocomplete#close_popup()."\<CR>"
-	return pumvisible() ? neocomplete#close_popup() : "\<CR>"
-endfunction
+if g:using_neocomplete
+	let g:neocomplete#enable_at_startup = 1
+	let g:neocomplete#enable_smart_case = 1
+	let g:neocomplete#auto_completion_start_length = 3
+	inoremap <expr><C-g> neocomplete#undo_completion()
+	inoremap <expr><C-l> neocomplete#complete_common_string()
+	inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
+	inoremap <expr><BS>  neocomplete#smart_close_popup()."\<C-h>"
+	inoremap <expr><C-y> neocomplete#close_popup()
+	inoremap <expr><C-e> neocomplete#cancel_popup()
+	inoremap <expr><Space> pumvisible() ? neocomplete#close_popup()."\<Space>" : "\<Space>"
+
+	"inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
+	inoremap <expr><TAB> pumvisible() ? "\<C-n>" :
+				\ <SID>completion_check_bs() ? "\<TAB>" :
+				\ neocomplete#start_manual_complete()
+	inoremap <silent><CR> <C-R>=<SID>neocomplete_do_cr()<CR>
+	function! s:neocomplete_do_cr()
+		"return neocomplete#close_popup()."\<CR>"
+		return pumvisible() ? neocomplete#close_popup() : "\<CR>"
+	endfunction
+else
+	" Simple autocompletion with <TAB>, uses Omni Completion if available.
+	inoremap <expr><TAB> pumvisible() ? "\<C-n>" :
+				\ <SID>completion_check_bs() ? "\<TAB>" : "\<C-x><C-o><C-p>"
+"else
+"	let g:SuperTabDefaultCompletionType = "context"
+endif
 
 " Plugin: YouCompleteMe
 let g:ycm_collect_identifiers_from_tags_files = 1
@@ -208,16 +221,16 @@ call unite#filters#matcher_default#use(['matcher_fuzzy'])
 
 autocmd FileType unite call s:unite_enter_buffer()
 function s:unite_enter_buffer()
-	nmap <buffer> <ESC> <Plug>(unite_insert_enter)
-	imap <buffer> <ESC> <Plug>(unite_exit)
-	nmap <buffer> <tab> <Plug>(unite_loop_cursor_down)
+	nmap <buffer> <ESC>   <Plug>(unite_insert_enter)
+	imap <buffer> <ESC>   <Plug>(unite_exit)
+	nmap <buffer> <tab>   <Plug>(unite_loop_cursor_down)
 	nmap <buffer> <s-tab> <Plug>(unite_loop_cursor_up)
-	imap <buffer> <c-a> <Plug>(unite_choose_action)
-	imap <buffer> <Tab> <Plug>(unite_insert_leave)
-	imap <buffer> <C-w> <Plug>(unite_delete_backward_word)
-	imap <buffer> <C-u> <Plug>(unite_delete_backward_path)
-	nmap <buffer> <C-r> <Plug>(unite_redraw)
-	imap <buffer> <C-r> <Plug>(unite_redraw)
+	imap <buffer> <c-a>   <Plug>(unite_choose_action)
+	imap <buffer> <tab>   <Plug>(unite_insert_leave)<Plug>(unite_loop_cursor_down)
+	imap <buffer> <C-w>   <Plug>(unite_delete_backward_word)
+	imap <buffer> <C-u>   <Plug>(unite_delete_backward_path)
+	nmap <buffer> <C-r>   <Plug>(unite_redraw)
+	imap <buffer> <C-r>   <Plug>(unite_redraw)
 endfunction
 
 " Unite: CtrlP-alike behavior and variations
@@ -466,6 +479,14 @@ command -nargs=0 EolMac2Unix    call ExecuteInPlace("%s/\\r/\\n/g")
 command -nargs=0 EolUnix2Mac    call ExecuteInPlace("%s/$/\\r/g")
 command -nargs=0 EolUnix2DOS    call ExecuteInPlace("%s/$/\\r\\n/g")
 
+" Move visual block
+vnoremap J :m '>+1<CR>gv=gv
+vnoremap K :m '<-2<CR>gv=gv
+
+" Move to the previous/mext buffer
+nnoremap H :bprevious<CR>
+nnoremap L :bnext<CR>
+
 " Exit swiftly
 map __ ZZ
 
@@ -473,18 +494,6 @@ map __ ZZ
 map <C-J> :YcmCompleter GoToDefinitionElseDeclaration<CR>
 map <C-T> <C-]>
 map <C-P> :pop<CR>
-
-" Autocomplete with <TAB> (AJ)
-"function InsertTabWrapper()
-"	let col = col('.') - 1
-""	if !col || getline('.')[col - 1] !~ '\k'
-"		return "\<tab>"
-"	else
-"		return "\<c-p>"
-"	endif
-"endfunction
-"inoremap <Tab>   <C-R>=InsertTabWrapper()<CR>
-"inoremap <S-Tab> <C-P>
 
 " Start searching with spacebar.
 map <Space> /
