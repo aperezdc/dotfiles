@@ -369,12 +369,6 @@ if has("autocmd")
 	
 endif
 
-" Some more highlighting stuff. The first one matches whitespace at end of
-" lines (we don't really like them) and the second one matches tabs, so we
-" are aware of them visually ;-)
-highlight WhitespaceEOL ctermbg=red guibg=red
-match WhitespaceEOL /\s\+$/
-
 " When under xterm and compatible terminals, use titles if available and
 " change cursor color depending on active mode.
 if &term =~ "xterm" || &term =~ "screen" || &term =~ "tmux"
@@ -420,6 +414,10 @@ if has("syntax") || has("gui_running")
 		highlight LineNr       ctermbg=234 ctermfg=238
 		highlight SignColumn   ctermbg=234
 	endif
+
+	" Match whitespace at end of lines (which is usually a mistake).
+	highlight WhitespaceEOL ctermbg=red guibg=red
+	match WhitespaceEOL /\s\+$/
 endif
 
 " Let Vim be picky about syntax, so we are reported of glitches visually.
