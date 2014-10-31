@@ -55,7 +55,6 @@ NeoBundle 'osyo-manga/unite-quickfix'
 NeoBundle 'Shougo/neomru.vim'
 NeoBundle 'bkad/CamelCaseMotion'
 NeoBundle 'terryma/vim-multiple-cursors'
-NeoBundle 'ervandew/supertab'
 NeoBundle 'othree/xml.vim'
 NeoBundle 'sjl/gundo.vim'
 NeoBundle 'calebsmith/vim-lambdify'
@@ -167,8 +166,6 @@ else
 	inoremap <expr><TAB> pumvisible() ? "\<C-n>" :
 				\ <SID>completion_check_bs() ? "\<TAB>" :
 				\ &omnifunc == "" ? "\<C-p>" : "\<C-x><C-o><C-p>"
-"else
-"	let g:SuperTabDefaultCompletionType = "context"
 endif
 
 " Plugin: YouCompleteMe
