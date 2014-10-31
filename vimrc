@@ -165,7 +165,8 @@ if g:using_neocomplete
 else
 	" Simple autocompletion with <TAB>, uses Omni Completion if available.
 	inoremap <expr><TAB> pumvisible() ? "\<C-n>" :
-				\ <SID>completion_check_bs() ? "\<TAB>" : "\<C-x><C-o><C-p>"
+				\ <SID>completion_check_bs() ? "\<TAB>" :
+				\ &omnifunc == "" ? "\<C-p>" : "\<C-x><C-o><C-p>"
 "else
 "	let g:SuperTabDefaultCompletionType = "context"
 endif
