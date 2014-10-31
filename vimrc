@@ -448,18 +448,6 @@ function ExecuteInPlace(expr)
 	call cursor(l:linePos, l:colPos)
 endfunction
 
-" Checks wether a given path is readable and sources it as a Vim script.
-" Very useful to load scripts only when available.
-function <SID>SourceIfAvailable(path)
-	if filereadable(expand(a:path))
-		execute "source " . expand(a:path)
-	endif
-endfunction
-
-" Command that loads the doxygen syntax file.
-command! -nargs=0 Doxygen
-			\ call <SID>SourceIfAvailable($VIMRUNTIME . "/../vimfiles/syntax/doxygen.vim")
-
 " Some commands used to thrash trailing garbage in lines.
 command -nargs=0 KillEolLF      call ExecuteInPlace("%s/\\r$//")
 command -nargs=0 KillEolSpaces  call ExecuteInPlace("%s/[ \\t]\\+$//")
@@ -490,13 +478,6 @@ map <Space> /
 " F2 -> Save file
 map  <F2>   :w!<CR>
 imap <F2>   <ESC>:w!<CR>a
-
-" F3 -> Toggle line numbers
-nnoremap <F3> :NumbersToggle<CR>
-
-" F4 -> Toggle secondary matches
-map  <silent> <F4>   :call <SID>Toggle2Match()<CR>
-imap <silent> <F4>   :call <SID>Toggle2Match()<CR>
 
 " F5 -> Compile/build
 " F6 -> Show build errors
