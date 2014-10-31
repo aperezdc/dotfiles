@@ -317,57 +317,44 @@ if has("folding")
 	"map <C-v> zA
 endif
 
-if has("autocmd")
-	" Tune defaults for some particular file types.
-	autocmd FileType javascript setlocal expandtab
-	autocmd FileType *html,xml setlocal matchpairs+=<:>
-	autocmd FileType xhtml,xml let xml_use_xhtml=1
-	autocmd FileType python setlocal expandtab tabstop=4 shiftwidth=4
-	autocmd FileType lua setlocal expandtab shiftwidth=2 tabstop=2
-	autocmd FileType rst setlocal expandtab tabstop=2 shiftwidth=2
-	autocmd FileType objc setlocal expandtab cinoptions+=(0
-	autocmd FileType cpp setlocal expandtab cinoptions+=(0
-	autocmd FileType c setlocal expandtab cinoptions+=(0
-	autocmd FileType d setlocal expandtab cinoptions+=(0
+" Tune defaults for some particular file types.
+autocmd FileType javascript setlocal expandtab
+autocmd FileType *html,xml setlocal matchpairs+=<:>
+autocmd FileType xhtml,xml let xml_use_xhtml=1
+autocmd FileType python setlocal expandtab tabstop=4 shiftwidth=4
+autocmd FileType lua setlocal expandtab shiftwidth=2 tabstop=2
+autocmd FileType rst setlocal expandtab tabstop=2 shiftwidth=2
+autocmd FileType objc setlocal expandtab cinoptions+=(0
+autocmd FileType cpp setlocal expandtab cinoptions+=(0
+autocmd FileType c setlocal expandtab cinoptions+=(0
+autocmd FileType d setlocal expandtab cinoptions+=(0
 
-	" Jump to the last edited position in the file being loaded (if available)
-	" in the ~/.viminfo file, I really love this =)
-	autocmd BufReadPost *
-				\ if line("'\"") > 0 && line("'\"") <= line("$") |
-				\		execute "normal g'\"" |
-				\ endif
+" Jump to the last edited position in the file being loaded (if available)
+" in the ~/.viminfo file, I really love this =)
+autocmd BufReadPost *
+			\ if line("'\"") > 0 && line("'\"") <= line("$") |
+			\		execute "normal g'\"" |
+			\ endif
 
-	" Set PO mode for POT gettext templates, too.
-	autocmd BufEnter *.pot
-				\ setf po | setlocal fenc=utf8
+" Set PO mode for POT gettext templates, too.
+autocmd BufEnter *.pot
+			\ setf po | setlocal fenc=utf8
 
-	" Set Python mode for Twisted Application Configuration (.tac) fiels.
-	autocmd BufReadPost,BufNewFile *.tac setf python
+" Set Python mode for Twisted Application Configuration (.tac) fiels.
+autocmd BufReadPost,BufNewFile *.tac setf python
 
-	" Add the `a' format option (autoreflow) to plain text files.
-	autocmd BufReadPost,BufNewFile *.txt,*README*,*TODO*,*HACKING*,*[Rr]eadme*,*[Tt]odo*
-				\ setlocal expandtab
+" Add the `a' format option (autoreflow) to plain text files.
+autocmd BufReadPost,BufNewFile *.txt,*README*,*TODO*,*HACKING*,*[Rr]eadme*,*[Tt]odo*
+			\ setlocal expandtab
 
-	" System headers usually are designed to be viewed with 8-space tabs
-	autocmd BufReadPost /usr/include/* setlocal ts=8 sw=8
+" System headers usually are designed to be viewed with 8-space tabs
+autocmd BufReadPost /usr/include/* setlocal ts=8 sw=8
 
-	" Tup build system
-	autocmd BufNewFile,BufRead Tupfile,*.tup setf tup
+" Tup build system
+autocmd BufNewFile,BufRead Tupfile,*.tup setf tup
 
-	" Use Enter key to navigate help links.
-	autocmd FileType help nmap <buffer> <Return> <C-]>
-
-	" Make ESC return to command mode faster while in edit mode
-	"if ! has('gui_running')
-	"	set ttimeoutlen=10
-	"	augroup FastEscape
-	"		autocmd!
-	"		au InsertEnter * set timeoutlen=0
-	"		au InsertLeave * set timeoutlen=1000
-	"	augroup END
-	"endif
-	
-endif
+" Use Enter key to navigate help links.
+autocmd FileType help nmap <buffer> <Return> <C-]>
 
 " When under xterm and compatible terminals, use titles if available and
 " change cursor color depending on active mode.
