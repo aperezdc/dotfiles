@@ -402,9 +402,15 @@ if has("syntax") || has("gui_running")
 		highlight SignColumn   ctermbg=234
 	endif
 
-	" Match whitespace at end of lines (which is usually a mistake).
+	" Match whitespace at end of lines (which is usually a mistake),
+	" but only while not in insert mode, to avoid matches popping in
+	" and out while typing.
 	highlight WhitespaceEOL ctermbg=red guibg=red
-	match WhitespaceEOL /\s\+$/
+	augroup WhitespaceEOL
+		autocmd!
+		autocmd InsertEnter * syn clear WhitespaceEOL | syn match WhitespaceEOL excludenl /\s\+\%#\@!$/
+		autocmd InsertLeave * syn clear WhitespaceEOL | syn match WhitespaceEOL excludenl /\s\+$/
+	augroup END
 endif
 
 " Let Vim be picky about syntax, so we are reported of glitches visually.
