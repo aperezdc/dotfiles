@@ -24,7 +24,6 @@ if has("python")
 				\ {'build': {
 				\   'unix': './install.sh --clang-completer --system-libclang'
 				\ }}
-	let g:using_neocomplete = 0
 else
 	NeoBundle 'Shougo/neocomplete.vim'
 	"NeoBundle 'aperezdc/ccode'
@@ -33,7 +32,6 @@ else
 	"			\ {'build': {
 	"			\   'unix': 'make'
 	"			\ }}
-	let g:using_neocomplete = 1
 endif
 NeoBundle 'nsf/gocode', {'rtp': 'vim/'}
 NeoBundle 'aperezdc/vim-template'
@@ -59,6 +57,7 @@ NeoBundle 'othree/xml.vim'
 NeoBundle 'sjl/gundo.vim'
 NeoBundle 'calebsmith/vim-lambdify'
 NeoBundle 'haya14busa/incsearch.vim'
+NeoBundle 'godlygeek/tabular'
 call neobundle#end()
 
 set tabstop=2				 " Set tabstops to 2 spaces
@@ -101,6 +100,7 @@ set noshowmode
 set grepprg=ag\ --noheading\ --nocolor\ --nobreak
 set secure
 set exrc
+set ttyfast
 set undofile                " Save undo's after file closes
 set undodir=$HOME/.vim/undo " where to save undo histories
 set undolevels=1000         " How many undos
@@ -140,7 +140,7 @@ function! s:completion_check_bs()
 	return !col || getline('.')[col - 1] =~ '\s'
 endfunction
 
-if g:using_neocomplete
+if neobundle#is_sourced("neocomplete")
 	let g:neocomplete#enable_at_startup = 1
 	let g:neocomplete#enable_smart_case = 1
 	let g:neocomplete#auto_completion_start_length = 3
@@ -169,153 +169,160 @@ else
 endif
 
 " Plugin: YouCompleteMe
-let g:ycm_collect_identifiers_from_tags_files = 1
-let g:ycm_seed_identifiers_with_syntax = 1
-let g:ycm_add_preview_to_completeopt = 1
-let g:ycm_auto_trigger = 1
-let g:ycm_min_num_of_chars_for_completion = 6
-let g:ycm_enable_diagnostic_signs = 0
-let g:ycm_extra_conf_globlist = ['/home/aperez/devel/*']
-let g:ycm_filetype_blacklist = { 'unite': 1, 'qf': 1, 'notmuch-folders': 1 }
+if neobundle#is_sourced("YouCompleteMe")
+	let g:ycm_collect_identifiers_from_tags_files = 0
+	let g:ycm_seed_identifiers_with_syntax = 1
+	let g:ycm_add_preview_to_completeopt = 0
+	let g:ycm_auto_trigger = 0
+	let g:ycm_min_num_of_chars_for_completion = 6
+	let g:ycm_enable_diagnostic_signs = 1
+	let g:ycm_extra_conf_globlist = ['/home/aperez/devel/*']
+	let g:ycm_filetype_blacklist = { 'unite': 1, 'qf': 1, 'notmuch-folders': 1 }
+	let g:ycm_key_invoke_completion = "<C-Space>"
+	let g:ycm_key_list_select_completion = ['<CR>']
+	" Jump to things using information gathered by YouCompleteMe
+	map <C-J> :YcmCompleter GoToDefinitionElseDeclaration<CR>
+endif " YouCompleteMe
 
 " Plugin: clang_complete
-let g:clang_complete_macros = 1
+if neobundle#is_sourced("clang_complete")
+	let g:clang_complete_macros = 1
+endif " clang_complete
 
 " Plugin: Syntastic
-let g:syntastic_error_symbol = '✗'
-let g:syntastic_warning_symbol = '⚠'
-let g:syntastic_style_error_symbol = '»»'
-let g:syntastic_style_warning_symbol = '»'
-let g:syntastic_always_populate_loc_list = 1
+if neobundle#is_sourced("syntastic")
+	let g:syntastic_error_symbol = '✗'
+	let g:syntastic_warning_symbol = '⚠'
+	let g:syntastic_style_error_symbol = '»»'
+	let g:syntastic_style_warning_symbol = '»'
+	let g:syntastic_always_populate_loc_list = 1
 
-let g:syntastic_python_pylint_args = '--indent-string="    "'
+	let g:syntastic_python_pylint_args = '--indent-string="    "'
 
-let g:syntastic_c_compiler = 'clang'
-let g:syntastic_c_compiler_options = ' -std=gnu99'
-let g:syntastic_c_check_header=1
-let g:syntastic_c_auto_refresh_includes=1
+	let g:syntastic_c_compiler = 'clang'
+	let g:syntastic_c_compiler_options = ' -std=gnu99'
+	let g:syntastic_c_check_header=1
+	let g:syntastic_c_auto_refresh_includes=1
 
-let g:syntastic_cpp_compiler = 'clang++'
-let g:syntastic_cpp_compiler_options = ' -std=c++1y -stdlib=libc++ '
-let g:syntastic_cpp_check_header=1
-let g:syntastic_cpp_auto_refresh_includes=1
+	let g:syntastic_cpp_compiler = 'clang++'
+	let g:syntastic_cpp_compiler_options = ' -std=c++1y -stdlib=libc++ '
+	let g:syntastic_cpp_check_header=1
+	let g:syntastic_cpp_auto_refresh_includes=1
 
-let g:syntastic_objc_compiler = 'clang'
-let g:syntastic_objc_compiler_options = ' -fobjc '
-let g:syntastic_objc_check_header=1
-let g:syntastic_objc_auto_refresh_includes=1
+	let g:syntastic_objc_compiler = 'clang'
+	let g:syntastic_objc_compiler_options = ' -fobjc '
+	let g:syntastic_objc_check_header=1
+	let g:syntastic_objc_auto_refresh_includes=1
 
-let g:syntastic_objcpp_compiler = 'clang++'
-let g:syntastic_objcpp_compiler_options = ' -std=c++11y -stdlib=libc++ -fobjc '
-let g:syntastic_objcpp_check_header=1
-let g:syntastic_objcpp_auto_refresh_includes=1
+	let g:syntastic_objcpp_compiler = 'clang++'
+	let g:syntastic_objcpp_compiler_options = ' -std=c++11y -stdlib=libc++ -fobjc '
+	let g:syntastic_objcpp_check_header=1
+	let g:syntastic_objcpp_auto_refresh_includes=1
+endif " Syntastic
 
-" Unite: General settings
-let g:unite_update_time = 200
-let g:unite_enable_start_insert = 1
-let g:unite_source_file_mru_limit = 1000
-call unite#custom#profile('default', 'context', { 'prompt': '% ' })
-call unite#filters#matcher_default#use(['matcher_fuzzy'])
+" Plugin: Unite
+if neobundle#is_sourced("unite.vim")
+	" General settings
+	let g:unite_update_time = 200
+	let g:unite_enable_start_insert = 1
+	let g:unite_source_file_mru_limit = 1000
+	call unite#custom#profile('default', 'context', { 'prompt': '% ' })
+	call unite#filters#matcher_default#use(['matcher_fuzzy'])
 
-autocmd FileType unite call s:unite_enter_buffer()
-function s:unite_enter_buffer()
-	nmap <buffer> <ESC>   <Plug>(unite_insert_enter)
-	imap <buffer> <ESC>   <Plug>(unite_exit)
-	nmap <buffer> <tab>   <Plug>(unite_loop_cursor_down)
-	nmap <buffer> <s-tab> <Plug>(unite_loop_cursor_up)
-	imap <buffer> <c-a>   <Plug>(unite_choose_action)
-	imap <buffer> <tab>   <Plug>(unite_insert_leave)<Plug>(unite_loop_cursor_down)
-	imap <buffer> <C-w>   <Plug>(unite_delete_backward_word)
-	imap <buffer> <C-u>   <Plug>(unite_delete_backward_path)
-	nmap <buffer> <C-r>   <Plug>(unite_redraw)
-	imap <buffer> <C-r>   <Plug>(unite_redraw)
-endfunction
+	autocmd FileType unite call s:unite_enter_buffer()
+	function s:unite_enter_buffer()
+		nmap <buffer> <ESC>   <Plug>(unite_insert_enter)
+		imap <buffer> <ESC>   <Plug>(unite_exit)
+		nmap <buffer> <tab>   <Plug>(unite_loop_cursor_down)
+		nmap <buffer> <s-tab> <Plug>(unite_loop_cursor_up)
+		imap <buffer> <c-a>   <Plug>(unite_choose_action)
+		imap <buffer> <tab>   <Plug>(unite_insert_leave)<Plug>(unite_loop_cursor_down)
+		imap <buffer> <C-w>   <Plug>(unite_delete_backward_word)
+		imap <buffer> <C-u>   <Plug>(unite_delete_backward_path)
+		nmap <buffer> <C-r>   <Plug>(unite_redraw)
+		imap <buffer> <C-r>   <Plug>(unite_redraw)
+	endfunction
 
-" Unite: CtrlP-alike behavior and variations
-nnoremap <silent> <leader>f :<C-u>Unite file_rec/async file/new -buffer-name=Files<cr>
-nnoremap <silent> <leader>F :<C-u>Unite file_rec/git:--cached:--others:--exclude-standard file/new -buffer-name=Files\ (Git)<cr>
-nnoremap <silent> <leader>d :<C-u>Unite buffer bookmark file/async -buffer-name=Files\ (misc)<cr>
-nnoremap <silent> <leader>m :<C-u>Unite neomru/file -buffer-name=MRU\ Files<cr>
-nnoremap <silent> <leader>b :<C-u>Unite buffer -buffer-name=Buffers<cr>
-nnoremap <silent> <leader>J :<C-u>Unite jump -buffer-name=Jump\ Locations<cr>
+	" CtrlP-alike behavior and variations
+	nnoremap <silent> <leader>f :<C-u>Unite file_rec/async file/new -buffer-name=Files<cr>
+	nnoremap <silent> <leader>F :<C-u>Unite file_rec/git:--cached:--others:--exclude-standard file/new -buffer-name=Files\ (Git)<cr>
+	nnoremap <silent> <leader>d :<C-u>Unite buffer bookmark file/async -buffer-name=Files\ (misc)<cr>
+	nnoremap <silent> <leader>m :<C-u>Unite neomru/file -buffer-name=MRU\ Files<cr>
+	nnoremap <silent> <leader>b :<C-u>Unite buffer -buffer-name=Buffers<cr>
+	nnoremap <silent> <leader>J :<C-u>Unite jump -buffer-name=Jump\ Locations<cr>
 
-" Unite: Outline (TagBar-alike)
-nnoremap <silent> <leader>o :<C-u>Unite outline -buffer-name=Outline<cr>
-nnoremap <silent> <leader>O :<C-u>Unite outline -no-split -buffer-name=Outline<cr>
+	" Outline (TagBar-alike)
+	nnoremap <silent> <leader>o :<C-u>Unite outline -buffer-name=Outline<cr>
+	nnoremap <silent> <leader>O :<C-u>Unite outline -no-split -buffer-name=Outline<cr>
 
-" Unite: QuickFix
-let g:unite_quickfix_is_multiline = 1
-nnoremap <silent> <leader>q :<C-u>Unite location_list quickfix -buffer-name=Location<cr>
+	" QuickFix
+	let g:unite_quickfix_is_multiline = 1
+	nnoremap <silent> <leader>q :<C-u>Unite location_list quickfix -buffer-name=Location<cr>
 
-" Unite: Ag/Ack/Grep
-if executable('ag')
-	let g:unite_source_grep_command = 'ag'
-	let g:unite_source_grep_default_opts = '-i --line-numbers --nocolor --nogroup --noheading'
-	let g:unite_source_grep_recursive_opt = ''
-elseif executable('ack')
-	let g:unite_source_grep_command = 'ack'
-	let g:unite_source_grep_default_opts = '-i --no-heading --no-color -k -H'
-	let g:unite_source_grep_recursive_opt = ''
-endif
-nnoremap <silent> <leader>g :<C-u>Unite grep:. -buffer-name=Find<cr>
+	" Ag/Ack/Grep
+	if executable('ag')
+		let g:unite_source_grep_command = 'ag'
+		let g:unite_source_grep_default_opts = '-i --line-numbers --nocolor --nogroup --noheading'
+		let g:unite_source_grep_recursive_opt = ''
+	elseif executable('ack')
+		let g:unite_source_grep_command = 'ack'
+		let g:unite_source_grep_default_opts = '-i --no-heading --no-color -k -H'
+		let g:unite_source_grep_recursive_opt = ''
+	endif
+	nnoremap <silent> <leader>g :<C-u>Unite grep:. -buffer-name=Find<cr>
 
-" Unite: Open last-used Unite buffer
-nnoremap <silent> <leader>L :<C-u>UniteResume<cr>
+	" Open last-used Unite buffer
+	nnoremap <silent> <leader>L :<C-u>UniteResume<cr>
+endif " unite.vim
 
 " Plugin: Airline
-let g:airline_powerline_fonts = 0
-let g:airline_left_sep = ''
-let g:airline_right_sep = ''
-let g:airline_symbols = {
-			\ 'linenr'     : '◢',
-			\ 'branch'     : '≣',
-			\ 'paste'      : '⟂',
-			\ 'readonly'   : '⚠',
-			\ 'whitespace' : '␥',
-			\ }
-let g:airline_mode_map = {
-			\ '__' : '-',
-			\ 'n'  : 'N',
-			\ 'i'  : 'I',
-			\ 'R'  : 'R',
-			\ 'c'  : 'C',
-			\ 'v'  : 'V',
-			\ 'V'  : 'V',
-			\ '' : 'V',
-			\ 's'  : 'S',
-			\ 'S'  : 'S',
-			\ '' : 'S',
-			\ }
-let g:airline_theme = 'bubblegum'
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#fnamemod = ':t'
-let g:airline#extensions#tabline#buffer_min_count = 2
+if neobundle#is_sourced("vim-airline")
+	let g:airline_powerline_fonts = 0
+	let g:airline_left_sep = ''
+	let g:airline_right_sep = ''
+	let g:airline_symbols = {
+				\ 'linenr'     : '◢',
+				\ 'branch'     : '≣',
+				\ 'paste'      : '⟂',
+				\ 'readonly'   : '⚠',
+				\ 'whitespace' : '␥',
+				\ }
+	let g:airline_mode_map = {
+				\ '__' : '-',
+				\ 'n'  : 'N',
+				\ 'i'  : 'I',
+				\ 'R'  : 'R',
+				\ 'c'  : 'C',
+				\ 'v'  : 'V',
+				\ 'V'  : 'V',
+				\ '' : 'V',
+				\ 's'  : 'S',
+				\ 'S'  : 'S',
+				\ '' : 'S',
+				\ }
+	let g:airline_theme = 'bubblegum'
+	let g:airline#extensions#tabline#enabled = 1
+	"let g:airline#extensions#tabline#fnamemod = ':t'
+	let g:airline#extensions#tabline#buffer_min_count = 2
+endif " vim-airline
 
 " Plugin: GitGutter
-let g:gitgutter_sign_column_always = 1
-nmap gh <Plug>GitGutterNextHunk
-nmap gH <Plug>GitGutterPrevHunk
-nmap gs <Plug>GitGutterStageHunk
-nmap gR <Plug>GitGutterRevertHunk
-nmap gd <Plug>GitGutterPreviewHunk
+if neobundle#is_sourced("vim-gitgutter")
+	let g:gitgutter_sign_column_always = 1
+	nmap gh <Plug>GitGutterNextHunk
+	nmap gH <Plug>GitGutterPrevHunk
+	nmap gs <Plug>GitGutterStageHunk
+	nmap gR <Plug>GitGutterRevertHunk
+	nmap gd <Plug>GitGutterPreviewHunk
+endif
 
 " Plugin: incsearch
-let g:incsearch#consistent_n_direction = 1
-map /  <Plug>(incsearch-forward)
-map ?  <Plug>(incsearch-backward)
-map g/ <Plug>(incsearch-stay)
-
-" End of configuration for (most) plug-ins
-
-if has("folding")
-	map , zj
-	"map m zk
-	map - za
-	map _ zA
-	"map ; zi
-	"map <CR> za
-	"map <C-v> zA
-endif
+if neobundle#is_sourced("incsearch.vim")
+	let g:incsearch#consistent_n_direction = 1
+	map /  <Plug>(incsearch-forward)
+	map ?  <Plug>(incsearch-backward)
+	map g/ <Plug>(incsearch-stay)
+endif " incsearch.vim
 
 " Tune defaults for some particular file types.
 autocmd FileType javascript setlocal expandtab
@@ -468,7 +475,6 @@ nnoremap L :bnext<CR>
 map __ ZZ
 
 " A bit of commoddity to jump through source files using tags
-map <C-J> :YcmCompleter GoToDefinitionElseDeclaration<CR>
 map <C-T> <C-]>
 map <C-P> :pop<CR>
 
@@ -489,8 +495,10 @@ map  <F7>   :cp!<CR>
 map  <F8>   :cn!<CR>
 
 " clang-format, see http://clang.llvm.org/docs/ClangFormat.html
-map <C-K> :pyf /usr/share/clang/clang-format.py<CR>
-imap <C-K> <ESC>:pyf /usr/share/clang/clang-format.py<CR>i
+if has("python") && executable("clang-format")
+	map <C-K> :pyf /usr/share/clang/clang-format.py<CR>
+	imap <C-K> <ESC>:pyf /usr/share/clang/clang-format.py<CR>i
+endif
 
 runtime! macros/matchit.vim
 NeoBundleCheck
