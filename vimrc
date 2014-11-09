@@ -229,20 +229,6 @@ if neobundle#is_sourced("unite.vim")
 	call unite#custom#profile('default', 'context', { 'prompt': '% ' })
 	call unite#filters#matcher_default#use(['matcher_fuzzy'])
 
-	autocmd FileType unite call s:unite_enter_buffer()
-	function s:unite_enter_buffer()
-		nmap <buffer> <ESC>   <Plug>(unite_insert_enter)
-		imap <buffer> <ESC>   <Plug>(unite_exit)
-		nmap <buffer> <tab>   <Plug>(unite_loop_cursor_down)
-		nmap <buffer> <s-tab> <Plug>(unite_loop_cursor_up)
-		imap <buffer> <c-a>   <Plug>(unite_choose_action)
-		imap <buffer> <tab>   <Plug>(unite_insert_leave)<Plug>(unite_loop_cursor_down)
-		imap <buffer> <C-w>   <Plug>(unite_delete_backward_word)
-		imap <buffer> <C-u>   <Plug>(unite_delete_backward_path)
-		nmap <buffer> <C-r>   <Plug>(unite_redraw)
-		imap <buffer> <C-r>   <Plug>(unite_redraw)
-	endfunction
-
 	" CtrlP-alike behavior and variations
 	nnoremap <silent> <leader>f :<C-u>Unite file_rec/async file/new -buffer-name=Files<cr>
 	nnoremap <silent> <leader>F :<C-u>Unite file_rec/git:--cached:--others:--exclude-standard file/new -buffer-name=Files\ (Git)<cr>
