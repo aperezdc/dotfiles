@@ -58,6 +58,7 @@ NeoBundle 'sjl/gundo.vim'
 NeoBundle 'calebsmith/vim-lambdify'
 NeoBundle 'haya14busa/incsearch.vim'
 NeoBundle 'godlygeek/tabular'
+NeoBundle 'aperezdc/vim-wcfg'
 call neobundle#end()
 
 set tabstop=2				 " Set tabstops to 2 spaces
