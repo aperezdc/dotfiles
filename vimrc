@@ -26,6 +26,9 @@ if has("python")
 				\ }}
 else
 	NeoBundle 'Shougo/neocomplete.vim'
+	"NeoBundle 'osyo-manga/vim-reunions'
+	"NeoBundle 'osyo-manga/vim-marching'
+	"NeoBundle 'davidhalter/jedi-vim'
 	"NeoBundle 'aperezdc/ccode'
 	"NeoBundle 'Shougo/neoinclude.vim'
 	"NeoBundle 'Rip-Rip/clang_complete',
@@ -42,6 +45,7 @@ NeoBundle 'vim-scripts/gtk-vim-syntax'
 NeoBundle 'scrooloose/syntastic'
 NeoBundle 'bling/vim-airline'
 NeoBundle 'tpope/vim-fugitive'
+NeoBundle 'tpope/vim-eunuch'
 "NeoBundle 'jaxbot/browserlink.vim'
 NeoBundle 'airblade/vim-gitgutter'
 NeoBundle 'ledger/vim-ledger'
@@ -162,6 +166,17 @@ if neobundle#is_sourced("neocomplete")
 		"return neocomplete#close_popup()."\<CR>"
 		return pumvisible() ? neocomplete#close_popup() : "\<CR>"
 	endfunction
+
+	if neobundle#is_sourced("vim-marching")
+		set updatetime=200
+		let g:marching_enable_neocomplete = 1
+		let g:neocomplete#force_omni_input_patterns = {}
+		let g:neocomplete#force_omni_input_patterns.cpp =
+		    \ '[^.[:digit:] *\t]\%(\.\|->\)\w*\|\h\w*::\w*'
+		"let g:marching_enable_refresh_always = 0
+		"imap <buffer> <C-x><C-o> <Plug>(marching_start_omni_complete)
+		"imap <buffer> <C-x><C-x><C-o> <Plug>(marching_force_start_omni_complete)
+	endif " vim-marching
 else
 	" Simple autocompletion with <TAB>, uses Omni Completion if available.
 	inoremap <expr><TAB> pumvisible() ? "\<C-n>" :
@@ -310,6 +325,19 @@ if neobundle#is_sourced("incsearch.vim")
 	map ?  <Plug>(incsearch-backward)
 	map g/ <Plug>(incsearch-stay)
 endif " incsearch.vim
+
+" Plugin: multiple cursors
+if neobundle#is_sourced("vim-multiple-cursors") && neobundle#is_sourced("neocomplete.vim")
+	function! Multiple_cursors_before()
+		execute "NeoCompleteLock"
+		echo "Completion disabled"
+	endfunction
+	function! Multiple_cursors_after()
+		execute "NeoCompleteUnlock"
+		echo "Completion enabled"
+	endfunction
+endif " vim-multiple-cursors && neocomplete.vim
+
 
 " Tune defaults for some particular file types.
 autocmd FileType javascript setlocal expandtab
