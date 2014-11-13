@@ -6,6 +6,12 @@ if has("vim_starting")
 	set nocompatible
 	set runtimepath+=~/.vim/bundle/neobundle.vim
 endif
+
+" NeoVim needs some trickery to enable Python support
+if has("nvim")
+	runtime! python_setup.vim
+endif
+
 filetype indent plugin on
 
 let g:email = "aperez@igalia.com"
@@ -20,15 +26,22 @@ map <S-E> <Plug>CamelCaseMotion_e
 call neobundle#begin(expand('~/.vim/bundle/'))
 NeoBundleFetch 'Shougo/neobundle.vim'
 if has("python")
+NeoBundle "tomtom/pluginstats_vim"
+
+" Choose plug-ins used for code completion.
 	NeoBundle 'Valloric/YouCompleteMe',
 				\ {'build': {
 				\   'unix': './install.sh --clang-completer --system-libclang'
 				\ }}
 else
-	NeoBundle 'Shougo/neocomplete.vim'
+	if has("lua")
+		NeoBundle 'Shougo/neocomplete.vim'
+	else
+		NeoBundle "tomtom/tlib_vim"
+		NeoBundle "tomtom/likelycomplete_vim"
+	endif
 	"NeoBundle 'osyo-manga/vim-reunions'
 	"NeoBundle 'osyo-manga/vim-marching'
-	"NeoBundle 'davidhalter/jedi-vim'
 	"NeoBundle 'aperezdc/ccode'
 	"NeoBundle 'Shougo/neoinclude.vim'
 	"NeoBundle 'Rip-Rip/clang_complete',
@@ -36,6 +49,15 @@ else
 	"			\   'unix': 'make'
 	"			\ }}
 endif
+
+if has("python")
+	NeoBundle 'davidhalter/jedi-vim'
+endif
+
+if has("lua")
+	NeoBundle 'Shougo/vimproc.vim', {'build': {'unix': 'make'}}
+endif
+
 NeoBundle 'nsf/gocode', {'rtp': 'vim/'}
 NeoBundle 'aperezdc/vim-template'
 NeoBundle 'jamessan/vim-gnupg'
@@ -50,7 +72,6 @@ NeoBundle 'tpope/vim-eunuch'
 NeoBundle 'airblade/vim-gitgutter'
 NeoBundle 'ledger/vim-ledger'
 NeoBundle 'gcmt/wildfire.vim'
-NeoBundle 'Shougo/vimproc.vim', {'build': {'unix': 'make'}}
 NeoBundle 'Shougo/unite.vim'
 NeoBundle 'Shougo/unite-outline'
 NeoBundle 'osyo-manga/unite-quickfix'
@@ -177,11 +198,30 @@ if neobundle#is_sourced("neocomplete")
 		"imap <buffer> <C-x><C-o> <Plug>(marching_start_omni_complete)
 		"imap <buffer> <C-x><C-x><C-o> <Plug>(marching_force_start_omni_complete)
 	endif " vim-marching
+
+	if neobundle#is_sourced("clang_complete")
+		if !exists("g:neocomplete#force_omni_input_patterns")
+			let g:neocomplete#force_omni_input_patterns = {}
+		endif
+		let g:neocomplete#force_omni_input_patterns.cpp =
+		    \ '[^.[:digit:] *\t]\%(\.\|->\)\w*\|\h\w*::\w*'
+	endif " clang_complete
+elseif neobundle#is_sourced("likelycomplete_vim")
+	" Likelycomplete makes the normal Ctrl-P completion use several sources,
+	" so we just have to trigger it from the <Tab> binding and it returns
+	" completion results for all sources at once.
+	let g:likelycomplete#experimental = 1
+	let g:likelycomplete#list_set_filter = 1
+	let g:likelycomplete#auto_complete = 0
+	let g:likelycomplete#sources = ["likelycomplete", "words", "dictionaries",
+				\ "syntaxcomplete", "completefunc", "omnifunc"]
+	inoremap <expr><TAB> pumvisible() ? "\<C-p>" :
+				\ <SID>completion_check_bs() ? "\<TAB>" : "\<C-x><C-u>"
 else
 	" Simple autocompletion with <TAB>, uses Omni Completion if available.
-	inoremap <expr><TAB> pumvisible() ? "\<C-n>" :
+	inoremap <expr><TAB> pumvisible() ? "\<C-p>" :
 				\ <SID>completion_check_bs() ? "\<TAB>" :
-				\ &omnifunc == "" ? "\<C-p>" : "\<C-x><C-o><C-p>"
+				\ &omnifunc == "" ? "\<C-p>" : "\<C-x><C-o>"
 endif
 
 " Plugin: YouCompleteMe
@@ -202,7 +242,13 @@ endif " YouCompleteMe
 
 " Plugin: clang_complete
 if neobundle#is_sourced("clang_complete")
+	let g:clang_hl_errors = 0
 	let g:clang_complete_macros = 1
+	let g:clang_snippets = 1
+	let g:clang_snippets_engine = 'clang_complete'
+	let g:clang_jumpto_declaration_key = "<leader>d"
+	let g:clang_jumpto_declaration_in_preview_key = "<leader>D"
+	let g:clang_library_path = "/usr/lib/libclang.so"
 endif " clang_complete
 
 " Plugin: Syntastic
@@ -245,10 +291,15 @@ if neobundle#is_sourced("unite.vim")
 	call unite#custom#profile('default', 'context', { 'prompt': '% ' })
 	call unite#filters#matcher_default#use(['matcher_fuzzy'])
 
-	" CtrlP-alike behavior and variations
-	nnoremap <silent> <leader>f :<C-u>Unite file_rec/async file/new -buffer-name=Files<cr>
+	" Finding files and buffers and things
+	if neobundle#is_sourced("vimproc.vim")
+		nnoremap <silent> <leader>f :<C-u>Unite file_rec/async file/new -buffer-name=Files<cr>
+		nnoremap <silent> <leader>d :<C-u>Unite buffer bookmark file/async -buffer-name=Files\ (misc)<cr>
+	else
+		nnoremap <silent> <leader>f :<C-u>Unite file_rec file/new -buffer-name=Files<cr>
+		nnoremap <silent> <leader>d :<C-u>Unite buffer bookmark file -buffer-name=Files\ (misc)<cr>
+	endif
 	nnoremap <silent> <leader>F :<C-u>Unite file_rec/git:--cached:--others:--exclude-standard file/new -buffer-name=Files\ (Git)<cr>
-	nnoremap <silent> <leader>d :<C-u>Unite buffer bookmark file/async -buffer-name=Files\ (misc)<cr>
 	nnoremap <silent> <leader>m :<C-u>Unite neomru/file -buffer-name=MRU\ Files<cr>
 	nnoremap <silent> <leader>b :<C-u>Unite buffer -buffer-name=Buffers<cr>
 	nnoremap <silent> <leader>J :<C-u>Unite jump -buffer-name=Jump\ Locations<cr>
@@ -260,6 +311,9 @@ if neobundle#is_sourced("unite.vim")
 	" QuickFix
 	let g:unite_quickfix_is_multiline = 1
 	nnoremap <silent> <leader>q :<C-u>Unite location_list quickfix -buffer-name=Location<cr>
+
+	" Fuzzy find in buffer
+	nnoremap <silent> <leader><space> :<C-u>Unite line -buffer-name=Search -start-insert -auto-preview -auto-resize<cr>
 
 	" Ag/Ack/Grep
 	if executable('ag')
@@ -304,7 +358,6 @@ if neobundle#is_sourced("vim-airline")
 				\ }
 	let g:airline_theme = 'bubblegum'
 	let g:airline#extensions#tabline#enabled = 1
-	"let g:airline#extensions#tabline#fnamemod = ':t'
 	let g:airline#extensions#tabline#buffer_min_count = 2
 endif " vim-airline
 
@@ -321,9 +374,11 @@ endif
 " Plugin: incsearch
 if neobundle#is_sourced("incsearch.vim")
 	let g:incsearch#consistent_n_direction = 1
-	map /  <Plug>(incsearch-forward)
-	map ?  <Plug>(incsearch-backward)
-	map g/ <Plug>(incsearch-stay)
+	map <Space>   <Plug>(incsearch-forward)
+	map <Leader>? <Plug>(incsearch-backward)
+	map g/        <Plug>(incsearch-stay)
+else
+	map <Space>   /
 endif " incsearch.vim
 
 " Plugin: multiple cursors
@@ -492,9 +547,6 @@ map __ ZZ
 " A bit of commoddity to jump through source files using tags
 map <C-T> <C-]>
 map <C-P> :pop<CR>
-
-" Start searching with spacebar.
-map <Space> /
 
 " F2 -> Save file
 map  <F2>   :w!<CR>
