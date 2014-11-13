@@ -479,8 +479,6 @@ if has("syntax") || has("gui_running")
 		set guifontwide=VL\ Gothic
 		set cursorline
 	else
-		colorscheme elflord
-
 		if &term =~ "xterm-256color" || &term =~ "screen-256color" || $COLORTERM =~ "gnome-terminal"
 			set t_Co=256
 			set t_AB=[48;5;%dm
@@ -492,11 +490,24 @@ if has("syntax") || has("gui_running")
 			set cursorline
 		endif
 
-		highlight CursorLine   NONE
-		highlight CursorLine   ctermbg=235
-		highlight CursorLineNr ctermbg=235 ctermfg=246
-		highlight LineNr       ctermbg=234 ctermfg=238
-		highlight SignColumn   ctermbg=234
+		if &t_Co == 256 && neobundle#is_sourced("Zenburn")
+			let g:zenburn_high_Contrast = 0
+			let g:zenburn_transparent = 1
+			colorscheme zenburn
+		else
+			colorscheme elflord
+			highlight CursorLine   NONE
+			if &t_Co == 256
+				highlight CursorLine   ctermbg=235
+				highlight CursorLineNr ctermbg=235 ctermfg=246
+				highlight LineNr       ctermbg=234 ctermfg=238
+				highlight SignColumn   ctermbg=234
+				highlight Pmenu        ctermbg=235 ctermfg=white
+				highlight PmenuSel     ctermbg=238 ctermfg=white
+				highlight PmenuSbar    ctermbg=238
+				highlight PmenuThumb   ctermbg=240
+			endif
+		endif
 	endif
 
 	" Match whitespace at end of lines (which is usually a mistake),
