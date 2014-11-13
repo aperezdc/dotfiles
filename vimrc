@@ -54,21 +54,17 @@ if has("python")
 	NeoBundle 'davidhalter/jedi-vim'
 endif
 
-if has("lua")
-	NeoBundle 'Shougo/vimproc.vim', {'build': {'unix': 'make'}}
-endif
-
+NeoBundle 'Shougo/vimproc.vim', {'build': {'unix': 'make'}}
 NeoBundle 'nsf/gocode', {'rtp': 'vim/'}
 NeoBundle 'aperezdc/vim-template'
 NeoBundle 'jamessan/vim-gnupg'
-NeoBundle 'cbracken/vala.vim'
+"NeoBundle 'cbracken/vala.vim'
 NeoBundle 'juvenn/mustache.vim'
 NeoBundle 'vim-scripts/gtk-vim-syntax'
 NeoBundle 'scrooloose/syntastic'
 NeoBundle 'bling/vim-airline'
-NeoBundle 'tpope/vim-fugitive'
-NeoBundle 'tpope/vim-eunuch'
-"NeoBundle 'jaxbot/browserlink.vim'
+"NeoBundle 'tpope/vim-fugitive'
+"NeoBundle 'tpope/vim-eunuch'
 NeoBundle 'airblade/vim-gitgutter'
 NeoBundle 'ledger/vim-ledger'
 NeoBundle 'gcmt/wildfire.vim'
@@ -77,13 +73,16 @@ NeoBundle 'Shougo/unite-outline'
 NeoBundle 'osyo-manga/unite-quickfix'
 NeoBundle 'Shougo/neomru.vim'
 NeoBundle 'bkad/CamelCaseMotion'
-NeoBundle 'terryma/vim-multiple-cursors'
+"NeoBundle 'terryma/vim-multiple-cursors'
+"NeoBundle 'aperezdc/notmuch-addrlookup-c'
 NeoBundle 'othree/xml.vim'
-NeoBundle 'sjl/gundo.vim'
+"NeoBundle 'sjl/gundo.vim'
+"NeoBundle 'katono/rogue.vim'
 NeoBundle 'calebsmith/vim-lambdify'
 NeoBundle 'haya14busa/incsearch.vim'
 NeoBundle 'godlygeek/tabular'
 NeoBundle 'aperezdc/vim-wcfg'
+"NeoBundle 'jnurmine/Zenburn'
 call neobundle#end()
 
 set tabstop=2				 " Set tabstops to 2 spaces
@@ -256,6 +255,11 @@ if neobundle#is_sourced("YouCompleteMe")
 	" Jump to things using information gathered by YouCompleteMe
 	map <C-J> :YcmCompleter GoToDefinitionElseDeclaration<CR>
 endif " YouCompleteMe
+
+" Plugin: vim-clang
+if neobundle#is_sourced("vim-clang")
+	let g:clang_diagsopt="leftabove:6"
+endif " vim-clang
 
 " Plugin: clang_complete
 if neobundle#is_sourced("clang_complete")
