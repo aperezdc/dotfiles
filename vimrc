@@ -227,10 +227,7 @@ elseif neobundle#is_sourced("likelycomplete_vim")
 			endif
 		endfor
 		if l:enable == 1
-			LikelyCompleteEnable
-			echo "Note: likelycomplete enabled"
-		else
-			echo "Note: likelycomplete disabled"
+			Likelycomplete
 		endif
 	endfunction
 
