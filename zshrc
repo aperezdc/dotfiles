@@ -245,8 +245,8 @@ export EMAIL='aperez@igalia.com'
 export NAME='Adrian Perez'
 export CCACHE_COMPRESS=1
 
-for i in vim zile nano pico ; do
-	i=$(whence -p vim)
+for i in nvim vim e3vi vi zile nano pico ; do
+	i=$(whence -p "${i}")
 	if [[ -x ${i} ]] ; then
 		export EDITOR=${i}
 		break
