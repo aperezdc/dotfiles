@@ -215,11 +215,31 @@ elseif neobundle#is_sourced("likelycomplete_vim")
 	let g:likelycomplete#auto_complete = 0
 	let g:likelycomplete#sources = ["likelycomplete", "words", "dictionaries",
 				\ "syntaxcomplete", "completefunc", "omnifunc"]
-	inoremap <expr><TAB> pumvisible() ? "\<C-p>" :
+	inoremap <expr><TAB> pumvisible() ? "\<C-n>" :
 				\ <SID>completion_check_bs() ? "\<TAB>" : "\<C-x><C-u>"
+
+	function! s:LikelyCompleteEnableByFileType(ft)
+		let l:enable = 1
+		for l:item in ["unite", "qf", "quickfix", "preview"]
+			if l:item == a:ft
+				let enable = 0
+				break
+			endif
+		endfor
+		if l:enable == 1
+			LikelyCompleteEnable
+			echo "Note: likelycomplete enabled"
+		else
+			echo "Note: likelycomplete disabled"
+		endif
+	endfunction
+
+	augroup LikelyCompleteAutoEnable
+		autocmd FileType * call s:LikelyCompleteEnableByFileType(expand("<amatch>"))
+	augroup END
 else
 	" Simple autocompletion with <TAB>, uses Omni Completion if available.
-	inoremap <expr><TAB> pumvisible() ? "\<C-p>" :
+	inoremap <expr><TAB> pumvisible() ? "\<C-n>" :
 				\ <SID>completion_check_bs() ? "\<TAB>" :
 				\ &omnifunc == "" ? "\<C-p>" : "\<C-x><C-o>"
 endif
