@@ -12,8 +12,6 @@ if has("nvim")
 	runtime! python_setup.vim
 endif
 
-filetype indent plugin on
-
 let g:email = "aperez@igalia.com"
 let g:user  = "Adrian Perez"
 
@@ -601,6 +599,8 @@ if has("python") && executable("clang-format")
 	map <C-K> :pyf /usr/share/clang/clang-format.py<CR>
 	imap <C-K> <ESC>:pyf /usr/share/clang/clang-format.py<CR>i
 endif
+
+filetype plugin indent on
 
 runtime! macros/matchit.vim
 NeoBundleCheck
