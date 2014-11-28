@@ -1,0 +1,22 @@
+#! /bin/sh
+#
+# alot-run-editor
+# Copyright (C) 2014 Adrian Perez <aperez@igalia.com>
+#
+# Distributed under terms of the MIT license.
+#
+
+alot_term_exe="$(dirname "$0")/alot"
+if ! [ -x "${alot_term_exe}" ] ; then
+	alot_term_exe=dwt
+fi
+
+unset TMUX
+export TERM=xterm-256color
+export DWT_SINGLE_WINDOW_PROCESS=1
+exec "${alot_term_exe}" \
+	--title='alot - Compose' \
+	--workdir="${HOME}" \
+	--no-title-updates \
+	--scrollback=0 \
+	--command="$*"
