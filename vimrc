@@ -233,15 +233,18 @@ elseif neobundle#is_sourced("likelycomplete_vim")
 	augroup LikelyCompleteAutoEnable
 		autocmd FileType * call s:LikelyCompleteEnableByFileType(expand("<amatch>"))
 	augroup END
+elseif neobundle#is_sourced('vim-lift')
+	let g:lift#sources = { '_' : ['syntax', 'omni', 'near', 'user'] }
+	"let g:lift#sources = { '_' : ['syntax'] }
+	"let g:lift#sources = { '_' : ['syntax'],
+	"	\ 'python' : ['syntax', 'omni'] }
+	inoremap <expr> <Tab> lift#trigger_completion()
 else
-	" Simple autocompletion with <TAB>, uses Omni Completion if available.
-	inoremap <expr><TAB> pumvisible() ? "\<C-n>" :
-				\ <SID>completion_check_bs() ? "\<TAB>" :
-				\ &omnifunc == "" ? "\<C-p>" : "\<C-x><C-o>"
+	inoremap <expr> <Tab> <sid>simple_tab_completion(0)
 endif
 
 " Plugin: YouCompleteMe
-if neobundle#is_sourced("YouCompleteMe")
+if neobundle#is_sourced('YouCompleteMe')
 	let g:ycm_collect_identifiers_from_tags_files = 0
 	let g:ycm_seed_identifiers_with_syntax = 1
 	let g:ycm_add_preview_to_completeopt = 0
@@ -257,12 +260,12 @@ if neobundle#is_sourced("YouCompleteMe")
 endif " YouCompleteMe
 
 " Plugin: vim-clang
-if neobundle#is_sourced("vim-clang")
+if neobundle#is_sourced('vim-clang')
 	let g:clang_diagsopt="leftabove:6"
 endif " vim-clang
 
 " Plugin: clang_complete
-if neobundle#is_sourced("clang_complete")
+if neobundle#is_sourced('clang_complete')
 	let g:clang_hl_errors = 0
 	let g:clang_complete_macros = 1
 	let g:clang_snippets = 1
@@ -273,7 +276,7 @@ if neobundle#is_sourced("clang_complete")
 endif " clang_complete
 
 " Plugin: Syntastic
-if neobundle#is_sourced("syntastic")
+if neobundle#is_sourced('syntastic')
 	let g:syntastic_error_symbol = '✗'
 	let g:syntastic_warning_symbol = '⚠'
 	let g:syntastic_style_error_symbol = '»»'
@@ -304,7 +307,7 @@ if neobundle#is_sourced("syntastic")
 endif " Syntastic
 
 " Plugin: Unite
-if neobundle#is_sourced("unite.vim")
+if neobundle#is_sourced('unite.vim')
 	" General settings
 	let g:unite_update_time = 200
 	let g:unite_enable_start_insert = 1
@@ -353,7 +356,7 @@ if neobundle#is_sourced("unite.vim")
 endif " unite.vim
 
 " Plugin: Airline
-if neobundle#is_sourced("vim-airline")
+if neobundle#is_sourced('vim-airline')
 	let g:airline_powerline_fonts = 0
 	let g:airline_left_sep = ''
 	let g:airline_right_sep = ''
@@ -383,7 +386,7 @@ if neobundle#is_sourced("vim-airline")
 endif " vim-airline
 
 " Plugin: GitGutter
-if neobundle#is_sourced("vim-gitgutter")
+if neobundle#is_sourced('vim-gitgutter')
 	let g:gitgutter_sign_column_always = 1
 	nmap gh <Plug>GitGutterNextHunk
 	nmap gH <Plug>GitGutterPrevHunk
@@ -393,7 +396,7 @@ if neobundle#is_sourced("vim-gitgutter")
 endif
 
 " Plugin: incsearch
-if neobundle#is_sourced("incsearch.vim")
+if neobundle#is_sourced('incsearch.vim')
 	let g:incsearch#consistent_n_direction = 1
 	map <Space>   <Plug>(incsearch-forward)
 	map <Leader>? <Plug>(incsearch-backward)
