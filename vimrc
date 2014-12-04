@@ -33,7 +33,6 @@ if has("python")
 				\   'unix': './install.sh --clang-completer --system-libclang'
 				\ }}
 else
-	NeoBundle "aperezdc/vim-lift"
 	"NeoBundle 'osyo-manga/vim-reunions'
 	"NeoBundle 'osyo-manga/vim-marching'
 	"NeoBundle 'aperezdc/ccode'
@@ -47,6 +46,7 @@ if has("python")
 	NeoBundle 'davidhalter/jedi-vim'
 endif
 
+NeoBundle "aperezdc/vim-lift"
 NeoBundle 'Shougo/vimproc.vim', {'build': {'unix': 'make'}}
 NeoBundle 'nsf/gocode', {'rtp': 'vim/'}
 NeoBundle 'aperezdc/vim-template'
