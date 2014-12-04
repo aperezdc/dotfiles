@@ -10,6 +10,7 @@ endif
 " NeoVim needs some trickery to enable Python support
 if has("nvim")
 	runtime! python_setup.vim
+	set unnamedclip
 endif
 
 let g:email = "aperez@igalia.com"
@@ -23,25 +24,19 @@ map <S-E> <Plug>CamelCaseMotion_e
 
 call neobundle#begin(expand('~/.vim/bundle/'))
 NeoBundleFetch 'Shougo/neobundle.vim'
-if has("python")
 NeoBundle "tomtom/pluginstats_vim"
 
 " Choose plug-ins used for code completion.
+if has("python")
 	NeoBundle 'Valloric/YouCompleteMe',
 				\ {'build': {
 				\   'unix': './install.sh --clang-completer --system-libclang'
 				\ }}
 else
-	if has("lua")
-		NeoBundle 'Shougo/neocomplete.vim'
-	else
-		NeoBundle "tomtom/tlib_vim"
-		NeoBundle "tomtom/likelycomplete_vim"
-	endif
+	NeoBundle "aperezdc/vim-lift"
 	"NeoBundle 'osyo-manga/vim-reunions'
 	"NeoBundle 'osyo-manga/vim-marching'
 	"NeoBundle 'aperezdc/ccode'
-	"NeoBundle 'Shougo/neoinclude.vim'
 	"NeoBundle 'Rip-Rip/clang_complete',
 	"			\ {'build': {
 	"			\   'unix': 'make'
@@ -107,7 +102,7 @@ set showmatch				 " Show matching parens
 set textwidth=76             " Text is 76 columns wide
 set backspace=2              " Backspace always useable in insert mode
 set fileformats=unix,mac,dos " Allows automatic line-end detection.
-set completeopt-=preview
+set completeopt+=preview,menuone,longest
 set ignorecase
 set infercase
 set splitbelow
@@ -157,85 +152,42 @@ endif
 " Plugin: XML
 let g:xml_syntax_folding = 1
 
-" Plugin: NeoComplete
+" Completion
 function! s:completion_check_bs()
 	let col = col('.') - 1
 	return !col || getline('.')[col - 1] =~ '\s'
 endfunction
 
-if neobundle#is_sourced("neocomplete")
-	let g:neocomplete#enable_at_startup = 1
-	let g:neocomplete#enable_smart_case = 1
-	let g:neocomplete#auto_completion_start_length = 3
-	inoremap <expr><C-g> neocomplete#undo_completion()
-	inoremap <expr><C-l> neocomplete#complete_common_string()
-	inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
-	inoremap <expr><BS>  neocomplete#smart_close_popup()."\<C-h>"
-	inoremap <expr><C-y> neocomplete#close_popup()
-	inoremap <expr><C-e> neocomplete#cancel_popup()
-	inoremap <expr><Space> pumvisible() ? neocomplete#close_popup()."\<Space>" : "\<Space>"
+" Simple autocompletion with <TAB>, uses Omni Completion if available,
+" falls back to an user/plugin-defined completefunc, or as a last
+" resort, to buffer completion.
+function! s:simple_tab_completion(prefer_user_complete)
+	if pumvisible()
+		return "\<C-p>"
+	endif
+	if s:completion_check_bs()
+		return "\<Tab>"
+	endif
 
-	"inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
-	inoremap <expr><TAB> pumvisible() ? "\<C-n>" :
-				\ <SID>completion_check_bs() ? "\<TAB>" :
-				\ neocomplete#start_manual_complete()
-	inoremap <silent><CR> <C-R>=<SID>neocomplete_do_cr()<CR>
-	function! s:neocomplete_do_cr()
-		"return neocomplete#close_popup()."\<CR>"
-		return pumvisible() ? neocomplete#close_popup() : "\<CR>"
-	endfunction
-
-	if neobundle#is_sourced("vim-marching")
-		set updatetime=200
-		let g:marching_enable_neocomplete = 1
-		let g:neocomplete#force_omni_input_patterns = {}
-		let g:neocomplete#force_omni_input_patterns.cpp =
-		    \ '[^.[:digit:] *\t]\%(\.\|->\)\w*\|\h\w*::\w*'
-		"let g:marching_enable_refresh_always = 0
-		"imap <buffer> <C-x><C-o> <Plug>(marching_start_omni_complete)
-		"imap <buffer> <C-x><C-x><C-o> <Plug>(marching_force_start_omni_complete)
-	endif " vim-marching
-
-	if neobundle#is_sourced("clang_complete")
-		if !exists("g:neocomplete#force_omni_input_patterns")
-			let g:neocomplete#force_omni_input_patterns = {}
+	if a:prefer_user_complete > 0
+		if exists("completefunc") && &completefunc != ""
+			return "\<C-x><C-u>"
+		elseif exists("omnifunc") && &omnifunc != ""
+			return "\<C-x><C-o>"
 		endif
-		let g:neocomplete#force_omni_input_patterns.cpp =
-		    \ '[^.[:digit:] *\t]\%(\.\|->\)\w*\|\h\w*::\w*'
-	endif " clang_complete
-elseif neobundle#is_sourced("likelycomplete_vim")
-	" Likelycomplete makes the normal Ctrl-P completion use several sources,
-	" so we just have to trigger it from the <Tab> binding and it returns
-	" completion results for all sources at once.
-	let g:likelycomplete#experimental = 1
-	let g:likelycomplete#list_set_filter = 1
-	let g:likelycomplete#auto_complete = 0
-	let g:likelycomplete#sources = ["likelycomplete", "words", "dictionaries",
-				\ "syntaxcomplete", "completefunc", "omnifunc"]
-	inoremap <expr><TAB> pumvisible() ? "\<C-n>" :
-				\ <SID>completion_check_bs() ? "\<TAB>" : "\<C-x><C-u>"
-
-	function! s:LikelyCompleteEnableByFileType(ft)
-		let l:enable = 1
-		for l:item in ["unite", "qf", "quickfix", "preview"]
-			if l:item == a:ft
-				let enable = 0
-				break
-			endif
-		endfor
-		if l:enable == 1
-			Likelycomplete
+	else
+		if exists("omnifunc") && &omnifunc != ""
+			return "\<C-x><C-o>"
+		elseif exists("completefunc") && &completefunc != ""
+			return "\<C-x><C-u>"
 		endif
-	endfunction
+	endif
+	return "\<C-p>"
+endfunction
 
-	augroup LikelyCompleteAutoEnable
-		autocmd FileType * call s:LikelyCompleteEnableByFileType(expand("<amatch>"))
-	augroup END
-elseif neobundle#is_sourced('vim-lift')
+if neobundle#is_sourced('vim-lift')
 	let g:lift#sources = { '_' : ['syntax', 'omni', 'near', 'user'] }
-	"let g:lift#sources = { '_' : ['syntax'] }
-	"let g:lift#sources = { '_' : ['syntax'],
-	"	\ 'python' : ['syntax', 'omni'] }
+	"let g:lift#close_preview_window = 1
 	inoremap <expr> <Tab> lift#trigger_completion()
 else
 	inoremap <expr> <Tab> <sid>simple_tab_completion(0)
@@ -245,7 +197,7 @@ endif
 if neobundle#is_sourced('YouCompleteMe')
 	let g:ycm_collect_identifiers_from_tags_files = 0
 	let g:ycm_seed_identifiers_with_syntax = 1
-	let g:ycm_add_preview_to_completeopt = 0
+	let g:ycm_add_preview_to_completeopt = 1
 	let g:ycm_auto_trigger = 0
 	let g:ycm_min_num_of_chars_for_completion = 6
 	let g:ycm_enable_diagnostic_signs = 1
@@ -356,15 +308,17 @@ endif " unite.vim
 " Plugin: Airline
 if neobundle#is_sourced('vim-airline')
 	let g:airline_powerline_fonts = 0
-	let g:airline_left_sep = ''
-	let g:airline_right_sep = ''
-	let g:airline_symbols = {
-				\ 'linenr'     : '◢',
-				\ 'branch'     : '≣',
-				\ 'paste'      : '⟂',
-				\ 'readonly'   : '⚠',
-				\ 'whitespace' : '␥',
-				\ }
+	if g:airline_powerline_fonts == 0
+		let g:airline_left_sep = ''
+		let g:airline_right_sep = ''
+		let g:airline_symbols = {
+					\ 'linenr'     : '◢',
+					\ 'branch'     : '≣',
+					\ 'paste'      : '⟂',
+					\ 'readonly'   : '⚠',
+					\ 'whitespace' : '␥',
+					\ }
+	endif
 	let g:airline_mode_map = {
 				\ '__' : '-',
 				\ 'n'  : 'N',
@@ -403,17 +357,10 @@ else
 	map <Space>   /
 endif " incsearch.vim
 
-" Plugin: multiple cursors
-if neobundle#is_sourced("vim-multiple-cursors") && neobundle#is_sourced("neocomplete.vim")
-	function! Multiple_cursors_before()
-		execute "NeoCompleteLock"
-		echo "Completion disabled"
-	endfunction
-	function! Multiple_cursors_after()
-		execute "NeoCompleteUnlock"
-		echo "Completion enabled"
-	endfunction
-endif " vim-multiple-cursors && neocomplete.vim
+" Plugin: Taskwarrior
+if neobundle#is_sourced('vim-taskwarrior')
+	let g:task_rc_override = 'rc.defaultwidth=999'
+endif
 
 
 " Tune defaults for some particular file types.
@@ -522,6 +469,7 @@ if has("syntax") || has("gui_running")
 		autocmd InsertLeave * syn clear WhitespaceEOL | syn match WhitespaceEOL excludenl /\s\+$/
 	augroup END
 endif
+
 
 " Let Vim be picky about syntax, so we are reported of glitches visually.
 let c_gnu                = 1
