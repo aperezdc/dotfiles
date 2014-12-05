@@ -151,7 +151,12 @@ esac
 
 if [[ ${COLORTERM} = gnome-terminal || ${COLORTERM} = drop-down-terminal || -n ${VTE_VERSION} ]] ; then
 	if [[ -n ${TMUX} ]] ; then
-		export TERM=screen-256color
+		export TERM='screen-256color'
+		if [[ -r /usr/share/terminfo/s/${TERM}-bce ]] ; then
+			export TERM="${TERM}-bce"
+		fi
+	elif [[ -n ${VTE_VERSION} && -r /usr/share/terminfo/g/gnome-256color ]] ; then
+		export TERM='gnome-256color'
 	else
 		export TERM='xterm-256color'
 	fi
