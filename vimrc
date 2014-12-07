@@ -10,7 +10,9 @@ endif
 " NeoVim needs some trickery to enable Python support
 if has("nvim")
 	runtime! python_setup.vim
-	set unnamedclip
+	if $DISPLAY != ''
+		set unnamedclip
+	endif
 endif
 
 let g:email = "aperez@igalia.com"
