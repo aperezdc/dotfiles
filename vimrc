@@ -48,7 +48,9 @@ if has("python")
 	NeoBundle 'davidhalter/jedi-vim'
 endif
 
-NeoBundle "aperezdc/vim-lift"
+NeoBundle 'vim-scripts/a.vim'
+NeoBundle 'qstrahl/vim-matchmaker'
+NeoBundle 'aperezdc/vim-lift'
 NeoBundle 'Shougo/vimproc.vim', {'build': {'unix': 'make'}}
 NeoBundle 'nsf/gocode', {'rtp': 'vim/'}
 NeoBundle 'aperezdc/vim-template'
@@ -73,7 +75,6 @@ NeoBundle 'bkad/CamelCaseMotion'
 NeoBundle 'othree/xml.vim'
 "NeoBundle 'sjl/gundo.vim'
 "NeoBundle 'katono/rogue.vim'
-NeoBundle 'calebsmith/vim-lambdify'
 NeoBundle 'haya14busa/incsearch.vim'
 NeoBundle 'godlygeek/tabular'
 NeoBundle 'aperezdc/vim-wcfg'
@@ -193,6 +194,11 @@ if neobundle#is_sourced('vim-lift')
 	inoremap <expr> <Tab> lift#trigger_completion()
 else
 	inoremap <expr> <Tab> <sid>simple_tab_completion(0)
+endif
+
+" Plugin: MatckMaker
+if neobundle#is_sourced('vim-matchmaker')
+    let g:matchmaker_enable_startup = 1
 endif
 
 " Plugin: YouCompleteMe
