@@ -9,9 +9,11 @@ call neobundle#begin(expand('~/.vim/bundle'))
 NeoBundleFetch 'Shougo/neobundle.vim'
 NeoBundle 'tpope/vim-sensible'
 NeoBundle 'bling/vim-airline'
-NeoBundle 'ledger/vim-ledger'
 NeoBundle 'qstrahl/vim-matchmaker'
 NeoBundle 'aperezdc/vim-lift', {
+			\   'type': 'nosync',
+			\ }
+NeoBundle 'aperezdc/vim-template', {
 			\   'type': 'nosync',
 			\ }
 NeoBundleLazy 'vim-scripts/a.vim', {
@@ -27,7 +29,12 @@ NeoBundleLazy 'jamessan/vim-gnupg', {
 NeoBundleLazy 'aperezdc/vim-wcfg', {
 			\   'type' : 'nosync',
 			\   'autoload' : {
-			\     'filetypes' : ['wcfg'],
+			\     'filetypes' : 'wcfg',
+			\   },
+			\ }
+NeoBundleLazy 'ledger/vim-ledger', {
+			\   'autoload' : {
+			\     'filetypes' : 'ledger',
 			\   },
 			\ }
 NeoBundleLazy 'vim-scripts/gtk-vim-syntax', {
@@ -35,17 +42,51 @@ NeoBundleLazy 'vim-scripts/gtk-vim-syntax', {
 			\     'filetypes' : ['c', 'cpp'],
 			\   },
 			\ }
-NeoBundleLazy 'davidhalter/jedi-vim', {
+NeoBundleLazy 'Rip-Rip/clang_complete', {
+			\   'build' : { 'unix': 'make' },
 			\   'autoload' : {
-			\     'filetypes': ['python'],
+			\     'filetypes' : ['c', 'cpp'],
 			\   },
 			\ }
+NeoBundleLazy 'davidhalter/jedi-vim', {
+			\   'autoload' : {
+			\     'filetypes': 'python',
+			\   },
+			\ }
+NeoBundleLazy 'godlygeek/tabular', {
+			\   'autoload' : {
+			\     'commands' : 'Tabularize',
+			\   },
+			\ }
+NeoBundleLazy 'Shougo/vimproc.vim', {
+			\   'build' : { 'unix' : 'make' },
+			\ }
+NeoBundleLazy 'Shougo/unite.vim', {
+			\   'depends' : 'Shougo/vimproc.vim',
+			\   'autoload' : {
+			\     'commands' : ['Unite', 'UniteResume'],
+			\   },
+			\ }
+NeoBundleLazy 'Shougo/unite-outline'
+NeoBundleLazy 'Shougo/neomru.vim', {
+			\   'autoload' : {
+			\     'unite_sources' : 'neomru/file',
+			\   },
+			\ }
+
+let bundle = neobundle#get('unite.vim')
+function! bundle.hooks.on_post_source(bundle)
+	call unite#custom#profile('default', 'context', { 'prompt': '% ' })
+	call unite#filters#matcher_default#use(['matcher_fuzzy'])
+endfunction
 call neobundle#end()
 
 syntax on
 colorscheme elflord
 filetype indent plugin on
 
+set smartcase
+set ignorecase
 set tabstop=4
 set shiftwidth=4
 set copyindent
@@ -55,7 +96,7 @@ set nowrap
 set showmode
 set textwidth=78
 set fileformats=unix,mac,dos
-set completeopt+=longest
+set completeopt-=longest
 set infercase
 set diffopt+=iwhite
 set nobackup
@@ -72,6 +113,7 @@ endif
 
 
 if neobundle#is_sourced('vim-lift')
+    let g:lift#sources = { '_': ['near', 'omni', 'user', 'syntax'] }
 	inoremap <expr> <Tab> lift#trigger_completion()
 else
 	function! s:completion_check_bs()
@@ -175,6 +217,7 @@ if exists('/usr/share/clang/clang-format.py') && executable('clang-format')
 endif
 
 
+" Plugin: Airline
 if neobundle#is_sourced('vim-airline')
 	let g:airline_powerline_fonts = 0
 	let g:airline_left_sep = ''
@@ -189,9 +232,41 @@ if neobundle#is_sourced('vim-airline')
 endif
 
 
+" Plugin: Matchmaker
 if neobundle#is_sourced('vim-matchmaker')
-	autocmd InsertEnter * Matchmaker
-	autocmd InsertLeave * Matchmaker!
+	autocmd InsertEnter * Matchmaker!
+	autocmd InsertLeave * Matchmaker
+    autocmd BufNew,BufEnter * Matchmaker
 endif
+
+
+" Plugin: Unite
+let g:unite_enable_start_insert = 1
+let g:unite_source_file_mru_limit = 350
+nnoremap <silent> <leader>f :<C-u>Unite file_rec/async file/new -buffer-name=Files<cr>
+nnoremap <silent> <leader>d :<C-u>Unite buffer bookmark file/async -buffer-name=Files\ (misc)<cr>
+nnoremap <silent> <leader>F :<C-u>Unite file_rec/git:--cached:--others:--exclude-standard file/new -buffer-name=Files\ (Git)<cr>
+nnoremap <silent> <leader>m :<C-u>Unite neomru/file -buffer-name=MRU\ Files<cr>
+nnoremap <silent> <leader>b :<C-u>Unite buffer -buffer-name=Buffers<cr>
+nnoremap <silent> <leader>J :<C-u>Unite jump -buffer-name=Jump\ Locations<cr>
+nnoremap <silent> <leader>o :<C-u>Unite outline -buffer-name=Outline<cr>
+nnoremap <silent> <leader>O :<C-u>Unite outline -no-split -buffer-name=Outline<cr>
+
+if executable('ag')
+	let g:unite_source_grep_command = 'ag'
+	let g:unite_source_grep_default_opts = '-i --line-numbers --nocolor --nogroup --noheading'
+	let g:unite_source_grep_recursive_opt = ''
+elseif executable('ack')
+	let g:unite_source_grep_command = 'ack'
+	let g:unite_source_grep_default_opts = '-i --no-heading --no-color -k -H'
+	let g:unite_source_grep_recursive_opt = ''
+endif
+nnoremap <silent> <leader>g :<C-u>Unite grep:. -buffer-name=Find<cr>
+nnoremap <silent> <leader>L :<C-u>UniteResume<cr>
+
+" Plugin: clang_complete
+let g:clang_library_path = '/usr/lib/libclang.so'
+let g:clang_make_default_keymappings = 0
+
 
 NeoBundleCheck
