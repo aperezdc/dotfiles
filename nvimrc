@@ -4,12 +4,16 @@ if has('vim_starting')
 	set runtimepath+=~/.vim/bundle/neobundle.vim
 endif
 
+let g:email = "aperez@igalia.com"
+let g:user  = "Adrian Perez"
 
 call neobundle#begin(expand('~/.vim/bundle'))
 NeoBundleFetch 'Shougo/neobundle.vim'
 NeoBundle 'tpope/vim-sensible'
 NeoBundle 'bling/vim-airline'
-NeoBundle 'qstrahl/vim-matchmaker'
+NeoBundle 'nathanaelkane/vim-indent-guides'
+NeoBundle 'ntpeters/vim-better-whitespace'
+NeoBundle 'gcmt/wildfire.vim'
 NeoBundle 'aperezdc/vim-lift', {
 			\   'type': 'nosync',
 			\ }
@@ -71,6 +75,11 @@ NeoBundleLazy 'Shougo/unite-outline'
 NeoBundleLazy 'Shougo/neomru.vim', {
 			\   'autoload' : {
 			\     'unite_sources' : 'neomru/file',
+			\   },
+			\ }
+NeoBundleLazy 't9md/vim-quickhl', {
+			\   'autoload' : {
+			\     'mappings' : '<Plug>(quickhl-',
 			\   },
 			\ }
 
@@ -199,16 +208,21 @@ map <C-t> <C-]>
 map <C-p> :pop<cr>
 map __ ZZ
 
-"
+
+augroup vimrc
+	autocmd!
+augroup END
+
+
 " Jump to the last edited position in the file being loaded (if available)
-autocmd BufReadPost *
+autocmd vimrc BufReadPost *
 			\ if line("'\"") > 0 && line("'\"") <= line("$") |
 			\		execute "normal g'\"" |
 			\ endif
-autocmd FileType objc setlocal expandtab cinoptions+=(0
-autocmd FileType cpp setlocal expandtab cinoptions+=(0
-autocmd FileType c setlocal expandtab cinoptions+=(0
-autocmd FileType d setlocal expandtab cinoptions+=(0
+autocmd vimrc FileType objc setlocal expandtab cinoptions+=(0
+autocmd vimrc FileType cpp setlocal expandtab cinoptions+=(0
+autocmd vimrc FileType c setlocal expandtab cinoptions+=(0
+autocmd vimrc FileType d setlocal expandtab cinoptions+=(0
 
 
 if exists('/usr/share/clang/clang-format.py') && executable('clang-format')
@@ -231,12 +245,14 @@ if neobundle#is_sourced('vim-airline')
 	let g:airline#extensions#tabline#buffer_min_count = 2
 endif
 
-
-" Plugin: Matchmaker
-if neobundle#is_sourced('vim-matchmaker')
-	autocmd InsertEnter * Matchmaker!
-	autocmd InsertLeave * Matchmaker
-    autocmd BufNew,BufEnter * Matchmaker
+" Plugin: Indent Guides
+if neobundle#is_sourced('vim-indent-guides')
+	let g:indent_guides_enable_on_vim_startup = 1
+	let g:indent_guides_guide_size = 1
+	let g:indent_guides_start_level = 2
+	let g:indent_guides_auto_colors = 0
+	highlight IndentGuidesOdd  ctermbg=234
+	highlight IndentGuidesEven ctermbg=233
 endif
 
 
@@ -267,6 +283,14 @@ nnoremap <silent> <leader>L :<C-u>UniteResume<cr>
 " Plugin: clang_complete
 let g:clang_library_path = '/usr/lib/libclang.so'
 let g:clang_make_default_keymappings = 0
+
+
+" Plugin: quickhl
+nmap <leader>h <Plug>(quickhl-manual-this)
+xmap <leader>h <Plug>(quickhl-manual-this)
+nmap <leader>H <Plug>(quickhl-manual-reset)
+xmap <leader>H <Plug>(quickhl-manual-reset)
+nmap <leader>j <Plug>(quickhl-cword-toggle)
 
 
 NeoBundleCheck
