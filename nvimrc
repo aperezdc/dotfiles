@@ -14,6 +14,7 @@ NeoBundle 'bling/vim-airline'
 NeoBundle 'nathanaelkane/vim-indent-guides'
 NeoBundle 'ntpeters/vim-better-whitespace'
 NeoBundle 'gcmt/wildfire.vim'
+NeoBundle 'jamessan/vim-gnupg'
 NeoBundle 'aperezdc/vim-lift', {
 			\   'type': 'nosync',
 			\ }
@@ -25,9 +26,9 @@ NeoBundleLazy 'vim-scripts/a.vim', {
 			\     'commands' : ['A', 'AS', 'AV', 'IH', 'IHS', 'IHV'],
 			\   },
 			\ }
-NeoBundleLazy 'jamessan/vim-gnupg', {
+NeoBundleLazy 'tyru/caw.vim', {
 			\   'autoload' : {
-			\     'filetypes' : ['gpg', 'gnupg'],
+			\     'mappings' : '<Plug>(caw:',
 			\   },
 			\ }
 NeoBundleLazy 'aperezdc/vim-wcfg', {
@@ -47,7 +48,6 @@ NeoBundleLazy 'vim-scripts/gtk-vim-syntax', {
 			\   },
 			\ }
 NeoBundleLazy 'Rip-Rip/clang_complete', {
-			\   'build' : { 'unix': 'make' },
 			\   'autoload' : {
 			\     'filetypes' : ['c', 'cpp'],
 			\   },
@@ -225,11 +225,16 @@ autocmd vimrc FileType c setlocal expandtab cinoptions+=(0
 autocmd vimrc FileType d setlocal expandtab cinoptions+=(0
 
 
-if exists('/usr/share/clang/clang-format.py') && executable('clang-format')
+if exists('/usr/share/clang/clang-format.py')
 	map  <C-k>      :pyf /usr/share/clang/clang-format.py<cr>
 	imap <C-k> <Esc>:pyf /usr/share/clang/clang-format.py<cr>i
 endif
 
+
+" Plugin: caw
+let g:caw_no_default_keymappings = 1
+nmap <leader>c <Plug>(caw:i:toggle)
+xmap <leader>c <Plug>(caw:i:toggle)
 
 " Plugin: Airline
 if neobundle#is_sourced('vim-airline')
@@ -247,14 +252,17 @@ endif
 
 " Plugin: Indent Guides
 if neobundle#is_sourced('vim-indent-guides')
+	let g:indent_guides_exclude_filetypes = ['help', 'unite', 'qf']
 	let g:indent_guides_enable_on_vim_startup = 1
-	let g:indent_guides_guide_size = 1
-	let g:indent_guides_start_level = 2
+	"let g:indent_guides_guide_size = 1
+	let g:indent_guides_start_level = 1
 	let g:indent_guides_auto_colors = 0
-	highlight IndentGuidesOdd  ctermbg=234
+	highlight IndentGuidesOdd  ctermbg=black
 	highlight IndentGuidesEven ctermbg=233
 endif
 
+" Plugin: better-whitespace
+let g:better_whitespace_filetypes_blacklist = ['help', 'unite', 'qf']
 
 " Plugin: Unite
 let g:unite_enable_start_insert = 1
@@ -291,6 +299,5 @@ xmap <leader>h <Plug>(quickhl-manual-this)
 nmap <leader>H <Plug>(quickhl-manual-reset)
 xmap <leader>H <Plug>(quickhl-manual-reset)
 nmap <leader>j <Plug>(quickhl-cword-toggle)
-
 
 NeoBundleCheck
