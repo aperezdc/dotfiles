@@ -8,10 +8,6 @@ fi
 autoload -Uz compinit
 compinit
 
-if [[ -x /usr/bin/clyde && -x /usr/bin/pacman ]] ; then
-	compdef clyde=pacman
-fi
-
 # End of lines added by compinstall
 # Lines configured by zsh-newuser-install
 HISTFILE=~/.histfile
@@ -108,7 +104,6 @@ zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
 zstyle ':completion:*:killall:*' force-list always
 zstyle ':completion:*:kill:*' force-list always
 
-
 FMT_BRANCH="%{$fg[cyan]%}%b%u%c%{$fg[default]%}" # e.g. master¹²
 FMT_ACTION="·%{$fg[green]%}%a%{$fg[default]%}"   # e.g. (rebase)
 
@@ -152,9 +147,6 @@ esac
 if [[ ${COLORTERM} = gnome-terminal || ${COLORTERM} = drop-down-terminal || -n ${VTE_VERSION} ]] ; then
 	if [[ -n ${TMUX} ]] ; then
 		export TERM='screen-256color'
-		if [[ -r /usr/share/terminfo/s/${TERM}-bce ]] ; then
-			export TERM="${TERM}-bce"
-		fi
 	elif [[ -n ${VTE_VERSION} && -r /usr/share/terminfo/g/gnome-256color ]] ; then
 		export TERM='gnome-256color'
 	else
@@ -237,6 +229,7 @@ fi
 
 # Python virtualenvwrapper
 if [ -r /usr/bin/virtualenvwrapper.sh ] ; then
+	export VIRTUALENVWRAPPER_PYTHON=python3
 	export WORKON_HOME=~/.venv.d
 	#export VIRTUALENV_DISTRIBUTE=1
 	if [ ! -d "${WORKON_HOME}" ] ; then
@@ -295,8 +288,4 @@ if [[ -r /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.
 	ZSH_HIGHLIGHT_STYLES[builtin]='fg=yellow,bold'
 	ZSH_HIGHLIGHT_STYLES[alias]='fg=yellow,bold'
 	#ZSH_HIGHLIGHT_STYLES[path]='fg=underline'
-fi
-
-if [[ -d ~/.dotfiles/deer ]] ; then
-	source ~/.dotfiles/deer/deer
 fi
