@@ -53,6 +53,21 @@ GYP_DEFINES : ${GYP_DEFINES}
 
 EOF
 
+builddir=out/Debug
+if [[ -n $1 ]] ; then
+	case $1 in
+		rel | release | Release)
+			builddir=out/Release
+			;;
+		dbg | debug | Debug)
+			;;
+		*)
+			echo 'Usage: $0 [release | debug]' 1>&2
+			exit 1
+			;;
+	esac
+fi
+
 set -x
 ./build/gyp_v8                     \
   -Dconsole=readline               \
@@ -72,4 +87,4 @@ set -x
   -Dlinux_use_gold_flags=1         \
   -Dlinux_use_debug_fission=0
 
-exec ninja -C out/Debug ${makej}
+exec ninja -C ${builddir} ${makej}
