@@ -5,86 +5,320 @@
 #
 # Distributed under terms of the MIT license.
 #
+set -e
 
-: ${CLANG:=1}
-: ${ICECC:=0}
-: ${ASAN:=0}
+# Toolchain to use: 'clang' or 'gcc'
+compiler='clang'
 
-makej="-j4"
+# Build system to use: 'make' or 'ninja'
+builder='make'
 
-if [[ -n ${ASAN} && ${ASAN} -ne 0 ]] ; then
-	CLANG=/usr/bin
-	export ASAN_SYMBOLIZER_PATH="$CLANG/llvm-symbolizer"
-	export CXX="$CLANG/clang++ -fsanitize=address -ferror-limit=1 -Qunused-arguments -stdlib=libc++"
-	export CXX_host=${CXX}
-	export LINK="$CLANG/clang++ -fsanitize=address -stdlib=libc++ -lc++abi"
-	export CXXFLAGS="-O1 -fno-omit-frame-pointer -g"
-	export CXXFLAGS_host=${CXXFLAGS}
-	asan="asan=${CLANG}/clang++"
-elif [[ -n ${ICECC} && ${ICECC} -ne 0 ]] ; then
-  # IceCC does not play well with clang
-  export CC=gcc
-  export CXX=g++
-  export LINK=g++
-	export CCACHE_PREFIX=/usr/lib/icecream/bin/icecc
-  if [[ -z ${ICECC_VERSION} ]] ; then
-    export ICECC_VERSION="$(pwd)/$(/usr/lib/icecream/bin/icecc --build-native 2>&1 |tee /dev/stderr|grep creating|awk '{print $2}')"
+# Build type: 'release' or 'debug'
+buildtype='debug'
+
+# Whether to use Icrecream (IceCC) to do a distributed build.
+# Setting to true forces compiler='gcc', and builder='ninja' above.
+use_icecc=false
+
+# Whether to use clang's Address Sanitizer (ASAN).
+# Setting to true forces compiler='clang' above
+use_asan=false
+
+# Number of parallel jobs. By default, it's set to the number of online
+# CPUs. When doing a distributed build, this is multiplied by five.
+parallel_jobs=$(getconf _NPROCESSORS_ONLN)
+
+
+declare -r clang_opts=(
+  '-ferror-limit=1'
+  '-Qunused-arguments'
+)
+declare -r clang_asan_opts=(
+  '-g'
+  '-O1'
+  '-fsanitize=address'
+  '-fno-omit-frame-pointer'
+)
+declare -r clang_libcxx_opts=(
+  '-stdlib=libc++'
+)
+declare -r link_libcxx_opts=(
+  "${clang_libcxx_opts[@]}"
+  '-lc++abi'
+)
+declare -a options=(
+  'console=readline'
+  'werror=no'
+  'disassembler=on'
+  'objectprint=on'
+  'verifyheap=on'
+  'backtrace=on'
+  'verifypredictable=on'
+  'extrachecks=on'
+  'slowdchecks=on'
+  'gdbjit=on'
+  'deprecationwarnings=on'
+)
+declare -a build_opts=( )
+
+declare -a gyp_cli_options=( )
+declare -a gyp_env_defines=(
+  'linux_use_bundled_binutils=0'
+  'linux_use_bundled_gold=0'
+  'linux_use_gold_flags=1'
+  'linux_use_debug_fission=0'
+)
+
+# Those manipulate the two previous variables.
+gyp_envd () {
+  if [[ -n $1 ]] ; then
+    gyp_env_defines=( "${gyp_env_defines[@]}" "$1" )
   fi
-	makej="-j24"
-elif [[ -n ${CLANG} && ${CLANG} -ne 0 ]] ; then
-	export CC='clang -ferror-limit=1 -Qunused-arguments -stdlib=libc++'
-	export CXX='clang++ -ferror-limit=1 -Qunused-arguments -stdlib=libc++'
-	export LINK='clang++ -stdlib=libc++ -lc++abi'
-	export GYP_DEFINES="${GYP_DEFINES} clang=1"
-	werror='werror=no'
+}
+gyp_flag () {
+  if [[ -n $1 ]] ; then
+    gyp_cli_options=( "${gyp_cli_options[@]}" "$1" )
+  fi
+}
+
+
+on_off () {
+  case $1 in
+    off) echo 0 ;;
+    on ) echo 1 ;;
+    *  ) die "Invalid on/off value: $1" ;;
+  esac
+}
+
+
+info () {
+  printf -- "[1;1m%10s[0;0m → %s\n" "$1" "$2"
+}
+
+
+die () {
+  echo "$*" 1>&2
+  exit 1
+}
+
+
+setup_icecc () {
+  if ${use_asan} ; then
+    die "Cannot use --asan and --icecc at the same time"
+  fi
+
+	export CCACHE_PREFIX=/usr/lib/icecream/bin/icecc
+  if [[ -n ${ICECC_VERSION} ]] ; then
+    info "icecc" "Using preset toolchain"
+  else
+    info "icecc" "Creating toolchain tarball"
+    export ICECC_VERSION="$(pwd)/$(/usr/lib/icecream/bin/icecc --build-native 2>&1 |awk '/^creating/{print $2}')"
+  fi
+  info "icecc" "${ICECC_VERSION}"
+
+  parallel_jobs=$(( parallel_jobs * 5 ))
+  compiler='gcc'
+}
+
+
+setup_asan () {
+  if ${use_icecc} ; then
+    die "Cannot use --asan and --icecc at the same time"
+  fi
+
+  local clang_dir=$(dirname "$(which clang)")
+  if [[ -z ${ASAN_SYMBOLIZER_PATH} ]] ; then
+    ASAN_SYMBOLIZER_PATH="${clang_dir}/llvm-symbolizer"
+  fi
+
+  [[ -x ${ASAN_SYMBOLIZER_PATH} ]] \
+    || die "${ASAN_SYMBOLIZER_PATH}: missing or it is not executable"
+  export ASAN_SYMBOLIZER_PATH
+
+  CXX="${clang_dir}/clang++ ${clang_opts[*]} ${clang_asan_opts[*]} ${clang_libcxx_opts[*]}"
+  LINK="${clang_dir}/clang++ ${clang_asan_opts[*]} ${link_libcxx_opts[*]}"
+
+  gyp_envd 'asan=1'
+  compiler='clang'
+  builder='make'
+}
+
+
+setup_compiler_clang () {
+  [[ -n ${LINK} ]] || LINK="clang ${clang_opts[*]}"
+  [[ -n ${CXX} ]] || CXX="clang ${clang_opts[*]}"
+  gyp_envd 'clang=1'
+  export CXX LINK
+}
+
+
+setup_compiler_gcc () {
+  [[ -n ${LINK} ]] || LINK="g++"
+  [[ -n ${CXX} ]] || CXX="g++"
+  gyp_envd 'clang=0'
+  export CXX LINK
+}
+
+
+setup_builder_ninja () {
+  if [[ ${buildtype} = debug ]] ; then
+    build_opts=( "${build_opts[@]}" '-C' 'out/Debug' )
+  else
+    build_opts=( "${build_opts[@]}" '-C' 'out/Release' )
+  fi
+  export GYP_GENERATORS='ninja'
+}
+
+
+setup_builder_make () {
+  if [[ ${buildtype} = debug ]] ; then
+    build_opts=( "${build_opts[@]}" 'x64.debug' )
+  else
+    build_opts=( "${build_opts[@]}" 'x64.release' )
+  fi
+}
+
+
+build_gyp_cli_options () {
+  local item
+
+  for item in "${gyp_defs[@]}" ; do
+    gyp_cli_options=( "${gyp_cli_options[@]}" "-D${item}" )
+  done
+
+  for item in "${options[@]}" ; do
+    case ${item} in
+      console=*)
+        gyp_flag "-D${item}"
+        ;;
+      werror=*)
+        v=${item#*=}
+        if [[ ${v} = no ]] ; then
+          gyp_flag '-Dwerror='
+        elif [[ ${v} != yes ]] ; then
+          gyp_flag "-Dwerror='${v}'"
+        fi
+        ;;
+      disassembler=* | backtrace=* | gdbjit=*)
+        gyp_flag "-Dv8_enable_${item%%=*}=$(on_off ${item#*=})"
+        ;;
+      verifypredictable=*)
+        gyp_flag "-Dv8_enable_verify_predictable=$(on_off ${item#*=})"
+        ;;
+      verifyheap=*)
+        gyp_flag "-Dv8_enable_verify_heap=$(on_off ${item#*=})"
+        ;;
+      objectprint=*)
+        gyp_flag "-Dv8_object_print=$(on_off ${item#*=})"
+        ;;
+      extrachecks=*)
+        gyp_flag "-Ddcheck_always_on=$(on_off ${item#*=})"
+        gyp_flag "-Dv8_enable_handle_zapping=$(on_off ${item#*=})"
+        ;;
+      slowdchecks=*)
+        gyp_flag "-Dv8_enable_slow_dchecks=$(on_off ${item#*=})"
+        ;;
+      deprecationwarnings=*)
+        gyp_flag "-Dv8_deprecation_warnings=$(on_off ${item#*=})"
+        ;;
+    esac
+  done
+}
+
+
+build_ninja () {
+  build_gyp_cli_options
+  ./build/gyp_v8 "${gyp_cli_options[@]}"
+  ln -fs Debug out/x64.debug
+  ln -fs Release out/x64.release
+  exec ninja -j${parallel_jobs} "${build_opts[@]}"
+}
+
+
+build_make () {
+  exec make -j${parallel_jobs} "${options[@]}" "${build_opts[@]}"
+}
+
+
+do_help () {
+  cat <<EOM
+Usage: $(basename "$0") [options]
+
+Available options:
+
+  --jobs=N           Use N parallel jobs.
+  --debug, --dbg     Make a debug build.
+  --release, --rel   Make a release build.
+  --clang            Build with Clang (usually the default).
+  --gcc              Build with GCC.
+  --make             Use Make as build system (default).
+  --ninja            Use Ninja as build system.
+  --icecc            Use IceCC to do a distributed build (forces --gcc).
+  --asan             Build with Clang's Address Sanitizer (forces --clang).
+
+Unrecognized options are passed down to the build system.
+
+EOM
+}
+
+
+for flag in "$@"
+do
+  case ${flag} in
+    --jobs=*)
+      parallel_jobs=${flag#*=}
+      ;;
+    --debug | --dbg)
+      buildtype='debug'
+      ;;
+    --release | --rel)
+      buildtype='release'
+      ;;
+    --clang)
+      compiler='clang'
+      ;;
+    --gcc)
+      compiler='gcc'
+      ;;
+    --ninja)
+      builder='ninja'
+      ;;
+    --make)
+      builder='make'
+      ;;
+    --icecc)
+      use_icecc=true
+      ;;
+    --asan)
+      use_asan=true
+      ;;
+    --help)
+      do_help
+      exit 0
+      ;;
+    *)
+      # Pass down unrecognized flags to the builder.
+      build_opts=( "${build_opts[@]}" "${flag}" )
+      ;;
+  esac
+done
+
+
+if ${use_icecc} ; then
+  setup_icecc
 fi
-export GYP_GENERATORS=ninja
-
-cat <<EOF
-
-CLANG ..... : ${CLANG}
-ICECC ..... : ${ICECC}
-ASAN ...... : ${ASAN}
-CC ........ : ${CC}
-CXX ....... : ${CXX}
-CXXFLAGS .. : ${CXXFLAGS}
-LINK ...... : ${LINK}
-GYP_DEFINES : ${GYP_DEFINES}
-
-EOF
-
-builddir=out/Debug
-if [[ -n $1 ]] ; then
-	case $1 in
-		rel | release | Release)
-			builddir=out/Release
-			;;
-		dbg | debug | Debug)
-			;;
-		*)
-			echo 'Usage: $0 [release | debug]' 1>&2
-			exit 1
-			;;
-	esac
+if ${use_asan} ; then
+  setup_asan
 fi
+setup_compiler_${compiler}
+setup_builder_${builder}
+export GYP_DEFINES=${gyp_env_defines[*]}
 
-set -x
-./build/gyp_v8                     \
-  -Dconsole=readline               \
-  -Dwerror=''                      \
-  -Dv8_enable_disassembler=1       \
-  -Dv8_object_print=1              \
-  -Dv8_enable_verify_heap=1        \
-  -Dv8_enable_backtrace=1          \
-  -Dv8_enable_verify_predictable=1 \
-  -Ddcheck_always_on=1             \
-  -Dv8_enable_handle_zapping=1     \
-  -Dv8_enable_slow_dchecks=1       \
-  -Dv8_enable_gdbjit=1             \
-  -Dv8_deprecation_warnings=1      \
-  -Dlinux_use_bundled_binutils=0   \
-  -Dlinux_use_bundled_gold=0       \
-  -Dlinux_use_gold_flags=1         \
-  -Dlinux_use_debug_fission=0
+info "build" "${buildtype}"
+info "jobs" "${parallel_jobs}"
+for item in "${gyp_env_defines[@]}" ; do info "env:gyp" "${item}" ; done
+info "env:LINK" "${LINK}"
+info "env:CXX" "${CXX}"
+echo
 
-exec ninja -C ${builddir} ${makej}
+build_${builder}
