@@ -145,18 +145,20 @@ setup_asan () {
 
 
 setup_compiler_clang () {
-  [[ -n ${LINK} ]] || LINK="clang ${clang_opts[*]}"
-  [[ -n ${CXX} ]] || CXX="clang ${clang_opts[*]}"
+  [[ -n ${LINK} ]] || LINK="clang++ ${clang_opts[*]}"
+  [[ -n ${CXX} ]] || CXX="clang++ ${clang_opts[*]}"
+  [[ -n ${CC} ]] || CC="clang ${clang_opts[*]}"
   gyp_envd 'clang=1'
-  export CXX LINK
+  export CC CXX LINK
 }
 
 
 setup_compiler_gcc () {
   [[ -n ${LINK} ]] || LINK="g++"
   [[ -n ${CXX} ]] || CXX="g++"
+  [[ -n ${CC} ]] || CC="gcc"
   gyp_envd 'clang=0'
-  export CXX LINK
+  export CC CXX LINK
 }
 
 
@@ -319,6 +321,7 @@ info "jobs" "${parallel_jobs}"
 for item in "${gyp_env_defines[@]}" ; do info "env:gyp" "${item}" ; done
 info "env:LINK" "${LINK}"
 info "env:CXX" "${CXX}"
+info "env:CC" "${CC}"
 echo
 
 build_${builder}
