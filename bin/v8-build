@@ -312,6 +312,9 @@ done
 if [[ ${buildtype} = debug ]] ; then
   options=( "${options[@]}" 'extrachecks=on' 'slowdchecks=on' )
 fi
+
+if ${use_icecc} ; then setup_icecc ; fi
+if ${use_asan}  ; then setup_asan  ; fi
 setup_compiler_${compiler}
 setup_builder_${builder}
 export GYP_DEFINES=${gyp_env_defines[*]}
