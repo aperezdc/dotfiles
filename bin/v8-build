@@ -54,9 +54,7 @@ declare -a options=(
   'verifyheap=on'
   'backtrace=on'
   'verifypredictable=on'
-  'extrachecks=on'
-  'slowdchecks=on'
-  'gdbjit=on'
+  'gdbjit=off'
   'deprecationwarnings=on'
 )
 declare -a build_opts=( )
@@ -306,11 +304,9 @@ do
 done
 
 
-if ${use_icecc} ; then
-  setup_icecc
-fi
-if ${use_asan} ; then
-  setup_asan
+# Add extra checks in debug builds.
+if [[ ${buildtype} = debug ]] ; then
+  options=( "${options[@]}" 'extrachecks=on' 'slowdchecks=on' )
 fi
 setup_compiler_${compiler}
 setup_builder_${builder}
