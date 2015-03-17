@@ -32,10 +32,10 @@ NeoBundleLazy 'tyru/caw.vim', {
 			\     'mappings' : '<Plug>(caw:',
 			\   },
 			\ }
-NeoBundleLazy 'aperezdc/vim-wcfg', {
+NeoBundleLazy 'aperezdc/hipack-vim', {
 			\   'type' : 'nosync',
 			\   'autoload' : {
-			\     'filetypes' : 'wcfg',
+			\     'filetypes' : 'hipack',
 			\   },
 			\ }
 NeoBundleLazy 'ledger/vim-ledger', {
