@@ -1,7 +1,7 @@
 #! /bin/bash
 #
 # v8-build
-# Copyright (C) 2013 Adrian Perez <aperez@igalia.com>
+# Copyright (C) 2013-2015 Adrian Perez <aperez@igalia.com>
 #
 # Distributed under terms of the MIT license.
 #
@@ -126,7 +126,11 @@ setup_asan () {
 
   local clang_dir=$(dirname "$(which clang)")
   if [[ -z ${ASAN_SYMBOLIZER_PATH} ]] ; then
-    ASAN_SYMBOLIZER_PATH="${clang_dir}/llvm-symbolizer"
+    if [[ -x /usr/bin/llvm-symbolizer ]] ; then
+      ASAN_SYMBOLIZER_PATH=/usr/bin/llvm-symbolizer
+    else
+      ASAN_SYMBOLIZER_PATH="${clang_dir}/llvm-symbolizer"
+    fi
   fi
 
   [[ -x ${ASAN_SYMBOLIZER_PATH} ]] \
