@@ -13,6 +13,7 @@ NeoBundle 'tpope/vim-sensible'
 NeoBundle 'bling/vim-airline'
 NeoBundle 'nathanaelkane/vim-indent-guides'
 NeoBundle 'ntpeters/vim-better-whitespace'
+NeoBundle 'chrisbra/vim-diff-enhanced'
 NeoBundle 'gcmt/wildfire.vim'
 NeoBundle 'jamessan/vim-gnupg'
 NeoBundle 'aperezdc/vim-lift', {
@@ -219,6 +220,7 @@ autocmd vimrc BufReadPost *
 			\ if line("'\"") > 0 && line("'\"") <= line("$") |
 			\		execute "normal g'\"" |
 			\ endif
+autocmd vimrc FileType markdown setlocal expandtab tabstop=2 shiftwidth=2
 autocmd vimrc FileType objc setlocal expandtab cinoptions+=(0
 autocmd vimrc FileType cpp setlocal expandtab cinoptions+=(0
 autocmd vimrc FileType c setlocal expandtab cinoptions+=(0
