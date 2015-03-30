@@ -84,6 +84,7 @@ NeoBundleLazy 't9md/vim-quickhl', {
 			\   },
 			\ }
 
+let g:neobundle#types#git#enable_submodule = 1
 let bundle = neobundle#get('unite.vim')
 function! bundle.hooks.on_post_source(bundle)
 	call unite#custom#profile('default', 'context', { 'prompt': '% ' })
