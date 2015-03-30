@@ -72,7 +72,11 @@ NeoBundleLazy 'Shougo/unite.vim', {
 			\     'commands' : ['Unite', 'UniteResume'],
 			\   },
 			\ }
-NeoBundleLazy 'Shougo/unite-outline'
+NeoBundleLazy 'Shougo/unite-outline', {
+			\   'autoload' : {
+			\     'unite_sources' : 'outline',
+			\   },
+			\ }
 NeoBundleLazy 'Shougo/neomru.vim', {
 			\   'autoload' : {
 			\     'unite_sources' : 'neomru/file',
