@@ -209,6 +209,8 @@ map <C-t> <C-]>
 map <C-p> :pop<cr>
 map __ ZZ
 
+" Make double Ctrl-t exit insert mode in terminals.
+tnoremap <C-t><C-t> <C-\><C-n>
 
 augroup vimrc
 	autocmd!
