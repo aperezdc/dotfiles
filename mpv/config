@@ -6,12 +6,19 @@ framedrop=vo
 use-filedir-conf=yes
 embeddedfonts=yes
 sub-ass=yes
-osd-font="Clear Sans"
-sub-text-font="Clear Sans"
+osd-font="Open Sans"
+sub-text-font="Apres Bold"
 ass-hinting=native
 screenshot-format=png
 #ao=pulse,alsa
-vo=vaapi,opengl,xv,wayland,sdl,x11
-hwdec=auto
+vo=opengl-hq,opengl,xv,vaapi,wayland,sdl,x11
 #vo=xv,opengl,wayland,sdl,x11
-#hwdec=auto
+
+[vo.vaapi]
+hwdec=vaapi
+
+[vo.opengl]
+hwdec=vaapi
+
+[vo.opengl-hq]
+hwdec=vaapi
