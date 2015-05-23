@@ -48,6 +48,11 @@ NeoBundleLazy 'vim-scripts/gtk-vim-syntax', {
 			\     'filetypes' : ['c', 'cpp'],
 			\   },
 			\ }
+NeoBundleLazy 'othree/yajs.vim', {
+			\   'autoload' : {
+			\     'filetypes' : 'javascript',
+			\   },
+			\ }
 NeoBundleLazy 'Rip-Rip/clang_complete', {
 			\   'autoload' : {
 			\     'filetypes' : ['c', 'cpp'],
@@ -101,6 +106,7 @@ colorscheme elflord
 filetype indent plugin on
 
 set smartcase
+set cursorline
 set ignorecase
 set tabstop=4
 set shiftwidth=4
