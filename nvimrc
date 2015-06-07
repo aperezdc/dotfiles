@@ -1,8 +1,7 @@
 
-if has('vim_starting')
-	set nocompatible
-	set runtimepath+=~/.vim/bundle/neobundle.vim
-endif
+augroup vimrc
+	autocmd!
+augroup END
 
 let g:email = "aperez@igalia.com"
 let g:user  = "Adrian Perez"
@@ -17,9 +16,9 @@ endif
 
 
 if empty(glob('~/.nvim/autoload/plug.vim'))
-  silent !curl -fLo ~/.nvim/autoload/plug.vim --create-dirs
-    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  autocmd VimEnter * PlugInstall
+	silent !curl -fLo ~/.nvim/autoload/plug.vim --create-dirs
+				\ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+	autocmd vimrc VimEnter * PlugInstall
 endif
 
 call plug#begin('~/.vim/bundle')
@@ -186,10 +185,6 @@ map __ ZZ
 
 " Make double Ctrl-t exit insert mode in terminals.
 tnoremap <C-t><C-t> <C-\><C-n>
-
-augroup vimrc
-	autocmd!
-augroup END
 
 
 " Jump to the last edited position in the file being loaded (if available)
