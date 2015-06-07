@@ -7,6 +7,15 @@ endif
 let g:email = "aperez@igalia.com"
 let g:user  = "Adrian Perez"
 
+" To avoid mistankenly using one for the other, always point to the versioned binaries.
+if has('python3')
+	let g:python3_host_prog = '/usr/bin/python3'
+endif
+if has('python')
+	let g:python_host_prog = '/usr/bin/python2'
+endif
+
+
 if empty(glob('~/.nvim/autoload/plug.vim'))
   silent !curl -fLo ~/.nvim/autoload/plug.vim --create-dirs
     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
