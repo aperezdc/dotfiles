@@ -33,6 +33,7 @@ Plug 'ntpeters/vim-better-whitespace'
 Plug 'chrisbra/vim-diff-enhanced'
 Plug 'gcmt/wildfire.vim'
 Plug 'jamessan/vim-gnupg'
+Plug 'spolu/dwm.vim'
 Plug 'vim-scripts/a.vim', { 'on': ['A', 'AV', 'AS'] }
 Plug 'tyru/caw.vim', { 'on' : '<Plug>(caw:' }
 Plug 'ledger/vim-ledger', { 'for' : 'ledger' }
@@ -50,12 +51,17 @@ Plug 'airblade/vim-gitgutter', { 'on' : [ '<Plug>GitGutter',
 			\ 'GitGutterEnable', 'GitGutterDisable', 'GitGutterToggle' ] }
 call plug#end()
 
-call unite#custom#profile('default', 'context', { 'prompt': '% ' })
+call unite#custom#profile('default', 'context', {
+			\ 'start_insert' : 1,
+			\ 'winheight'    : 15,
+			\ 'direction'    : 'botright',
+			\ 'prompt'       : '% ' })
 call unite#filters#matcher_default#use(['matcher_fuzzy'])
 
 syntax on
 filetype indent plugin on
 
+set nobomb
 set smartcase
 set cursorline
 set ignorecase
@@ -235,7 +241,6 @@ highlight IndentGuidesEven ctermbg=233
 let g:better_whitespace_filetypes_blacklist = ['help', 'unite', 'qf']
 
 " Plugin: Unite
-let g:unite_enable_start_insert = 1
 let g:unite_source_file_mru_limit = 350
 nnoremap <silent> <leader>f :<C-u>Unite file_rec/async file/new -buffer-name=Files<cr>
 nnoremap <silent> <leader>d :<C-u>Unite buffer bookmark file/async -buffer-name=Files\ (misc)<cr>
@@ -262,6 +267,8 @@ nnoremap <silent> <leader>L :<C-u>UniteResume<cr>
 let g:clang_library_path = '/usr/lib/libclang.so'
 let g:clang_make_default_keymappings = 0
 
+" Plugin: dwm
+nmap <Tab> <Plug>DWMFocus
 
 " Plugin: quickhl
 nmap <leader>h <Plug>(quickhl-manual-this)
@@ -270,3 +277,5 @@ nmap <leader>H <Plug>(quickhl-manual-reset)
 xmap <leader>H <Plug>(quickhl-manual-reset)
 nmap <leader>j <Plug>(quickhl-cword-toggle)
 
+" Show "git diff --cached" in split window when committing changes.
+autocmd vimrc FileType gitcommit DiffGitCached | wincmd H | wincmd r | wincmd p
