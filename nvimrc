@@ -7,99 +7,43 @@ endif
 let g:email = "aperez@igalia.com"
 let g:user  = "Adrian Perez"
 
-call neobundle#begin(expand('~/.vim/bundle'))
-NeoBundleFetch 'Shougo/neobundle.vim'
-NeoBundle 'tpope/vim-sensible'
-NeoBundle 'bling/vim-airline'
-NeoBundle 'nathanaelkane/vim-indent-guides'
-NeoBundle 'ntpeters/vim-better-whitespace'
-NeoBundle 'chrisbra/vim-diff-enhanced'
-NeoBundle 'gcmt/wildfire.vim'
-NeoBundle 'jamessan/vim-gnupg'
-NeoBundle 'aperezdc/vim-lift', {
-			\   'type': 'nosync',
-			\ }
-NeoBundle 'aperezdc/vim-template', {
-			\   'type': 'nosync',
-			\ }
-NeoBundleLazy 'vim-scripts/a.vim', {
-			\   'autoload' : {
-			\     'commands' : ['A', 'AS', 'AV', 'IH', 'IHS', 'IHV'],
-			\   },
-			\ }
-NeoBundleLazy 'tyru/caw.vim', {
-			\   'autoload' : {
-			\     'mappings' : '<Plug>(caw:',
-			\   },
-			\ }
-NeoBundleLazy 'aperezdc/hipack-vim', {
-			\   'type' : 'nosync',
-			\   'autoload' : {
-			\     'filetypes' : 'hipack',
-			\   },
-			\ }
-NeoBundleLazy 'ledger/vim-ledger', {
-			\   'autoload' : {
-			\     'filetypes' : 'ledger',
-			\   },
-			\ }
-NeoBundleLazy 'vim-scripts/gtk-vim-syntax', {
-			\   'autoload' : {
-			\     'filetypes' : ['c', 'cpp'],
-			\   },
-			\ }
-NeoBundleLazy 'othree/yajs.vim', {
-			\   'autoload' : {
-			\     'filetypes' : 'javascript',
-			\   },
-			\ }
-NeoBundleLazy 'Rip-Rip/clang_complete', {
-			\   'autoload' : {
-			\     'filetypes' : ['c', 'cpp'],
-			\   },
-			\ }
-NeoBundleLazy 'davidhalter/jedi-vim', {
-			\   'autoload' : {
-			\     'filetypes': 'python',
-			\   },
-			\ }
-NeoBundleLazy 'godlygeek/tabular', {
-			\   'autoload' : {
-			\     'commands' : 'Tabularize',
-			\   },
-			\ }
-NeoBundleLazy 'Shougo/vimproc.vim', {
-			\   'build' : { 'unix' : 'make' },
-			\ }
-NeoBundleLazy 'Shougo/unite.vim', {
-			\   'depends' : 'Shougo/vimproc.vim',
-			\   'autoload' : {
-			\     'commands' : ['Unite', 'UniteResume'],
-			\   },
-			\ }
-NeoBundleLazy 'Shougo/unite-outline', {
-			\   'autoload' : {
-			\     'unite_sources' : 'outline',
-			\   },
-			\ }
-NeoBundleLazy 'Shougo/neomru.vim', {
-			\   'autoload' : {
-			\     'unite_sources' : 'neomru/file',
-			\   },
-			\ }
-NeoBundleLazy 't9md/vim-quickhl', {
-			\   'autoload' : {
-			\     'mappings' : '<Plug>(quickhl-',
-			\   },
-			\ }
+if empty(glob('~/.nvim/autoload/plug.vim'))
+  silent !curl -fLo ~/.nvim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall
+endif
 
-let g:neobundle#types#git#enable_submodule = 1
-let bundle = neobundle#get('unite.vim')
-function! bundle.hooks.on_post_source(bundle)
-	call unite#custom#profile('default', 'context', { 'prompt': '% ' })
-	call unite#filters#matcher_default#use(['matcher_fuzzy'])
-endfunction
-call neobundle#end()
+call plug#begin('~/.vim/bundle')
+Plug '~/devel/vim-lift'
+Plug '~/devel/vim-template'
+Plug '~/devel/hipack-vim', { 'for' : 'hipack' }
+
+Plug 'tpope/vim-sensible'
+Plug 'bling/vim-airline'
+Plug 'nathanaelkane/vim-indent-guides'
+Plug 'ntpeters/vim-better-whitespace'
+Plug 'chrisbra/vim-diff-enhanced'
+Plug 'gcmt/wildfire.vim'
+Plug 'jamessan/vim-gnupg'
+Plug 'vim-scripts/a.vim', { 'on': ['A', 'AV', 'AS'] }
+Plug 'tyru/caw.vim', { 'on' : '<Plug>(caw:' }
+Plug 'ledger/vim-ledger', { 'for' : 'ledger' }
+Plug 'vim-scripts/gtk-vim-syntax', { 'for' : ['c', 'cpp'] }
+Plug 'othree/yajs.vim', { 'for' : 'javascript' }
+Plug 'Rip-Rip/clang_complete', { 'for' : ['c', 'cpp'] }
+Plug 'davidhalter/jedi-vim', { 'for' : 'python' }
+Plug 'godlygeek/tabular', { 'on' : 'Tabularize' }
+Plug 'Shougo/vimproc.vim' |
+			\ Plug 'Shougo/unite.vim' |
+			\ Plug 'Shougo/unite-outline' |
+			\ Plug 'Shougo/neomru.vim'
+Plug 't9md/vim-quickhl', { 'on' : '<Plug>(quickhl-' }
+Plug 'airblade/vim-gitgutter', { 'on' : [ '<Plug>GitGutter',
+			\ 'GitGutterEnable', 'GitGutterDisable', 'GitGutterToggle' ] }
+call plug#end()
+
+call unite#custom#profile('default', 'context', { 'prompt': '% ' })
+call unite#filters#matcher_default#use(['matcher_fuzzy'])
 
 syntax on
 colorscheme elflord
@@ -133,7 +77,7 @@ if len($DISPLAY) > 0
 endif
 
 
-if neobundle#is_sourced('vim-lift')
+if 1
     let g:lift#sources = { '_': ['near', 'omni', 'user', 'syntax'] }
 	inoremap <expr> <Tab> lift#trigger_completion()
 else
@@ -252,29 +196,25 @@ nmap <leader>c <Plug>(caw:i:toggle)
 xmap <leader>c <Plug>(caw:i:toggle)
 
 " Plugin: Airline
-if neobundle#is_sourced('vim-airline')
-	let g:airline_powerline_fonts = 0
-	let g:airline_left_sep = ''
-	let g:airline_right_sep = ''
-	let g:airline_mode_map = {
-				\ '__' : '-', 'n'  : 'N', 'i'  : 'I', 'R'  : 'R',
-				\ 'c'  : 'C', 'v'  : 'V', 'V'  : 'V', '' : 'V',
-				\ 's'  : 'S', 'S'  : 'S', '' : 'S' }
-	let g:airline_theme = 'bubblegum'
-	let g:airline#extensions#tabline#enabled = 1
-	let g:airline#extensions#tabline#buffer_min_count = 2
-endif
+let g:airline_powerline_fonts = 0
+let g:airline_left_sep = ''
+let g:airline_right_sep = ''
+let g:airline_mode_map = {
+			\ '__' : '-', 'n'  : 'N', 'i'  : 'I', 'R'  : 'R',
+			\ 'c'  : 'C', 'v'  : 'V', 'V'  : 'V', '' : 'V',
+			\ 's'  : 'S', 'S'  : 'S', '' : 'S' }
+let g:airline_theme = 'bubblegum'
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#buffer_min_count = 2
 
 " Plugin: Indent Guides
-if neobundle#is_sourced('vim-indent-guides')
-	let g:indent_guides_exclude_filetypes = ['help', 'unite', 'qf']
-	let g:indent_guides_enable_on_vim_startup = 1
-	"let g:indent_guides_guide_size = 1
-	let g:indent_guides_start_level = 1
-	let g:indent_guides_auto_colors = 0
-	highlight IndentGuidesOdd  ctermbg=black
-	highlight IndentGuidesEven ctermbg=233
-endif
+let g:indent_guides_exclude_filetypes = ['help', 'unite', 'qf']
+let g:indent_guides_enable_on_vim_startup = 1
+"let g:indent_guides_guide_size = 1
+let g:indent_guides_start_level = 1
+let g:indent_guides_auto_colors = 0
+highlight IndentGuidesOdd  ctermbg=black
+highlight IndentGuidesEven ctermbg=233
 
 " Plugin: better-whitespace
 let g:better_whitespace_filetypes_blacklist = ['help', 'unite', 'qf']
@@ -315,4 +255,3 @@ nmap <leader>H <Plug>(quickhl-manual-reset)
 xmap <leader>H <Plug>(quickhl-manual-reset)
 nmap <leader>j <Plug>(quickhl-cword-toggle)
 
-NeoBundleCheck
