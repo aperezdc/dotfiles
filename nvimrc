@@ -46,7 +46,6 @@ call unite#custom#profile('default', 'context', { 'prompt': '% ' })
 call unite#filters#matcher_default#use(['matcher_fuzzy'])
 
 syntax on
-colorscheme elflord
 filetype indent plugin on
 
 set smartcase
@@ -115,16 +114,28 @@ else
 endif
 
 
-if &term =~ "screen"
+if &term =~ "^screen"
 	map  <silent> [1;5D <C-Left>
 	map  <silent> [1;5C <C-Right>
 	lmap <silent> [1;5D <C-Left>
 	lmap <silent> [1;5C <C-Right>
 	imap <silent> [1;5D <C-Left>
 	imap <silent> [1;5C <C-Right>
+
+	" pretend this is xterm.  it probably is anyway, but if term is left as
+    " 'screen', vim doesn't understand ctrl-arrow.
+    if &term == "screen-256color"
+        set term=xterm-256color
+    else
+        set term=xterm
+    endif
+
+    " gotta set these *last*, since `set term` resets everything
+    set t_ts=k
+    set t_fs=\
 endif
 
-if &term =~ "xterm-256color" || &term =~ "screen-256color" || $COLORTERM =~ "gnome-terminal"
+if &term =~ "xterm-256color" || &term =~ "screen-256color" || &term =~ "gnome-256color" || $COLORTERM =~ "gnome-terminal"
 	set t_Co=256
 	set t_AB=[48;5;%dm
 	set t_AF=[38;5;%dm
