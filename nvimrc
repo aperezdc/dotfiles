@@ -133,19 +133,19 @@ endif
 
 
 if &term =~ "^screen"
-	map  <silent> [1;5D <C-Left>
-	map  <silent> [1;5C <C-Right>
-	lmap <silent> [1;5D <C-Left>
-	lmap <silent> [1;5C <C-Right>
-	imap <silent> [1;5D <C-Left>
-	imap <silent> [1;5C <C-Right>
+    map  <silent> [1;5D <C-Left>
+    map  <silent> [1;5C <C-Right>
+    lmap <silent> [1;5D <C-Left>
+    lmap <silent> [1;5C <C-Right>
+    imap <silent> [1;5D <C-Left>
+    imap <silent> [1;5C <C-Right>
 
-	" pretend this is xterm.  it probably is anyway, but if term is left as
+    " pretend this is xterm.  it probably is anyway, but if term is left as
     " 'screen', vim doesn't understand ctrl-arrow.
     if &term == "screen-256color"
-        set term=xterm-256color
+	set term=xterm-256color
     else
-        set term=xterm
+	set term=xterm
     endif
 
     " gotta set these *last*, since `set term` resets everything
@@ -158,23 +158,27 @@ if &term =~ "xterm-256color" || &term =~ "screen-256color" || &term =~ "gnome-25
 	set t_AB=[48;5;%dm
 	set t_AF=[38;5;%dm
 	set cursorline
+else
+	if &term =~ "st-256color"
+		set t_Co=256
+		set cursorline
+	else
+		set t_Co=16
+	endif
 endif
-if &term =~ "st-256color"
-	set t_Co=256
-	set cursorline
-endif
+
 
 colorscheme elflord
 highlight CursorLine NONE
 if &t_Co == 256
-	highlight CursorLine   ctermbg=235
-	highlight CursorLineNr ctermbg=235 ctermfg=246
-	highlight LineNr       ctermbg=234 ctermfg=238
-	highlight SignColumn   ctermbg=234
-	highlight Pmenu        ctermbg=235 ctermfg=white
-	highlight PmenuSel     ctermbg=238 ctermfg=white
-	highlight PmenuSbar    ctermbg=238
-	highlight PmenuThumb   ctermbg=240
+    highlight CursorLine   ctermbg=235
+    highlight CursorLineNr ctermbg=235 ctermfg=246
+    highlight LineNr       ctermbg=234 ctermfg=238
+    highlight SignColumn   ctermbg=234
+    highlight Pmenu        ctermbg=235 ctermfg=white
+    highlight PmenuSel     ctermbg=238 ctermfg=white
+    highlight PmenuSbar    ctermbg=238
+    highlight PmenuThumb   ctermbg=240
 endif
 
 
