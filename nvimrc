@@ -27,6 +27,8 @@ Plug '~/devel/vim-template'
 Plug '~/devel/hipack-vim', { 'for' : 'hipack' }
 
 Plug 'tpope/vim-sensible'
+Plug 'tpope/vim-endwise'
+Plug 'Cloudef/vim-indent'
 Plug 'bling/vim-airline'
 Plug 'nathanaelkane/vim-indent-guides'
 Plug 'ntpeters/vim-better-whitespace'
@@ -34,6 +36,7 @@ Plug 'chrisbra/vim-diff-enhanced'
 Plug 'gcmt/wildfire.vim'
 Plug 'jamessan/vim-gnupg'
 Plug 'spolu/dwm.vim'
+Plug 'tyru/current-func-info.vim'
 Plug 'vim-scripts/a.vim', { 'on': ['A', 'AV', 'AS'] }
 Plug 'tyru/caw.vim', { 'on' : '<Plug>(caw:' }
 Plug 'ledger/vim-ledger', { 'for' : 'ledger' }
@@ -42,6 +45,7 @@ Plug 'othree/yajs.vim', { 'for' : 'javascript' }
 Plug 'Rip-Rip/clang_complete', { 'for' : ['c', 'cpp'] }
 Plug 'davidhalter/jedi-vim', { 'for' : 'python' }
 Plug 'godlygeek/tabular', { 'on' : 'Tabularize' }
+Plug 'reedes/vim-pencil'
 Plug 'Shougo/vimproc.vim' |
 			\ Plug 'Shougo/unite.vim' |
 			\ Plug 'Shougo/unite-outline' |
@@ -74,7 +78,7 @@ set nowrap
 set showmode
 set textwidth=78
 set fileformats=unix,mac,dos
-set completeopt-=longest
+set completeopt=longest,menu,menuone,preview,noinsert
 set infercase
 set diffopt+=iwhite
 set nobackup
