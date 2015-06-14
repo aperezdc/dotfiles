@@ -54,7 +54,7 @@ call plug#end()
 call unite#custom#profile('default', 'context', {
 			\ 'start_insert' : 1,
 			\ 'winheight'    : 15,
-			\ 'direction'    : 'botright',
+			\ 'no_split'     : 1,
 			\ 'prompt'       : '% ' })
 call unite#filters#matcher_default#use(['matcher_fuzzy'])
 
