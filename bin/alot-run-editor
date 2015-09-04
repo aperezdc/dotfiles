@@ -6,15 +6,20 @@
 # Distributed under terms of the MIT license.
 #
 
-alot_term_exe="$(dirname "$0")/alot"
-if ! [ -x "${alot_term_exe}" ] ; then
-	alot_term_exe=dwt
+if [[ -n ${TMUX} && -n ${TMUX_PANE} ]] ; then
+	if [[ -n ${PPID} ]] ; then
+		CHAN_ID="alot-compose-${PPID}-$$"
+	else
+		CHAN_ID="alot-compose-$$"
+	fi
+	tmux split-window "$* ; tmux wait-for -S '${CHAN_ID}'"
+	exec tmux wait-for "${CHAN_ID}"
 fi
 
 unset TMUX
 export TERM=xterm-256color
 export DWT_SINGLE_WINDOW_PROCESS=1
-exec "${alot_term_exe}" \
+exec dwt \
 	--title='alot - Compose' \
 	--workdir="${HOME}" \
 	--no-title-updates \

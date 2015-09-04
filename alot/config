@@ -1,0 +1,78 @@
+# vim: ft=cfg
+auto_remove_unread = False
+honor_followup_to = True
+folowup_to = True
+terminal_cmd = /home/aperez/.local/bin/alot-run-editor
+initial_command = search tag:inbox AND NOT tag:killed AND NOT tag:deleted
+ask_subject = False
+editor_spawn = True
+editor_in_thread = True
+prefer_plaintext = True
+tabwidth = 4
+
+[accounts]
+  [[igalia]]
+    realname = Adrián Pérez de Castro
+    address = aperez@igalia.com
+    sent_box = maildir:///home/aperez/.mail/Sent
+    draft_box = maildir:///home/aperez/.mail/Drafts
+		signature_filename = file:///home/aperez/.signature
+		gpg_key = E4C9123B
+		sign_by_default = True
+		[[[abook]]]
+			type = shellcommand
+			regexp = '^(?P<email>[^@]+@[^\t]+)\t+(?P<name>[^\t]+)'
+			command = notmuch-addrlookup --mutt
+			ignorecase = True
+
+[bindings]
+Q = exit
+q = bclose
+  [[search]]
+    d = toggletags deleted
+    J = toggletags spam
+  [[thread]]
+    s = toggletags unread
+
+[tags]
+  [[flagged]]
+	translated = ‼
+	#translated = ⚑
+	normal = '','','light red','','light red',''
+	focus = '','','light red','','light red',''
+  [[replied]]
+	translated = 
+	#translated = ⭍
+	#translated = ⮌
+	#translated = ↩
+  [[sent]]
+	translated = ↗
+	#translated = 🡕
+  [[encrypted]]
+	#translated = Θ
+	translated = 
+	#translated = 🔒
+	#translated = 🗝
+	#translated = ⛊
+  [[inbox]]
+	translated = 
+	#translated = 📨
+	#translated = 🖂
+	#translated = 📂
+  [[signed]]
+	translated = §
+	#translated = 🖆
+	#translated = ⛉
+  [[fyi]]
+	#translated = ⌘
+  [[unread]]
+	translated = "#"
+	#translated = ★
+	#translated = 🔰
+	#translated = 🗲
+	#normal = '','','light green','','light green',''
+    focus = '','','light green','','light green',''
+  [[deleted]]
+    #translated = ♻
+  [[attachment]]
+    #translated = 📎
