@@ -1,4 +1,8 @@
 import readline, atexit, os, rlcompleter
+try:
+    from importlib import reload
+except:
+    pass
 
 historypath = os.path.expanduser("~/.pyhistory")
 readline.parse_and_bind("tab: complete")
