@@ -1,109 +1,67 @@
 
-if has("vim_starting")
-	set nocompatible
-	set runtimepath+=~/.vim/bundle/neobundle.vim
-endif
+augroup vimrc
+	autocmd!
+augroup END
 
 let g:email = "aperez@igalia.com"
 let g:user  = "Adrian Perez"
 
-" Plugin: CamelCaseMotion
-" This plug-in has to be configured before sourcing
-map <S-W> <Plug>CamelCaseMotion_w
-map <S-B> <Plug>CamelCaseMotion_b
-map <S-E> <Plug>CamelCaseMotion_e
+" To avoid mistankenly using one for the other, always point to the versioned binaries.
+if has('python3')
+	let g:python3_host_prog = '/usr/bin/python3'
+endif
+if has('python')
+	let g:python_host_prog = '/usr/bin/python2'
+endif
 
-call neobundle#begin(expand('~/.vim/bundle/'))
-NeoBundleFetch 'Shougo/neobundle.vim'
-NeoBundle 'tpope/vim-sensible'
-NeoBundle 'bling/vim-airline'
-NeoBundle 'nathanaelkane/vim-indent-guides'
-NeoBundle 'ntpeters/vim-better-whitespace'
-NeoBundle 'chrisbra/vim-diff-enhanced'
-NeoBundle 'aperezdc/vim-lift'
-NeoBundle 'aperezdc/vim-template'
-NeoBundle 'gcmt/wildfire.vim'
-"NeoBundle 'nsf/gocode', {'rtp': 'vim/'}
-"NeoBundle 'cbracken/vala.vim'
+if empty(glob('~/.vim/autoload/plug.vim'))
+	silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+				\ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+	autocmd vimrc VimEnter * PlugInstall
+endif
 
-NeoBundleLazy 'vim-scripts/a.vim', {
-			\   'autoload' : {
-			\     'commands' : ['A', 'AS', 'AV', 'IH', 'IHS', 'IHV'],
-			\   },
-			\ }
-NeoBundleLazy 'tyru/caw.vim', {
-			\   'autoload' : {
-			\     'mappings' : '<Plug>(caw:',
-			\   },
-			\ }
-NeoBundleLazy 'jamessan/vim-gnupg', {
-			\   'autoload' : {
-			\     'filetypes' : ['gpg', 'gnupg'],
-			\   },
-			\ }
-NeoBundleLazy 'aperezdc/hipack-vim', {
-			\   'autoload' : {
-			\     'filetypes' : 'hipack',
-			\   },
-			\ }
-NeoBundleLazy 'ledger/vim-ledger', {
-			\   'autoload' : {
-			\     'filetypes' : 'ledger',
-			\   },
-			\ }
-NeoBundleLazy 'vim-scripts/gtk-vim-syntax', {
-			\   'autoload' : {
-			\     'filetypes' : ['c', 'cpp'],
-			\   },
-			\ }
-NeoBundleLazy 'Rip-Rip/clang_complete', {
-			\   'build' : { 'unix': 'make' },
-			\   'autoload' : {
-			\     'filetypes' : ['c', 'cpp'],
-			\   },
-			\ }
-NeoBundleLazy 'davidhalter/jedi-vim', {
-			\   'autoload' : {
-			\     'filetypes': 'python',
-			\   },
-			\ }
-NeoBundleLazy 'godlygeek/tabular', {
-			\   'autoload' : {
-			\     'commands' : 'Tabularize',
-			\   },
-			\ }
-NeoBundleLazy 'Shougo/vimproc.vim', {
-			\   'build' : { 'unix' : 'make' },
-			\ }
-NeoBundleLazy 'Shougo/unite.vim', {
-			\   'depends' : 'Shougo/vimproc.vim',
-			\   'autoload' : {
-			\     'commands' : ['Unite', 'UniteResume'],
-			\   },
-			\ }
-NeoBundleLazy 'Shougo/unite-outline'
-NeoBundleLazy 'Shougo/neomru.vim', {
-			\   'autoload' : {
-			\     'unite_sources' : 'neomru/file',
-			\   },
-			\ }
-NeoBundleLazy 't9md/vim-quickhl', {
-			\   'autoload' : {
-			\     'mappings' : '<Plug>(quickhl-',
-			\   },
-			\ }
+"let g:templates_directory = '~/t'
 
-let bundle = neobundle#get('unite.vim')
-function! bundle.hooks.on_post_source(bundle)
-	call unite#custom#profile('default', 'context', { 'prompt': '% ' })
-	call unite#filters#matcher_default#use(['matcher_fuzzy'])
-endfunction
-call neobundle#end()
+call plug#begin('~/.vim/bundle')
+" Plug '~/devel/vim-lift'
+Plug '~/devel/vim-template'
+Plug '~/devel/hipack-vim', { 'for' : 'hipack' }
+Plug 'tpope/vim-sensible'
+Plug 'bling/vim-airline'
+"Plug 'nathanaelkane/vim-indent-guides'
+Plug 'ntpeters/vim-better-whitespace'
+Plug 'chrisbra/vim-diff-enhanced'
+Plug 'gcmt/wildfire.vim'
+"Plug 'nsf/gocode', {'rtp': 'vim/'}
+"Plug 'cbracken/vala.vim'
+Plug 'vim-scripts/a.vim'
+Plug 'tyru/caw.vim', { 'on' : '<Plug>(caw:' }
+Plug 'jamessan/vim-gnupg', { 'for' : ['gpg', 'gnupg'] }
+Plug 'ledger/vim-ledger', { 'for' : 'ledger' }
+Plug 'vim-scripts/gtk-vim-syntax', { 'for' : ['c', 'cpp'] }
+Plug 'justmao945/vim-clang', { 'for' : ['c', 'cpp', 'objc'] }
+" Plug 'Rip-Rip/clang_complete', { 'for' : ['c', 'cpp'] }
+Plug 'davidhalter/jedi-vim', { 'for': 'python' }
+Plug 'godlygeek/tabular', { 'on' : 'Tabularize' }
+Plug 'Shougo/vimproc.vim', { 'do' : 'make' } |
+			\ Plug 'Shougo/unite.vim' |
+			\ Plug 'Shougo/unite-outline' |
+			\ Plug 'Shougo/neomru.vim'
+Plug 't9md/vim-quickhl', { 'on' : '<Plug>(quickhl-' }
+call plug#end()
+
+call unite#custom#profile('default', 'context', {
+			\ 'start_insert' : 1,
+			\ 'winheight'    : 15,
+			\ 'no_split'     : 0,
+			\ 'prompt'       : '% ' })
+call unite#filters#matcher_default#use(['matcher_fuzzy'])
 
 syntax on
 colorscheme elflord
 filetype indent plugin on
 
+set nobomb
 set smartcase
 set ignorecase
 set tabstop=4
@@ -131,7 +89,7 @@ if len($DISPLAY) > 0
 endif
 
 
-if neobundle#is_sourced('vim-lift')
+if get(g:, 'loaded_lift_plugin', 0)
     let g:lift#sources = { '_': ['near', 'omni', 'user', 'syntax'] }
 	inoremap <expr> <Tab> lift#trigger_completion()
 else
@@ -178,7 +136,7 @@ if &term =~ "screen"
 	imap <silent> [1;5C <C-Right>
 endif
 
-if &term =~ "xterm-256color" || &term =~ "screen-256color" || $COLORTERM =~ "gnome-terminal"
+if &term =~ "xterm-256color" || &term =~ "screen-256color" || &term =~ "gnome-256color" || $COLORTERM =~ "gnome-terminal"
 	set t_Co=256
 	set t_AB=[48;5;%dm
 	set t_AF=[38;5;%dm
@@ -219,11 +177,6 @@ map <C-p> :pop<cr>
 map __ ZZ
 
 
-augroup vimrc
-	autocmd!
-augroup END
-
-
 " Jump to the last edited position in the file being loaded (if available)
 autocmd vimrc BufReadPost *
 			\ if line("'\"") > 0 && line("'\"") <= line("$") |
@@ -246,35 +199,30 @@ nmap <leader>c <Plug>(caw:i:toggle)
 xmap <leader>c <Plug>(caw:i:toggle)
 
 " Plugin: Airline
-if neobundle#is_sourced('vim-airline')
-	let g:airline_powerline_fonts = 0
-	let g:airline_left_sep = ''
-	let g:airline_right_sep = ''
-	let g:airline_mode_map = {
-				\ '__' : '-', 'n'  : 'N', 'i'  : 'I', 'R'  : 'R',
-				\ 'c'  : 'C', 'v'  : 'V', 'V'  : 'V', '' : 'V',
-				\ 's'  : 'S', 'S'  : 'S', '' : 'S' }
-	let g:airline_theme = 'bubblegum'
-	let g:airline#extensions#tabline#enabled = 1
-	let g:airline#extensions#tabline#buffer_min_count = 2
-endif
+let g:airline_powerline_fonts = 0
+let g:airline_left_sep = ''
+let g:airline_right_sep = ''
+let g:airline_mode_map = {
+			\ '__' : '-', 'n'  : 'N', 'i'  : 'I', 'R'  : 'R',
+			\ 'c'  : 'C', 'v'  : 'V', 'V'  : 'V', '' : 'V',
+			\ 's'  : 'S', 'S'  : 'S', '' : 'S' }
+let g:airline_theme = 'bubblegum'
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#buffer_min_count = 2
 
 " Plugin: Indent Guides
-if neobundle#is_sourced('vim-indent-guides')
-	let g:indent_guides_exclude_filetypes = ['help', 'unite', 'qf']
-	let g:indent_guides_enable_on_vim_startup = 1
-	let g:indent_guides_guide_size = 1
-	let g:indent_guides_start_level = 2
-	let g:indent_guides_auto_colors = 0
-	highlight IndentGuidesOdd  ctermbg=234
-	highlight IndentGuidesEven ctermbg=233
-endif
+let g:indent_guides_exclude_filetypes = ['help', 'unite', 'qf']
+let g:indent_guides_enable_on_vim_startup = 1
+let g:indent_guides_guide_size = 1
+let g:indent_guides_start_level = 2
+let g:indent_guides_auto_colors = 0
+highlight IndentGuidesOdd  ctermbg=234
+highlight IndentGuidesEven ctermbg=233
 
 " Plugin: better-whitespace
 let g:better_whitespace_filetypes_blacklist = ['help', 'unite', 'qf']
 
 " Plugin: Unite
-let g:unite_enable_start_insert = 1
 let g:unite_source_file_mru_limit = 350
 nnoremap <silent> <leader>f :<C-u>Unite file_rec/async file/new -buffer-name=Files<cr>
 nnoremap <silent> <leader>d :<C-u>Unite buffer bookmark file/async -buffer-name=Files\ (misc)<cr>
@@ -301,6 +249,10 @@ nnoremap <silent> <leader>L :<C-u>UniteResume<cr>
 let g:clang_library_path = '/usr/lib/libclang.so'
 let g:clang_make_default_keymappings = 0
 
+" Plugin: vim-clang
+let g:clang_c_options   = '-Qunused-arguments -std=gnu99'
+let g:clang_cpp_options = '-Qunused-arguments -std=gnu++11 -stdlib=libc++'
+let g:clang_auto        = 0
 
 " Plugin: quickhl
 nmap <leader>h <Plug>(quickhl-manual-this)
@@ -308,6 +260,3 @@ xmap <leader>h <Plug>(quickhl-manual-this)
 nmap <leader>H <Plug>(quickhl-manual-reset)
 xmap <leader>H <Plug>(quickhl-manual-reset)
 nmap <leader>j <Plug>(quickhl-cword-toggle)
-
-
-NeoBundleCheck
