@@ -2,7 +2,7 @@
 (require 'notmuch-address)
 (notmuch-address-message-insinuate)
 
-(setq notmuch-address-command        "/home/aperez/.local/bin/notmuch-addrlookup")
+(setq notmuch-address-command        "notmuch-addrlookup")
 (setq message-kill-buffer-on-exit    t)
 (setq mail-specify-envelope-from     t)
 (setq message-sendmail-envelope-from 'header)

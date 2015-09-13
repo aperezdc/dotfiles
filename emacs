@@ -56,11 +56,21 @@
  '(message-send-mail-function (quote message-send-mail-with-sendmail))
  '(message-tool-bar (quote message-tool-bar-gnome))
  '(mm-text-html-renderer (quote w3m-standalone))
+ '(notmuch-address-command "notmuch-addrlookup")
+ '(notmuch-archive-tags (quote ("-inbox" "-unread")))
  '(notmuch-crypto-process-mime t)
  '(notmuch-fcc-dirs "Sent/")
- '(notmuch-identities (quote ("aperez@igalia.com" "adrian@perezdecastro.org" "aperez@furi-ku.org" "the.lightman@gmail.com")))
+ '(notmuch-identities
+   (quote
+    ("aperez@igalia.com" "adrian@perezdecastro.org" "aperez@furi-ku.org" "the.lightman@gmail.com")))
  '(notmuch-mua-compose-in (quote new-frame))
- '(notmuch-saved-searches (quote (("inbox" . "tag:inbox") ("unread" . "tag:unread") ("logs" . "tag:unread and tag:log") ("flagged" . "tag:flagged"))))
+ '(notmuch-saved-searches
+   (quote
+    (("inbox" . "tag:inbox")
+     ("unread" . "tag:unread")
+     ("logs" . "tag:unread and tag:log")
+     ("flagged" . "tag:flagged")
+     (:name "wip" :query "tag:wip"))))
  '(notmuch-search-oldest-first nil)
  '(notmuch-show-indent-messages-width 3)
  '(notmuch-show-indent-multipart nil)
@@ -76,4 +86,4 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :background "white" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 120 :width normal :foundry "unknown" :family "PragmataPro")))))
+ '(default ((t (:inherit nil :stipple nil :background "white" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 128 :width normal :foundry "unknown" :family "PragmataPro")))))
