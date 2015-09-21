@@ -1,3 +1,12 @@
+#! /bin/zsh
+#set -e
+
+if [[ $- != *i* ]] ; then
+	return
+fi
+
+stty -ixon -ixoff
+
 # The following lines were added by compinstall
 zstyle :compinstall filename '/home/aperez/.zshrc'
 
@@ -13,8 +22,11 @@ compinit
 HISTFILE=~/.histfile
 HISTSIZE=1000
 SAVEHIST=${HISTSIZE}
-setopt appendhistory extendedglob
-unsetopt beep nomatch
+setopt appendhistory extendedglob inc_append_history share_history \
+	   hist_reduce_blanks hist_ignore_space extended_history \
+	   hist_no_store hist_ignore_dups hist_expire_dups_first \
+	   hist_find_no_dups nomatch
+unsetopt beep
 bindkey -e
 # End of lines configured by zsh-newuser-install
 
@@ -54,9 +66,9 @@ setopt prompt_subst pushd_silent auto_param_slash auto_list \
 	     hist_reduce_blanks auto_remove_slash chase_dots \
 	     pushd_ignore_dups auto_param_keys hist_ignore_all_dups \
 	     mark_dirs cdablevars interactive_comments glob_complete \
-	     print_eight_bit always_to_end glob warn_create_global \
+	     print_eight_bit always_to_end glob no_warn_create_global \
 	     hash_list_all correct hash_cmds hash_dirs hash_executables_only \
-	     auto_continue check_jobs
+	     auto_continue check_jobs complete_in_word rc_quotes
 unsetopt menu_complete auto_remove_slash auto_menu list_ambiguous \
 	     pushd_to_home
 
@@ -70,18 +82,22 @@ zstyle ':completion:*:descriptions' format '%U%B%d%b%u'
 zstyle ':completion:*:warnings' format '%BNo matching %b%d'
 
 # Prevent CVS files from being matched
-zstyle ':completion:*:(all-|)files' ignored-patterns '(|*/)CVS'
+zstyle ':completion:*:(all-|)files' ignored-patterns '(|*/)CVS' '*.py[cod]' '__pycache__'
 zstyle ':completion:*:cd:*' ignored-patterns '(*/)#CVS'
 zstyle ':completion:*:cd:*' noignore-parents noparent pwd
 
 # Bring up ${LS_COLORS}
 if [ -x /usr/bin/dircolors ] ; then
+	local dircolors_TERM=${TERM}
+	if [[ ${TERM} = xterm-termite ]] ; then
+		dircolors_TERM=xterm-color
+	fi
 	if [ -r "${HOME}/.dir_colors" ] ; then
-		eval $(dircolors -b "${HOME}/.dir_colors")
+		eval $(TERM=${dircolors_TERM} dircolors -b "${HOME}/.dir_colors")
 	elif [ -r /etc/DIRCOLORS ] ; then
-		eval $(dircolors -b /etc/DIRCOLORS)
+		eval $(TERM=${dircolors_TERM} dircolors -b /etc/DIRCOLORS)
 	else
-		eval $(dircolors)
+		eval $(TERM=${dircolors_TERM} dircolors)
 	fi
 fi
 
@@ -126,12 +142,48 @@ zle -C complete-files complete-word _generic
 zstyle ':completion:complete-files:*' completer _files
 bindkey '^[,' complete-files
 
+# Tab completion
+bindkey '^i' complete-word              # tab to do menu
+bindkey "\e[Z" reverse-menu-complete    # shift-tab to reverse menu
+
+# Up/down arrow.
+# I want shared history for ^R, but I don't want another shell's activity to
+# mess with up/down.  This does that.
+down-line-or-local-history() {
+    zle set-local-history 1
+    zle down-line-or-history
+    zle set-local-history 0
+}
+zle -N down-line-or-local-history
+up-line-or-local-history() {
+    zle set-local-history 1
+    zle up-line-or-history
+    zle set-local-history 0
+}
+zle -N up-line-or-local-history
+
+bindkey "\e[A" up-line-or-local-history
+bindkey "\eOA" up-line-or-local-history
+bindkey "\e[B" down-line-or-local-history
+bindkey "\eOB" down-line-or-local-history
+
+
 # Disable Git automatic file completion -- it is slow.
 #__git_files(){}
 
+## workaround for handling TERM variable in multiple tmux sessions properly from http://sourceforge.net/p/tmux/mailman/message/32751663/ by Nicholas Marriott
+if [[ -n ${TMUX} && -n ${commands[tmux]} ]];then
+	case $(tmux showenv TERM 2>/dev/null) in
+		*256color) ;&
+		TERM=fbterm)
+			TERM=screen-256color ;;
+		*)
+			TERM=screen
+	esac
+fi
 
 case ${TERM} in
-	screen* | xterm* | gnome-terminal)
+	screen* | xterm* | gnome*)
 		function precmd {
 			vcs_info 'prompt'
 			print -Pn "\e]0;%n@%m: %~\a"
@@ -146,11 +198,21 @@ esac
 
 if [[ ${COLORTERM} = gnome-terminal || ${COLORTERM} = drop-down-terminal || -n ${VTE_VERSION} ]] ; then
 	if [[ -n ${TMUX} ]] ; then
-		export TERM='screen-256color'
-	elif [[ -n ${VTE_VERSION} && -r /usr/share/terminfo/g/gnome-256color ]] ; then
-		export TERM='gnome-256color'
+		TERM='screen-256color'
 	else
-		export TERM='xterm-256color'
+		if [[ ${TERM} == xterm-termite && ! -r /usr/share/terminfo/x/xterm-termite ]] ; then
+			TERM='xterm-256color'
+		fi
+		if [[ ${TERM} != xterm-termite ]] ; then
+			if [[ -n ${VTE_VERSION} && -r /usr/share/terminfo/g/gnome-256color ]] ; then
+				TERM='gnome-256color'
+			else
+				TERM='xterm-256color'
+			fi
+		fi
+	fi
+	if [[ -r /etc/profile.d/vte.sh ]] ; then
+		. /etc/profile.d/vte.sh
 	fi
 fi
 
@@ -177,26 +239,14 @@ fi
 # Final PROMPT setting
 PROMPT=$'%{%B%(!.$fg[red].$fg[green])%}%m%{%b%}${zsh_chroot_info}${zsh_jhbuild_info} ${vcs_info_msg_0_}%{%B$fg[blue]%}%1~ %{%(?.$fg[blue].%B$fg[red])%}%# %{%b%k%f%}'
 
-# Devtodo
-#
-if [[ -x /usr/bin/devtodo ]] ; then
-	function cd {
-		if builtin cd "$@" ; then
-			devtodo --summary --timeout 30
-		fi
-	}
-	function pushd {
-		if builtin pushd "$@" ; then
-			devtodo --summary --timeout 30
-		fi
-	}
-	function popd {
-		if builtin popd "$@" ; then
-			devtodo --summary --timeout 30
-		fi
-	}
-	devtodo --summary --timeout 30
-fi
+# Don't count common path separators as word characters
+WORDCHARS=${WORDCHARS//[&.;\/]}
+
+# Words cannot express how fucking sweet this is
+REPORTTIME=5
+
+# Don't glob with find or wget
+for command in find wget curl; alias ${command}="noglob ${command}"
 
 # Aliases
 alias -- '-'=popd
@@ -227,22 +277,6 @@ if [ -r "${HOME}/.startup.py" ] ; then
 	export PYTHONSTARTUP="${HOME}/.startup.py"
 fi
 
-# Python virtualenvwrapper
-if [ -r /usr/bin/virtualenvwrapper.sh ] ; then
-	export VIRTUALENVWRAPPER_PYTHON=python3
-	export WORKON_HOME=~/.venv.d
-	#export VIRTUALENV_DISTRIBUTE=1
-	if [ ! -d "${WORKON_HOME}" ] ; then
-		mkdir -p "${WORKON_HOME}"
-	fi
-	# Prefer the lazy-loaded version of the script
-	if [ -r /usr/bin/virtualenvwrapper_lazy.sh ] ; then
-		. /usr/bin/virtualenvwrapper_lazy.sh
-	else
-		. /usr/bin/virtualenvwrapper.sh
-	fi
-fi
-
 export EMAIL='aperez@igalia.com'
 export NAME='Adrian Perez'
 export CCACHE_COMPRESS=1
@@ -254,6 +288,19 @@ for i in nvim vim e3vi vi zile nano pico ; do
 		break
 	fi
 done
+
+for i in less most more ; do
+	i=$(whence -p "${i}")
+	if [[ -x ${i} ]] ; then
+		export PAGER=${i}
+		break
+	fi
+done
+
+if [[ ${PAGER} = */less ]] ; then
+	export LESS=RSM
+fi
+
 
 if [[ -x /usr/bin/ccache ]] ; then
 	if [[ -d /usr/lib/ccache/bin ]] ; then
