@@ -21,12 +21,25 @@ if empty(glob('~/.nvim/autoload/plug.vim'))
 	autocmd vimrc VimEnter * PlugInstall
 endif
 
+
+let s:completion_setup = 'ycm'
+
 call plug#begin('~/.vim/bundle')
-Plug '~/devel/vim-lift'
+Plug 'tpope/vim-sensible'
+
+if s:completion_setup == 'lift'
+	Plug '~/devel/vim-lift'
+elseif s:completion_setup == 'deoplete'
+	Plug 'Shougo/deoplete.nvim'
+	Plug 'Shougo/neco-vim'
+	Plug 'Shougo/neco-syntax'
+	Plug 'Shougo/neoinclude.vim'
+elseif s:completion_setup == 'ycm'
+	Plug 'Valloric/YouCompleteMe', { 'do': 'python2 install.py --clang-completer --gocode-completer --system-boost --system-libclang' }
+endif
+
 Plug '~/devel/vim-template'
 Plug '~/devel/hipack-vim', { 'for' : 'hipack' }
-
-Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-endwise'
 Plug 'Cloudef/vim-indent'
 Plug 'bling/vim-airline'
@@ -42,8 +55,6 @@ Plug 'tyru/caw.vim', { 'on' : '<Plug>(caw:' }
 Plug 'ledger/vim-ledger', { 'for' : 'ledger' }
 Plug 'vim-scripts/gtk-vim-syntax', { 'for' : ['c', 'cpp'] }
 Plug 'othree/yajs.vim', { 'for' : 'javascript' }
-Plug 'Rip-Rip/clang_complete', { 'for' : ['c', 'cpp'] }
-Plug 'davidhalter/jedi-vim', { 'for' : 'python' }
 Plug 'godlygeek/tabular', { 'on' : 'Tabularize' }
 Plug 'reedes/vim-pencil'
 Plug 'Shougo/vimproc.vim' |
@@ -86,7 +97,8 @@ set nowrap
 set showmode
 set textwidth=78
 set fileformats=unix,mac,dos
-set completeopt=longest,menu,menuone,preview,noinsert
+set completeopt=menu,preview
+set hidden
 set infercase
 set diffopt+=iwhite
 set nobackup
@@ -102,41 +114,51 @@ if len($DISPLAY) > 0
 endif
 
 
-if 1
-    let g:lift#sources = { '_': ['near', 'omni', 'user', 'syntax'] }
-	inoremap <expr> <Tab> lift#trigger_completion()
+if exists('g:loaded_lift_plugin') && s:completion_setup == 'lift'
+    let g:lift#sources = {
+				\   '_': ['near', 'omni', 'user', 'syntax'],
+				\   'c': ['omni', 'near'],
+				\ }
+    let g:lift#close_preview_window = 0
+    let g:lift#shortcut_single_source = 1
+	inoremap <expr><silent><Tab> lift#trigger_completion()
 else
 	function! s:completion_check_bs()
 		let l:col = col('.') - 1
 		return !l:col || getline('.')[l:col - 1] =~ '\s'
 	endfunction
 
-	function! s:simple_tab_completion(prefer_user_complete)
-		if pumvisible()
+	if s:completion_setup == 'simple'
+		function! s:simple_tab_completion(prefer_user_complete)
+			if pumvisible()
+				return "\<C-n>"
+			endif
+			if s:completion_check_bs()
+				return "\<Tab>"
+			endif
+
+			if a:prefer_user_complete == 0
+				if len(&completefunc) > 0
+					return "\<C-x>\<C-u>"
+				elseif len(&omnifunc) > 0
+					return "\<C-x>\<C-o>"
+				endif
+			else
+				if len(&omnifunc) > 0
+					return "\<C-x>\<C-o>"
+				elseif len(&completefunc) > 0
+					return "\<C-x>\<C-u>"
+				endif
+			endif
+
 			return "\<C-n>"
-		endif
-		if s:completion_check_bs()
-			return "\<Tab>"
-		endif
+		endfunction
 
-		if a:prefer_user_complete == 0
-			if len(&completefunc) > 0
-				return "\<C-x>\<C-u>"
-			elseif len(&omnifunc) > 0
-				return "\<C-x>\<C-o>"
-			endif
-		else
-			if len(&omnifunc) > 0
-				return "\<C-x>\<C-o>"
-			elseif len(&completefunc) > 0
-				return "\<C-x>\<C-u>"
-			endif
-		endif
-
-		return "\<C-n>"
-	endfunction
-
-	inoremap <expr> <Tab> <sid>simple_tab_completion(0)
+		inoremap <expr><silent><Tab> <sid>simple_tab_completion(0)
+	elseif s:completion_setup == 'deoplete'
+		inoremap <expr><silent><Tab> pumvisible() ? "\<C-n>" :
+			\ (<sid>completion_check_bs() ? "\<Tab>" : deoplete#mappings#manual_complete())
+	endif
 endif
 
 
@@ -279,12 +301,43 @@ endif
 nnoremap <silent> <leader>g :<C-u>Unite grep:. -buffer-name=Find<cr>
 nnoremap <silent> <leader>L :<C-u>UniteResume<cr>
 
-" Plugin: clang_complete
-let g:clang_library_path = '/usr/lib/libclang.so'
-let g:clang_make_default_keymappings = 0
+" Plugin: deoplete
+if s:completion_setup == 'deoplete'
+	let g:deoplete#enable_at_startup = 1
+	let g:deoplete#auto_completion_start_length = 3
 
-" Plugin: dwm
-nmap <Tab> <Plug>DWMFocus
+	" inoremap <expr><C-Space> deoplete#mappings#manual_complete()
+	" inoremap <expr><Nul> deoplete#mappings#manual_complete()
+	inoremap <expr><C-y> deoplete#mappings#close_popup()
+	inoremap <expr><C-e> deoplete#mappings#cancel_popup()
+	inoremap <expr><C-h> deoplete#mappings#smart_close_popup()."\<C-h>"
+	inoremap <expr><BS>  deoplete#mappings#smart_close_popup()."\<C-h>"
+	inoremap <expr> '    pumvisible() ? deoplete#mappings#close_popup() : "'"
+	inoremap <expr> "    pumvisible() ? deoplete#mappings#close_popup() : '"'
+endif
+
+" Plugin: YouCompleteMe
+if s:completion_setup == 'ycm'
+	let g:ycm_min_num_of_chars_for_completion = 3
+	let g:ycm_always_populate_location_list = 1
+	let g:ycm_key_detailed_diagnostics = '<leader>D'
+	let g:ycm_extra_conf_globlist = ['~/devel/*', '~/pfc/eol/*', '!~/*']
+
+	if &t_Co == 256
+    highlight YcmErrorSign   ctermbg=124 ctermfg=9
+    highlight YcmWarningSign ctermbg=172 ctermfg=11
+    highlight YcmErrorLine   ctermbg=52  ctermfg=15
+    highlight YcmWarningLine ctermbg=94  ctermfg=15
+  endif
+
+	if !exists('g:ycm_semantic_triggers')
+		let g:ycm_semantic_triggers = {}
+	endif
+	" VimTex integration
+	let g:ycm_semantic_triggers.tex = [
+				\ 're!\\[A-Za-z]*(ref|cite)[A-Za-z]*([^]]*])?{([^}]*, ?)*'
+				\ ]
+endif
 
 " Plugin: quickhl
 nmap <leader>h <Plug>(quickhl-manual-this)
