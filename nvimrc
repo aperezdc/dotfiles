@@ -55,6 +55,11 @@ Plug 'airblade/vim-gitgutter', { 'on' : [ '<Plug>GitGutter',
 			\ 'GitGutterEnable', 'GitGutterDisable', 'GitGutterToggle' ] }
 call plug#end()
 
+" Add system-wide Vim files directory, if it exists
+if isdirectory('/usr/share/vim/vimfiles')
+	set runtimepath+=/usr/share/vim/vimfiles
+endif
+
 call unite#custom#profile('default', 'context', {
 			\ 'start_insert' : 1,
 			\ 'winheight'    : 15,
