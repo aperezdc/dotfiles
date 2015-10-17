@@ -61,11 +61,14 @@ if isdirectory('/usr/share/vim/vimfiles')
 endif
 
 call unite#custom#profile('default', 'context', {
-			\ 'start_insert' : 1,
-			\ 'winheight'    : 15,
-			\ 'no_split'     : 1,
-			\ 'prompt'       : '% ' })
+			\ 'winheight'       : 15,
+			\ 'start_insert'    : 1,
+			\ 'no_split'        : 1,
+			\ 'prompt'          : ': ',
+			\ })
 call unite#filters#matcher_default#use(['matcher_fuzzy'])
+call unite#custom#source('neomru/file', 'matchers',
+			\ ['matcher_project_files', 'matcher_fuzzy'])
 
 syntax on
 filetype indent plugin on
