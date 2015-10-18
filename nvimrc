@@ -41,29 +41,39 @@ endif
 Plug '~/devel/vim-template'
 Plug '~/devel/hipack-vim', { 'for' : 'hipack' }
 Plug 'tpope/vim-endwise'
-Plug 'Cloudef/vim-indent'
 Plug 'bling/vim-airline'
-Plug 'nathanaelkane/vim-indent-guides'
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'chrisbra/vim-diff-enhanced'
+Plug 'tmux-plugins/vim-tmux-focus-events'
 Plug 'gcmt/wildfire.vim'
 Plug 'jamessan/vim-gnupg'
-Plug 'spolu/dwm.vim'
+Plug 'wting/rust.vim'
+Plug 'phildawes/racer', { 'for': 'rust', 'do': 'cargo build --release' }
 Plug 'tyru/current-func-info.vim'
+Plug 'lervag/vimtex'
 Plug 'vim-scripts/a.vim', { 'on': ['A', 'AV', 'AS'] }
 Plug 'tyru/caw.vim', { 'on' : '<Plug>(caw:' }
 Plug 'ledger/vim-ledger', { 'for' : 'ledger' }
 Plug 'vim-scripts/gtk-vim-syntax', { 'for' : ['c', 'cpp'] }
 Plug 'othree/yajs.vim', { 'for' : 'javascript' }
+Plug 'othree/html5.vim', { 'for' : ['html', 'html.handlebars'] }
+Plug 'prurigro/vim-markdown-concealed'
 Plug 'godlygeek/tabular', { 'on' : 'Tabularize' }
+Plug 'duff/vim-bufonly', { 'on' : 'BufOnly' }
+Plug 'junegunn/goyo.vim', { 'on' : 'Goyo' }
 Plug 'reedes/vim-pencil'
-Plug 'Shougo/vimproc.vim' |
+Plug 'reedes/vim-wheel'
+Plug 'reedes/vim-wordy', { 'on' : ['Wordy', 'NextWordy'] }
+Plug 'Shougo/vimproc.vim', { 'do': 'make' } |
 			\ Plug 'Shougo/unite.vim' |
 			\ Plug 'Shougo/unite-outline' |
 			\ Plug 'Shougo/neomru.vim'
 Plug 't9md/vim-quickhl', { 'on' : '<Plug>(quickhl-' }
 Plug 'airblade/vim-gitgutter', { 'on' : [ '<Plug>GitGutter',
 			\ 'GitGutterEnable', 'GitGutterDisable', 'GitGutterToggle' ] }
+Plug 'Valloric/ListToggle'
+Plug 'sjl/splice.vim', { 'on' : 'SpliceInit' }
+Plug 'junegunn/seoul256.vim'
 call plug#end()
 
 " Add system-wide Vim files directory, if it exists
@@ -97,6 +107,7 @@ set nowrap
 set showmode
 set textwidth=78
 set fileformats=unix,mac,dos
+" set completeopt=longest,menu,menuone,preview,noinsert
 set completeopt=menu,preview
 set hidden
 set infercase
@@ -105,9 +116,20 @@ set nobackup
 set grepprg=ag\ --noheading\ --nocolor\ --nobreak
 set secure
 set exrc
-set viminfo+=n~/.viminfo
+set shada+=n~/.nvim/info.shada
 set wildchar=<tab>
 set encoding=utf-8
+set undodir=~/.nvim/undo
+set undofile
+set lazyredraw
+set listchars=tab:↹·,extends:⇉,precedes:⇇,nbsp:␠,trail:␠,nbsp:␣
+set linebreak                   " break on what looks like boundaries
+set showbreak=↳\                " shown at the start of a wrapped line
+set mouse=a
+
+if isdirectory(expand('~/.nvim/swap'))
+    set directory^=~/.nvim/swap
+endif
 
 if len($DISPLAY) > 0
 	set clipboard+=unnamed
@@ -162,7 +184,7 @@ else
 endif
 
 
-if &term =~ "^screen"
+if $TERM =~ "^screen"
     map  <silent> [1;5D <C-Left>
     map  <silent> [1;5C <C-Right>
     lmap <silent> [1;5D <C-Left>
@@ -172,28 +194,27 @@ if &term =~ "^screen"
 
     " pretend this is xterm.  it probably is anyway, but if term is left as
     " 'screen', vim doesn't understand ctrl-arrow.
-    if &term == "screen-256color"
-	set term=xterm-256color
-    else
-	set term=xterm
-    endif
+ "    if &term == "screen-256color"
+	" set term=xterm-256color
+ "    else
+	" set term=xterm
+ "    endif
 
     " gotta set these *last*, since `set term` resets everything
     set t_ts=k
     set t_fs=\
 endif
 
-if &term =~ "xterm-256color" || &term =~ "screen-256color" || &term =~ "gnome-256color" || $COLORTERM =~ "gnome-terminal"
+set t_Co=16
+if $TERM =~ "xterm-256color" || $TERM =~ "screen-256color" || $TERM =~ "xterm-termite" || $TERM =~ "gnome-256color" || $COLORTERM =~ "gnome-terminal"
 	set t_Co=256
 	set t_AB=[48;5;%dm
 	set t_AF=[38;5;%dm
 	set cursorline
 else
-	if &term =~ "st-256color"
+	if $TERM =~ "st-256color"
 		set t_Co=256
 		set cursorline
-	else
-		set t_Co=16
 	endif
 endif
 
@@ -201,6 +222,7 @@ endif
 colorscheme elflord
 highlight CursorLine NONE
 if &t_Co == 256
+    set cursorline
     highlight CursorLine   ctermbg=235
     highlight CursorLineNr ctermbg=235 ctermfg=246
     highlight LineNr       ctermbg=234 ctermfg=238
@@ -209,6 +231,8 @@ if &t_Co == 256
     highlight PmenuSel     ctermbg=238 ctermfg=white
     highlight PmenuSbar    ctermbg=238
     highlight PmenuThumb   ctermbg=240
+    highlight VertSplit    ctermbg=235 ctermfg=235
+    highlight StatusLineNC ctermfg=235
 endif
 
 
@@ -248,6 +272,16 @@ if exists('/usr/share/clang/clang-format.py')
 	imap <C-k> <Esc>:pyf /usr/share/clang/clang-format.py<cr>i
 endif
 
+" Plugin: pencil
+nmap <silent> <F10> :PencilToggle<CR>
+imap <silent> <F10> <Esc>:PencilToggle<CR>a
+nmap <silent> <C-i> :PencilToggle<CR>a
+
+" Plugin: GitGutter
+let g:gitgutter_enabled = 0
+let g:gitgutter_diff_args = '-w'
+nmap <silent> <F8> :GitGutterToggle<cr>
+imap <silent> <F8> <Esc>:GitGutterToggle<cr>a
 
 " Plugin: caw
 let g:caw_no_default_keymappings = 1
@@ -255,21 +289,22 @@ nmap <leader>c <Plug>(caw:i:toggle)
 xmap <leader>c <Plug>(caw:i:toggle)
 
 " Plugin: Airline
-let g:airline_powerline_fonts = 0
-let g:airline_left_sep = ''
-let g:airline_right_sep = ''
-let g:airline_mode_map = {
-			\ '__' : '-', 'n'  : 'N', 'i'  : 'I', 'R'  : 'R',
-			\ 'c'  : 'C', 'v'  : 'V', 'V'  : 'V', '' : 'V',
-			\ 's'  : 'S', 'S'  : 'S', '' : 'S' }
+let g:airline_powerline_fonts = 1
+" let g:airline_left_sep = ''
+" let g:airline_right_sep = ''
+" let g:airline_mode_map = {
+" 			\ '__' : '-', 'n'  : 'N', 'i'  : 'I', 'R'  : 'R',
+" 			\ 'c'  : 'C', 'v'  : 'V', 'V'  : 'V', '' : 'V',
+" 			\ 's'  : 'S', 'S'  : 'S', '' : 'S' }
 let g:airline_theme = 'bubblegum'
+let g:airline_detect_crypt = 0
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#buffer_min_count = 2
+let g:airline_section_x = '%{PencilMode()}%{cfi#format(" · %s()", "")}'
 
 " Plugin: Indent Guides
 let g:indent_guides_exclude_filetypes = ['help', 'unite', 'qf']
 let g:indent_guides_enable_on_vim_startup = 1
-"let g:indent_guides_guide_size = 1
 let g:indent_guides_start_level = 1
 let g:indent_guides_auto_colors = 0
 highlight IndentGuidesOdd  ctermbg=black
@@ -280,7 +315,7 @@ let g:better_whitespace_filetypes_blacklist = ['help', 'unite', 'qf']
 
 " Plugin: Unite
 let g:unite_source_file_mru_limit = 350
-nnoremap <silent> <leader>f :<C-u>Unite file_rec/async file/new -buffer-name=Files<cr>
+nnoremap <silent> <leader>f :<C-u>Unite file_rec/neovim file/new -buffer-name=Files<cr>
 nnoremap <silent> <leader>d :<C-u>Unite buffer bookmark file/async -buffer-name=Files\ (misc)<cr>
 nnoremap <silent> <leader>F :<C-u>Unite file_rec/git:--cached:--others:--exclude-standard file/new -buffer-name=Files\ (Git)<cr>
 nnoremap <silent> <leader>m :<C-u>Unite neomru/file -buffer-name=MRU\ Files<cr>
@@ -288,10 +323,17 @@ nnoremap <silent> <leader>b :<C-u>Unite buffer -buffer-name=Buffers<cr>
 nnoremap <silent> <leader>J :<C-u>Unite jump -buffer-name=Jump\ Locations<cr>
 nnoremap <silent> <leader>o :<C-u>Unite outline -buffer-name=Outline<cr>
 nnoremap <silent> <leader>O :<C-u>Unite outline -no-split -buffer-name=Outline<cr>
+nmap <C-A-p> <leader>f
+nmap <C-A-m> <leader>m
 
-if executable('ag')
+if executable('pt')
+  let g:unite_source_grep_command = 'pt'
+  let g:unite_source_grep_default_opts = '--nogroup --nocolor'
+  let g:unite_source_grep_recursive_opt = ''
+  let g:unite_source_grep_encoding = 'utf-8'
+elseif executable('ag')
 	let g:unite_source_grep_command = 'ag'
-	let g:unite_source_grep_default_opts = '-i --line-numbers --nocolor --nogroup --noheading'
+	let g:unite_source_grep_default_opts = '-i --vimgrep --ignore .hg --ignore .git --ignore .svn --ignore .bzr'
 	let g:unite_source_grep_recursive_opt = ''
 elseif executable('ack')
 	let g:unite_source_grep_command = 'ack'
@@ -346,5 +388,36 @@ nmap <leader>H <Plug>(quickhl-manual-reset)
 xmap <leader>H <Plug>(quickhl-manual-reset)
 nmap <leader>j <Plug>(quickhl-cword-toggle)
 
+" Plugin: racer
+let g:racer_cmd = '/home/aperez/.vim/bundle/racer/target/release/racer'
+let $RUST_SRC_PATH = '/devel/rust/src'
+
+" Plugin: vimtex
+let g:vimtex_fold_enabled = 0
+let g:vimtex_syntax_minted = [
+			\ { 'lang': 'c', 'environments': ['ccode'] },
+			\ { 'lang': 'lua', 'environments': ['luacode'] },
+			\ ]
+
 " Show "git diff --cached" in split window when committing changes.
-autocmd vimrc FileType gitcommit DiffGitCached | wincmd H | wincmd r | wincmd p
+function! s:SplitGitDiffCached()
+    vnew
+    silent 0read! git diff --cached --no-color
+    silent file! git-diff-cached
+    setlocal filetype=git buftype=nowrite nobuflisted noswapfile nomodifiable
+    " Go to the top of the buffer: always shown diff from the beginning
+    execute ':1'
+    wincmd r | wincmd p
+    autocmd QuitPre <buffer> wincmd w | wincmd q
+    " Convert the split into an horizontal one in not-so-wide terminals.
+    if &columns < 140
+		wincmd K
+    endif
+endfunction
+autocmd vimrc FileType gitcommit call s:SplitGitDiffCached()
+
+" dwm-like window movements
+nnoremap <A-h> <C-w>h
+nnoremap <A-j> <C-w>j
+nnoremap <A-k> <C-w>k
+nnoremap <A-l> <C-w>l
