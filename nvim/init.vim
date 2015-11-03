@@ -15,8 +15,8 @@ if has('python')
 endif
 
 
-if empty(glob('~/.nvim/autoload/plug.vim'))
-	silent !curl -fLo ~/.nvim/autoload/plug.vim --create-dirs
+if empty(glob('~/.config/nvim/autoload/plug.vim'))
+	silent !curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs
 				\ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 	autocmd vimrc VimEnter * PlugInstall
 endif
@@ -24,7 +24,7 @@ endif
 
 let s:completion_setup = 'ycm'
 
-call plug#begin('~/.vim/bundle')
+call plug#begin('~/.config/nvim/bundle')
 Plug 'tpope/vim-sensible'
 
 if s:completion_setup == 'lift'
@@ -116,7 +116,6 @@ set nobackup
 set grepprg=ag\ --noheading\ --nocolor\ --nobreak
 set secure
 set exrc
-set shada+=n~/.nvim/info.shada
 set wildchar=<tab>
 set encoding=utf-8
 set undodir=~/.nvim/undo
@@ -126,10 +125,6 @@ set listchars=tab:↹·,extends:⇉,precedes:⇇,nbsp:␠,trail:␠,nbsp:␣
 set linebreak                   " break on what looks like boundaries
 set showbreak=↳\                " shown at the start of a wrapped line
 set mouse=a
-
-if isdirectory(expand('~/.nvim/swap'))
-    set directory^=~/.nvim/swap
-endif
 
 if len($DISPLAY) > 0
 	set clipboard+=unnamed
@@ -389,7 +384,7 @@ xmap <leader>H <Plug>(quickhl-manual-reset)
 nmap <leader>j <Plug>(quickhl-cword-toggle)
 
 " Plugin: racer
-let g:racer_cmd = '/home/aperez/.vim/bundle/racer/target/release/racer'
+let g:racer_cmd = '/home/aperez/.config/nvim/bundle/racer/racer/target/release/racer'
 let $RUST_SRC_PATH = '/devel/rust/src'
 
 " Plugin: vimtex
