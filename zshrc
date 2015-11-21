@@ -14,6 +14,19 @@ if [[ -d ~/.zsh/functions ]] ; then
 	fpath=( ${fpath} ~/.zsh/functions )
 fi
 
+if [[ -d ~/.zsh/zgen ]] ; then
+	source ~/.zsh/zgen/zgen.zsh
+	if ! zgen saved ; then
+		zgen load zsh-users/zsh-syntax-highlighting
+		zgen load zsh-users/zsh-completions src
+		zgen load Tarrasch/zsh-autoenv
+		zgen save
+	fi
+else
+	echo "zgen not available, please run:"
+	echo "git clone git://github.com/tarjoilija/zgen ~/.zsh/zgen"
+fi
+
 autoload -Uz compinit
 compinit
 
@@ -314,25 +327,22 @@ fi
 # Mark exports
 export PATH
 
-
-if [[ -r /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]] ; then
-	ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
-	source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-	ZSH_HIGHLIGHT_STYLES[dollar-double-quoted-argument]='fg=magenta,bold'
-	ZSH_HIGHLIGHT_STYLES[double-quoted-argument]='fg=magenta,bold'
-	ZSH_HIGHLIGHT_STYLES[single-quoted-argument]='fg=magenta,bold'
-	ZSH_HIGHLIGHT_STYLES[single-hyphen-option]='fg=cyan'
-	ZSH_HIGHLIGHT_STYLES[double-hyphen-option]='fg=cyan'
-	ZSH_HIGHLIGHT_STYLES[back-quoted-argument]='fg=magenta'
-	ZSH_HIGHLIGHT_STYLES[commandseparator]='fg=red,bold'
-	ZSH_HIGHLIGHT_STYLES[hashed-command]='fg=yellow,bold'
-	ZSH_HIGHLIGHT_STYLES[reserved-word]='fg=bold'
-	ZSH_HIGHLIGHT_STYLES[unknown-token]='bg=brown'
-	ZSH_HIGHLIGHT_STYLES[precommand]='fg=yellow,bold,underline'
-	ZSH_HIGHLIGHT_STYLES[function]='fg=yellow,bold'
-	ZSH_HIGHLIGHT_STYLES[globbing]='fg=cyan,bold'
-	ZSH_HIGHLIGHT_STYLES[command]='fg=yellow,bold'
-	ZSH_HIGHLIGHT_STYLES[builtin]='fg=yellow,bold'
-	ZSH_HIGHLIGHT_STYLES[alias]='fg=yellow,bold'
-	#ZSH_HIGHLIGHT_STYLES[path]='fg=underline'
-fi
+# Syntax highlighting settings
+ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
+ZSH_HIGHLIGHT_STYLES[dollar-double-quoted-argument]='fg=magenta,bold'
+ZSH_HIGHLIGHT_STYLES[double-quoted-argument]='fg=magenta,bold'
+ZSH_HIGHLIGHT_STYLES[single-quoted-argument]='fg=magenta,bold'
+ZSH_HIGHLIGHT_STYLES[single-hyphen-option]='fg=cyan'
+ZSH_HIGHLIGHT_STYLES[double-hyphen-option]='fg=cyan'
+ZSH_HIGHLIGHT_STYLES[back-quoted-argument]='fg=magenta'
+ZSH_HIGHLIGHT_STYLES[commandseparator]='fg=red,bold'
+ZSH_HIGHLIGHT_STYLES[hashed-command]='fg=yellow,bold'
+ZSH_HIGHLIGHT_STYLES[reserved-word]='fg=bold'
+ZSH_HIGHLIGHT_STYLES[unknown-token]='bg=brown'
+ZSH_HIGHLIGHT_STYLES[precommand]='fg=yellow,bold,underline'
+ZSH_HIGHLIGHT_STYLES[function]='fg=yellow,bold'
+ZSH_HIGHLIGHT_STYLES[globbing]='fg=cyan,bold'
+ZSH_HIGHLIGHT_STYLES[command]='fg=yellow,bold'
+ZSH_HIGHLIGHT_STYLES[builtin]='fg=yellow,bold'
+ZSH_HIGHLIGHT_STYLES[alias]='fg=yellow,bold'
+ZSH_HIGHLIGHT_STYLES[path]='fg=underline'
