@@ -48,7 +48,7 @@ Plug 'tmux-plugins/vim-tmux-focus-events'
 Plug 'gcmt/wildfire.vim'
 Plug 'jamessan/vim-gnupg'
 Plug 'wting/rust.vim'
-Plug 'phildawes/racer', { 'for': 'rust', 'do': 'cargo build --release' }
+Plug 'racer-rust/vim-racer'
 Plug 'tyru/current-func-info.vim'
 Plug 'lervag/vimtex'
 Plug 'vim-scripts/a.vim', { 'on': ['A', 'AV', 'AS'] }
@@ -57,9 +57,11 @@ Plug 'ledger/vim-ledger', { 'for' : 'ledger' }
 Plug 'vim-scripts/gtk-vim-syntax', { 'for' : ['c', 'cpp'] }
 Plug 'othree/yajs.vim', { 'for' : 'javascript' }
 Plug 'othree/html5.vim', { 'for' : ['html', 'html.handlebars'] }
-Plug 'prurigro/vim-markdown-concealed'
+Plug 'cespare/vim-toml'
+Plug 'plasticboy/vim-markdown'
+Plug 'xolox/vim-misc' |
+			\ Plug 'xolox/vim-lua-ftplugin'
 Plug 'godlygeek/tabular', { 'on' : 'Tabularize' }
-Plug 'duff/vim-bufonly', { 'on' : 'BufOnly' }
 Plug 'junegunn/goyo.vim', { 'on' : 'Goyo' }
 Plug 'reedes/vim-pencil'
 Plug 'reedes/vim-wheel'
@@ -73,7 +75,6 @@ Plug 'airblade/vim-gitgutter', { 'on' : [ '<Plug>GitGutter',
 			\ 'GitGutterEnable', 'GitGutterDisable', 'GitGutterToggle' ] }
 Plug 'Valloric/ListToggle'
 Plug 'sjl/splice.vim', { 'on' : 'SpliceInit' }
-Plug 'junegunn/seoul256.vim'
 call plug#end()
 
 " Add system-wide Vim files directory, if it exists
@@ -255,7 +256,7 @@ autocmd vimrc BufReadPost *
 			\ if line("'\"") > 0 && line("'\"") <= line("$") |
 			\		execute "normal g'\"" |
 			\ endif
-autocmd vimrc FileType markdown setlocal expandtab tabstop=2 shiftwidth=2
+autocmd vimrc FileType mkdc,markdown setlocal expandtab tabstop=2 shiftwidth=2
 autocmd vimrc FileType objc setlocal expandtab cinoptions+=(0
 autocmd vimrc FileType cpp setlocal expandtab cinoptions+=(0
 autocmd vimrc FileType c setlocal expandtab cinoptions+=(0
@@ -338,6 +339,11 @@ endif
 nnoremap <silent> <leader>g :<C-u>Unite grep:. -buffer-name=Find<cr>
 nnoremap <silent> <leader>L :<C-u>UniteResume<cr>
 
+" Plugin: vim-lua-ftplugin
+let g:lua_check_syntax = 0
+let g:lua_complete_omni = 1
+let g:lua_complete_dynamic = 0
+
 " Plugin: deoplete
 if s:completion_setup == 'deoplete'
 	let g:deoplete#enable_at_startup = 1
@@ -351,6 +357,14 @@ if s:completion_setup == 'deoplete'
 	inoremap <expr><BS>  deoplete#mappings#smart_close_popup()."\<C-h>"
 	inoremap <expr> '    pumvisible() ? deoplete#mappings#close_popup() : "'"
 	inoremap <expr> "    pumvisible() ? deoplete#mappings#close_popup() : '"'
+
+	" Make deoplete provide completions from vim-lua-ftplugin
+	if !exists('g:deoplete#omni#functions')
+		let g:deoplete#omni#functions = {}
+	endif
+	let g:deoplete#omni#functions.lua = 'xolox#lua#omnifunc'
+	"let g:deoplete#omni#functions.lua = 'xolox#lua#completefunc'
+	let g:lua_define_completion_mappings = 0
 endif
 
 " Plugin: YouCompleteMe
@@ -358,7 +372,7 @@ if s:completion_setup == 'ycm'
 	let g:ycm_min_num_of_chars_for_completion = 3
 	let g:ycm_always_populate_location_list = 1
 	let g:ycm_key_detailed_diagnostics = '<leader>D'
-	let g:ycm_extra_conf_globlist = ['~/devel/*', '~/pfc/eol/*', '!~/*']
+	let g:ycm_extra_conf_globlist = ['~/devel/*', '/devel/*', '~/pfc/eol/*', '!~/*']
 
 	if &t_Co == 256
     highlight YcmErrorSign   ctermbg=124 ctermfg=9
@@ -384,8 +398,11 @@ xmap <leader>H <Plug>(quickhl-manual-reset)
 nmap <leader>j <Plug>(quickhl-cword-toggle)
 
 " Plugin: racer
-let g:racer_cmd = '/home/aperez/.config/nvim/bundle/racer/racer/target/release/racer'
-let $RUST_SRC_PATH = '/devel/rust/src'
+let g:racer_cmd = '/usr/bin/racer'
+let $RUST_SRC_PATH = '/usr/src/rust/src'
+
+" Plugin: Markdown
+let g:vim_markdown_folding_disabled = 1
 
 " Plugin: vimtex
 let g:vimtex_fold_enabled = 0
