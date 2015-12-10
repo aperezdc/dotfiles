@@ -1,5 +1,5 @@
 #! /bin/zsh
-#set -e
+set -e
 
 if [[ $- != *i* ]] ; then
 	return
@@ -184,9 +184,17 @@ bindkey "\eOB" down-line-or-local-history
 # Disable Git automatic file completion -- it is slow.
 #__git_files(){}
 
+REAL_TERM=${TERM}
+if [[ -n ${TMUX} ]] ; then
+	local tmp=$(tmux show-environment -g TERM 2> /dev/null)
+	if [[ -n ${tmp} ]] ; then
+		REAL_TERM=${tmp:5}
+	fi
+fi
+
 ## workaround for handling TERM variable in multiple tmux sessions properly from http://sourceforge.net/p/tmux/mailman/message/32751663/ by Nicholas Marriott
 if [[ -n ${TMUX} && -n ${commands[tmux]} ]];then
-	case $(tmux showenv TERM 2>/dev/null) in
+	case ${REAL_TERM} in
 		*256color) ;&
 		TERM=fbterm)
 			TERM=screen-256color ;;
@@ -195,18 +203,18 @@ if [[ -n ${TMUX} && -n ${commands[tmux]} ]];then
 	esac
 fi
 
-case ${TERM} in
-	screen* | xterm* | gnome*)
-		function precmd {
-			vcs_info 'prompt'
+function precmd_vcs_info_prompt {
+	vcs_info prompt
+}
+precmd_functions+=(precmd_vcs_info_prompt)
+
+case ${REAL_TERM} in
+	xterm* | gnome*)
+		function precmd_xterm_title {
 			print -Pn "\e]0;%n@%m: %~\a"
 		}
-	;;
-	*)
-		function precmd {
-			vcs_info 'prompt'
-		}
-	;;
+		precmd_functions+=(precmd_xterm_title)
+		;;
 esac
 
 if [[ ${COLORTERM} = gnome-terminal || ${COLORTERM} = drop-down-terminal || -n ${VTE_VERSION} ]] ; then
@@ -225,9 +233,11 @@ if [[ ${COLORTERM} = gnome-terminal || ${COLORTERM} = drop-down-terminal || -n $
 		fi
 	fi
 	if [[ -r /etc/profile.d/vte.sh ]] ; then
-		. /etc/profile.d/vte.sh
+		TERM=${REAL_TERM} source /etc/profile.d/vte.sh
 	fi
 fi
+
+unset REAL_TERM
 
 # Put the prefix of the jhbuild environment in the prompt
 zsh_jhbuild_info=''
@@ -346,3 +356,10 @@ ZSH_HIGHLIGHT_STYLES[command]='fg=yellow,bold'
 ZSH_HIGHLIGHT_STYLES[builtin]='fg=yellow,bold'
 ZSH_HIGHLIGHT_STYLES[alias]='fg=yellow,bold'
 ZSH_HIGHLIGHT_STYLES[path]='fg=underline'
+
+# Source the fzf helpers last, to make sure its keybindings prevail
+if [[ -r /etc/profile.d/fzf.zsh ]] ; then
+	source /etc/profile.d/fzf.zsh
+fi
+
+set +e
