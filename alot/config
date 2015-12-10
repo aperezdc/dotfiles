@@ -41,10 +41,10 @@ q = bclose
 	normal = '','','light red','','light red',''
 	focus = '','','light red','','light red',''
   [[replied]]
-	translated = 
+	#translated = 
 	#translated = ⭍
 	#translated = ⮌
-	#translated = ↩
+	translated = ↩
   [[sent]]
 	translated = ↗
 	#translated = 🡕
@@ -55,19 +55,21 @@ q = bclose
 	#translated = 🗝
 	#translated = ⛊
   [[inbox]]
-	translated = 
+	#translated = 
 	#translated = 📨
 	#translated = 🖂
 	#translated = 📂
+	#translated = ⛳
   [[signed]]
 	translated = §
 	#translated = 🖆
 	#translated = ⛉
   [[fyi]]
 	#translated = ⌘
+	translated = ℹ
   [[unread]]
-	translated = "#"
-	#translated = ★
+	#translated = "#"
+	translated = ★
 	#translated = 🔰
 	#translated = 🗲
 	#normal = '','','light green','','light green',''

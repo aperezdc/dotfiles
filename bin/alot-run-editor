@@ -12,7 +12,7 @@ if [[ -n ${TMUX} && -n ${TMUX_PANE} ]] ; then
 	else
 		CHAN_ID="alot-compose-$$"
 	fi
-	tmux split-window "$* ; tmux wait-for -S '${CHAN_ID}'"
+	tmux split-window -h "$* ; tmux wait-for -S '${CHAN_ID}'"
 	exec tmux wait-for "${CHAN_ID}"
 fi
 

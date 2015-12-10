@@ -18,6 +18,7 @@ def pre_edit_translate(body, ui=None, dbm=None):
         except:
             pass
         if signature is not None:
-            body = body + "\n--\n" + signature.decode("utf-8")
-
+            signature = u"\n--\n" + signature.decode("utf-8")
+            if not body.endswith(signature):
+                body += signature
     return body
