@@ -16,15 +16,15 @@ order += "disk /"
 order += "disk /devel"
 #order += "run_watch DHCP"
 #order += "run_watch VPN"
-#order += "wireless _first_"
+order += "wireless _first_"
 #order += "ethernet _first_"
 order += "battery 0"
 order += "load"
 order += "tztime local"
 
 wireless _first_ {
-        format_up = "W: %essid %quality"
-        format_down = "W: down"
+        format_up = "%quality   %essid "
+        format_down = "  down"
 }
 
 ethernet _first_ {
@@ -34,10 +34,10 @@ ethernet _first_ {
 }
 
 battery 0 {
-        format = "%status %percentage %remaining"
-        status_chr = "⚇"
-        status_bat = "⚡"
-        status_full = "☻"
+        format = " %percentage %status  %remaining "
+        status_chr = ""
+        status_bat = ""
+        status_full = ""
 }
 
 run_watch DHCP {
@@ -49,16 +49,16 @@ run_watch VPN {
 }
 
 tztime local {
-        format = "%Y.%m.%d %H:%M"
+        format = " %b %d, %H:%M "
 }
 
 load {
-        format = "L: %1min %5min %15min"
+        format = "   %1min %5min %15min "
 }
 
 disk "/" {
-        format = "/: %avail"
+        format = " /   %avail "
 }
 disk "/devel" {
-	format = "/devel: %avail"
+	format = " /devel   %avail "
 }
