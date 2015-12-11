@@ -8,7 +8,7 @@
 
 general {
         colors = true
-        interval = 10
+        interval = 5
 }
 
 #order += "ipv6"
@@ -23,8 +23,8 @@ order += "load"
 order += "tztime local"
 
 wireless _first_ {
-        format_up = "%quality   %essid "
-        format_down = "  down"
+        format_up = " %quality   %essid "
+        format_down = "   down "
 }
 
 ethernet _first_ {
@@ -34,7 +34,7 @@ ethernet _first_ {
 }
 
 battery 0 {
-        format = " %percentage %status  %remaining "
+        format = " %remaining %status  %percentage "
         status_chr = ""
         status_bat = ""
         status_full = ""
