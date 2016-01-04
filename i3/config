@@ -105,6 +105,8 @@ bindsym $mod+Shift+r restart
 # exit i3 (logs you out of your X session)
 bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
 
+bindsym $mod+Shift+period exec systemctl suspend
+
 # resize window (you can also use the mouse for that)
 mode "resize" {
         # These bindings trigger as soon as you enter the resize mode
@@ -140,3 +142,13 @@ bar {
         #mode hide
         #modifier $mod
 }
+
+exec --no-startup-id xrdb -merge /home/aperez/.Xresources
+exec --no-startup-id sh /home/aperez/.fehbg
+exec --no-startup-id xsetroot -solid steelblue
+exec --no-startup-id xsettingsd
+exec --no-startup-id dunst
+exec --no-startup-id xss-lock -- i3lock -n -i /home/aperez/Pictures/Wallpapers/linen-tile.png -t
+exec --no-startup-id redshift-scheduler
+exec --no-startup-id nm-applet
+exec --no-startup-id mpd

@@ -15,10 +15,10 @@ UpEthernet=${(<speed>b/s)}
 UpWiFi=${ssid> }(${strength>%, }${bitrate}b/s)
 
 [Override nm-wifi:wlp1s0]
-Label=📶
+Label= 
 
 [Override time:local]
-Label=🕗
+Label=🕗 
 
 [Override upower-battery:BAT0]
-Label=🔋
+Label= 
