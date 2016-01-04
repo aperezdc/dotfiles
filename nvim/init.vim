@@ -49,7 +49,6 @@ Plug 'gcmt/wildfire.vim'
 Plug 'jamessan/vim-gnupg'
 Plug 'wting/rust.vim'
 Plug 'racer-rust/vim-racer'
-Plug 'tyru/current-func-info.vim'
 Plug 'lervag/vimtex'
 Plug 'vim-scripts/a.vim', { 'on': ['A', 'AV', 'AS'] }
 Plug 'tyru/caw.vim', { 'on' : '<Plug>(caw:' }
@@ -59,10 +58,7 @@ Plug 'othree/yajs.vim', { 'for' : 'javascript' }
 Plug 'othree/html5.vim', { 'for' : ['html', 'html.handlebars'] }
 Plug 'cespare/vim-toml'
 Plug 'plasticboy/vim-markdown'
-Plug 'xolox/vim-misc' |
-			\ Plug 'xolox/vim-lua-ftplugin'
 Plug 'godlygeek/tabular', { 'on' : 'Tabularize' }
-Plug 'junegunn/goyo.vim', { 'on' : 'Goyo' }
 Plug 'reedes/vim-pencil'
 Plug 'reedes/vim-wheel'
 Plug 'reedes/vim-wordy', { 'on' : ['Wordy', 'NextWordy'] }
@@ -272,6 +268,7 @@ endif
 nmap <silent> <F10> :PencilToggle<CR>
 imap <silent> <F10> <Esc>:PencilToggle<CR>a
 nmap <silent> <C-i> :PencilToggle<CR>a
+let g:pencil#mode_indicators = {'hard': 'H', 'auto': 'A', 'soft': 'S', 'off': '',}
 
 " Plugin: GitGutter
 let g:gitgutter_enabled = 0
@@ -285,18 +282,18 @@ nmap <leader>c <Plug>(caw:i:toggle)
 xmap <leader>c <Plug>(caw:i:toggle)
 
 " Plugin: Airline
-let g:airline_powerline_fonts = 1
-" let g:airline_left_sep = ''
-" let g:airline_right_sep = ''
-" let g:airline_mode_map = {
-" 			\ '__' : '-', 'n'  : 'N', 'i'  : 'I', 'R'  : 'R',
-" 			\ 'c'  : 'C', 'v'  : 'V', 'V'  : 'V', '' : 'V',
-" 			\ 's'  : 'S', 'S'  : 'S', '' : 'S' }
+let g:airline_powerline_fonts = 0
+let g:airline_left_sep = ''
+let g:airline_right_sep = ''
+let g:airline_mode_map = {
+			\ '__' : '-', 'n'  : 'N', 'i'  : 'I', 'R'  : 'R',
+			\ 'c'  : 'C', 'v'  : 'V', 'V'  : 'V', '' : 'V',
+			\ 's'  : 'S', 'S'  : 'S', '' : 'S' }
 let g:airline_theme = 'bubblegum'
 let g:airline_detect_crypt = 0
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#buffer_min_count = 2
-let g:airline_section_x = '%{PencilMode()}%{cfi#format(" · %s()", "")}'
+let g:airline_section_x = '%{PencilMode()}'
 
 " Plugin: Indent Guides
 let g:indent_guides_exclude_filetypes = ['help', 'unite', 'qf']
@@ -339,11 +336,6 @@ endif
 nnoremap <silent> <leader>g :<C-u>Unite grep:. -buffer-name=Find<cr>
 nnoremap <silent> <leader>L :<C-u>UniteResume<cr>
 
-" Plugin: vim-lua-ftplugin
-let g:lua_check_syntax = 0
-let g:lua_complete_omni = 1
-let g:lua_complete_dynamic = 0
-
 " Plugin: deoplete
 if s:completion_setup == 'deoplete'
 	let g:deoplete#enable_at_startup = 1
@@ -355,8 +347,8 @@ if s:completion_setup == 'deoplete'
 	inoremap <expr><C-e> deoplete#mappings#cancel_popup()
 	inoremap <expr><C-h> deoplete#mappings#smart_close_popup()."\<C-h>"
 	inoremap <expr><BS>  deoplete#mappings#smart_close_popup()."\<C-h>"
-	inoremap <expr> '    pumvisible() ? deoplete#mappings#close_popup() : "'"
-	inoremap <expr> "    pumvisible() ? deoplete#mappings#close_popup() : '"'
+	inoremap <expr> '    pumvisible() ? deoplete#mappings#close_popup()."'" : "'"
+	inoremap <expr> "    pumvisible() ? deoplete#mappings#close_popup().'"' : '"'
 
 	" Make deoplete provide completions from vim-lua-ftplugin
 	if !exists('g:deoplete#omni#functions')
