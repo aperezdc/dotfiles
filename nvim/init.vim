@@ -35,7 +35,7 @@ elseif s:completion_setup == 'deoplete'
 	Plug 'Shougo/neco-syntax'
 	Plug 'Shougo/neoinclude.vim'
 elseif s:completion_setup == 'ycm'
-	Plug 'Valloric/YouCompleteMe', { 'do': 'python2 install.py --clang-completer --gocode-completer --system-boost --system-libclang' }
+	Plug 'Valloric/YouCompleteMe', { 'do': 'python2 install.py --clang-completer --gocode-completer --system-boost --system-libclang --racer-completer' }
 endif
 
 Plug '~/devel/vim-template'
@@ -48,8 +48,7 @@ Plug 'tmux-plugins/vim-tmux-focus-events'
 Plug 'gcmt/wildfire.vim'
 Plug 'jamessan/vim-gnupg'
 Plug 'wting/rust.vim'
-Plug 'racer-rust/vim-racer'
-Plug 'lervag/vimtex'
+"Plug 'lervag/vimtex'
 Plug 'vim-scripts/a.vim', { 'on': ['A', 'AV', 'AS'] }
 Plug 'tyru/caw.vim', { 'on' : '<Plug>(caw:' }
 Plug 'ledger/vim-ledger', { 'for' : 'ledger' }
@@ -70,7 +69,6 @@ Plug 't9md/vim-quickhl', { 'on' : '<Plug>(quickhl-' }
 Plug 'airblade/vim-gitgutter', { 'on' : [ '<Plug>GitGutter',
 			\ 'GitGutterEnable', 'GitGutterDisable', 'GitGutterToggle' ] }
 Plug 'Valloric/ListToggle'
-Plug 'sjl/splice.vim', { 'on' : 'SpliceInit' }
 call plug#end()
 
 " Add system-wide Vim files directory, if it exists
@@ -210,23 +208,7 @@ else
 	endif
 endif
 
-
-colorscheme elflord
-highlight CursorLine NONE
-if &t_Co == 256
-    set cursorline
-    highlight CursorLine   ctermbg=235
-    highlight CursorLineNr ctermbg=235 ctermfg=246
-    highlight LineNr       ctermbg=234 ctermfg=238
-    highlight SignColumn   ctermbg=234
-    highlight Pmenu        ctermbg=235 ctermfg=white
-    highlight PmenuSel     ctermbg=238 ctermfg=white
-    highlight PmenuSbar    ctermbg=238
-    highlight PmenuThumb   ctermbg=240
-    highlight VertSplit    ctermbg=235 ctermfg=235
-    highlight StatusLineNC ctermfg=235
-endif
-
+colorscheme elrond
 
 command! -nargs=0 -bang Q q<bang>
 command! -bang W write<bang>
@@ -253,8 +235,10 @@ autocmd vimrc BufReadPost *
 			\		execute "normal g'\"" |
 			\ endif
 autocmd vimrc FileType mkdc,markdown setlocal expandtab tabstop=2 shiftwidth=2
+autocmd vimrc FileType yaml setlocal tabstop=2 shiftwidth=2
 autocmd vimrc FileType objc setlocal expandtab cinoptions+=(0
 autocmd vimrc FileType cpp setlocal expandtab cinoptions+=(0
+autocmd vimrc FileType lua setlocal expandtab tabstop=3 shiftwidth=3
 autocmd vimrc FileType c setlocal expandtab cinoptions+=(0
 autocmd vimrc FileType d setlocal expandtab cinoptions+=(0
 
@@ -265,10 +249,21 @@ if exists('/usr/share/clang/clang-format.py')
 endif
 
 " Plugin: pencil
+nnoremap <silent> Q gwip
+noremap  <buffer> <silent> <F9> :<C-u>PFormatToggle<cr>
+inoremap <buffer> <silent> <F9>  <C-o>:PFormatToggle<cr>
 nmap <silent> <F10> :PencilToggle<CR>
 imap <silent> <F10> <Esc>:PencilToggle<CR>a
 nmap <silent> <C-i> :PencilToggle<CR>a
 let g:pencil#mode_indicators = {'hard': 'H', 'auto': 'A', 'soft': 'S', 'off': '',}
+let g:pencil#conceallevel = 3
+let g:pencil#concealcursor = 'c'
+
+augroup pencil
+	autocmd!
+	autocmd FileType markdown,mkd,mkdc call pencil#init()
+	autocmd FileType text              call pencil#init()
+augroup END
 
 " Plugin: GitGutter
 let g:gitgutter_enabled = 0
@@ -365,6 +360,7 @@ if s:completion_setup == 'ycm'
 	let g:ycm_always_populate_location_list = 1
 	let g:ycm_key_detailed_diagnostics = '<leader>D'
 	let g:ycm_extra_conf_globlist = ['~/devel/*', '/devel/*', '~/pfc/eol/*', '!~/*']
+	let g:ycm_rust_src_path = '/usr/src/rust/src'
 
 	if &t_Co == 256
     highlight YcmErrorSign   ctermbg=124 ctermfg=9
@@ -388,10 +384,6 @@ xmap <leader>h <Plug>(quickhl-manual-this)
 nmap <leader>H <Plug>(quickhl-manual-reset)
 xmap <leader>H <Plug>(quickhl-manual-reset)
 nmap <leader>j <Plug>(quickhl-cword-toggle)
-
-" Plugin: racer
-let g:racer_cmd = '/usr/bin/racer'
-let $RUST_SRC_PATH = '/usr/src/rust/src'
 
 " Plugin: Markdown
 let g:vim_markdown_folding_disabled = 1
