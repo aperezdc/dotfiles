@@ -1,0 +1,18 @@
+# vim:ft=cfg
+
+[SpamFilter]
+[ClassifyingFilter]
+[KillThreadsFilter]
+[ListMailsFilter]
+
+[ArchiveSentMailsFilter]
+sent_tag = sent
+
+[InboxFilter]
+tags = +unread;+inbox
+
+[MailMover]
+folders = INBOX Spam Spam/Undecided
+INBOX = 'tag:spam':Spam/ReSpam 'tag:ham':Spam/ReHam 'NOT ( tag:inbox OR tag:unread OR tag:flagged ) AND date:..30days':Archives
+Spam = 'tag:spam':Spam/ReSpam 'tag:ham':Spam/ReHam
+Spam/Undecided = 'tag:spam':Spam/ReSpam 'tag:ham':Spam/ReHam
