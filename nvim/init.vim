@@ -41,7 +41,7 @@ endif
 Plug '~/devel/vim-template'
 Plug '~/devel/hipack-vim', { 'for' : 'hipack' }
 Plug 'tpope/vim-endwise'
-Plug 'bling/vim-airline'
+Plug 'vim-airline/vim-airline-themes' | Plug 'vim-airline/vim-airline'
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'chrisbra/vim-diff-enhanced'
 Plug 'tmux-plugins/vim-tmux-focus-events'
