@@ -30,14 +30,14 @@ Plug 'tpope/vim-sensible'
 if s:completion_setup == 'lift'
 	Plug '~/devel/vim-lift'
 elseif s:completion_setup == 'ycm'
-	Plug 'Valloric/YouCompleteMe', { 'do': 'python2 install.py --clang-completer --gocode-completer --system-boost --system-libclang' }
+	Plug 'Valloric/YouCompleteMe', { 'do': 'python2 install.py --clang-completer --gocode-completer --system-boost --system-libclang --racer-completer' }
 endif
 
 Plug '~/devel/vim-template'
 Plug '~/devel/vim-elrond'
 Plug '~/devel/hipack-vim', { 'for' : 'hipack' }
 Plug 'tpope/vim-endwise'
-Plug 'bling/vim-airline'
+Plug 'vim-airline/vim-airline-themes' | Plug 'vim-airline/vim-airline'
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'chrisbra/vim-diff-enhanced'
 Plug 'tmux-plugins/vim-tmux-focus-events'
