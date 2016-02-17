@@ -38,7 +38,7 @@ SAVEHIST=${HISTSIZE}
 setopt appendhistory extendedglob inc_append_history share_history \
 	   hist_reduce_blanks hist_ignore_space extended_history \
 	   hist_no_store hist_ignore_dups hist_expire_dups_first \
-	   hist_find_no_dups nomatch
+	   hist_find_no_dups hist_ignore_all_dups nomatch
 unsetopt beep
 bindkey -e
 # End of lines configured by zsh-newuser-install
@@ -77,19 +77,41 @@ bindkey "^[[3~" delete-char
 # Set a bunch of options :-)
 setopt prompt_subst pushd_silent auto_param_slash auto_list \
 	     hist_reduce_blanks auto_remove_slash chase_dots \
-	     pushd_ignore_dups auto_param_keys hist_ignore_all_dups \
+	     pushd_ignore_dups auto_param_keys \
 	     mark_dirs cdablevars interactive_comments glob_complete \
 	     print_eight_bit always_to_end glob no_warn_create_global \
-	     hash_list_all correct hash_cmds hash_dirs hash_executables_only \
-	     auto_continue check_jobs complete_in_word rc_quotes
+	     hash_list_all hash_cmds hash_dirs hash_executables_only \
+	     auto_continue check_jobs complete_in_word rc_quotes \
+	     completealiases
 unsetopt menu_complete auto_remove_slash auto_menu list_ambiguous \
 	     pushd_to_home
+
+# Correct things, but not too aggressively for certain commands
+setopt correct correctall
+alias mv='nocorrect mv'
+alias man='nocorrect man'
+alias sudo='nocorrect sudo'
+alias mkdir='nocorrect mkdir'
+
+autoload predict-on
+zle -N predict-on
+zle -N predict-off
+bindkey '^Z'   predict-on
+bindkey '^X^Z' predict-off
+zstyle ':predict' verbose true
 
 # Make completion faster: use cache and do not do partial matches
 [[ -d ~/.zsh/cache ]] && mkdir -p ~/.zsh/cache
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path ~/.zsh/cache
 zstyle ':completion:*' accept-exact '*(N)'
+
+# Fuzzy completion
+zstyle ':completion:*' completer _complete _match _approximate
+zstyle ':completion:*:match:*' original only
+zstyle -e ':completion:*:approximate:*' max-errors 'reply=($((($#PREFIX+$#SUFFIX)/3))numeric)'
+zstyle ':completion:*:functions' ignored-patterns '_*'
+
 
 zstyle ':completion:*:descriptions' format '%U%B%d%b%u'
 zstyle ':completion:*:warnings' format '%BNo matching %b%d'
@@ -180,6 +202,9 @@ bindkey "\eOA" up-line-or-local-history
 bindkey "\e[B" down-line-or-local-history
 bindkey "\eOB" down-line-or-local-history
 
+# Search in history using the current input as prefix
+[[ -n "${key[PageUp]}"   ]] && bindkey "${key[PageUp]}"   history-beginning-search-backward
+[[ -n "${key[PageDown]}" ]] && bindkey "${key[PageDown]}" history-beginning-search-forward
 
 # Disable Git automatic file completion -- it is slow.
 #__git_files(){}
@@ -207,6 +232,11 @@ function precmd_vcs_info_prompt {
 	vcs_info prompt
 }
 precmd_functions+=(precmd_vcs_info_prompt)
+
+function precmd_bell {
+	printf '\a'
+}
+precmd_functions+=(precmd_bell)
 
 case ${REAL_TERM} in
 	xterm* | gnome*)
@@ -291,10 +321,6 @@ if [[ -d ${HOME}/.local/bin ]] ; then
 	PATH="${PATH}:${HOME}/.local/bin"
 fi
 
-if [[ -d /home/aperez/devel/WebKit/Tools/Scripts ]] ; then
-	PATH="$PATH:/home/aperez/devel/WebKit/Tools/Scripts"
-fi
-
 # Python startup file
 if [ -r "${HOME}/.startup.py" ] ; then
 	export PYTHONSTARTUP="${HOME}/.startup.py"
@@ -327,7 +353,7 @@ fi
 
 if [[ -x /usr/bin/ccache ]] ; then
 	if [[ -d /usr/lib/ccache/bin ]] ; then
-		PATH="/usr/lib/ccache/bin:$PATH"
+		PATH="/usr/lib/ccache/bin:${PATH}"
 	fi
 	if [[ -d /home/devel/.ccache ]] ; then
 		export CCACHE_DIR=/home/devel/.ccache
@@ -360,6 +386,12 @@ ZSH_HIGHLIGHT_STYLES[path]='fg=underline'
 # Source the fzf helpers last, to make sure its keybindings prevail
 if [[ -r /etc/profile.d/fzf.zsh ]] ; then
 	source /etc/profile.d/fzf.zsh
+fi
+
+if [[ -S ~/.mpd/socket ]] ; then
+	export MPD_HOST="${HOME}/.mpd/socket"
+else
+	unset MPD_HOST
 fi
 
 set +e
