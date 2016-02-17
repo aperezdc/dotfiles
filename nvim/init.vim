@@ -335,23 +335,19 @@ nnoremap <silent> <leader>L :<C-u>UniteResume<cr>
 if s:completion_setup == 'deoplete'
 	let g:deoplete#enable_at_startup = 1
 	let g:deoplete#auto_completion_start_length = 3
+	let g:deoplete#enable_ignore_case = 1
+	let g:deoplete#enable_smart_case = 0
 
 	" inoremap <expr><C-Space> deoplete#mappings#manual_complete()
 	" inoremap <expr><Nul> deoplete#mappings#manual_complete()
 	inoremap <expr><C-y> deoplete#mappings#close_popup()
 	inoremap <expr><C-e> deoplete#mappings#cancel_popup()
+	inoremap <expr><C-g> deoplete#mappings#undo_completion()
 	inoremap <expr><C-h> deoplete#mappings#smart_close_popup()."\<C-h>"
 	inoremap <expr><BS>  deoplete#mappings#smart_close_popup()."\<C-h>"
-	inoremap <expr> '    pumvisible() ? deoplete#mappings#close_popup()."'" : "'"
-	inoremap <expr> "    pumvisible() ? deoplete#mappings#close_popup().'"' : '"'
-
-	" Make deoplete provide completions from vim-lua-ftplugin
-	if !exists('g:deoplete#omni#functions')
-		let g:deoplete#omni#functions = {}
-	endif
-	let g:deoplete#omni#functions.lua = 'xolox#lua#omnifunc'
-	"let g:deoplete#omni#functions.lua = 'xolox#lua#completefunc'
-	let g:lua_define_completion_mappings = 0
+	" inoremap <expr><CR>  deoplete#mappings#close_popup()."\<CR>"
+	" inoremap <expr> '    pumvisible() ? deoplete#mappings#close_popup()."'" : "'"
+	" inoremap <expr> "    pumvisible() ? deoplete#mappings#close_popup().'"' : '"'
 endif
 
 " Plugin: YouCompleteMe
