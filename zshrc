@@ -238,6 +238,13 @@ if [[ -n ${TMUX} && -n ${commands[tmux]} ]];then
 	esac
 fi
 
+# Disable bracketes paste in terminals which won't gobble unrecognized
+# escapes. This fixes the trailing characters in prompts in some *BSD
+# consoles. Info: http://www.zsh.org/mla/users/2015/msg01055.html
+if [[ -z $(printf '%s %q\n' ${(kv)terminfo[(R)*[0-9](#c4)[hl]]}) ]] ; then
+	unset zle_bracketed_paste
+fi
+
 function precmd_vcs_info_prompt {
 	vcs_info prompt
 }
