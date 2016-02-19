@@ -322,6 +322,10 @@ else
 	export CLICOLOR=1
 fi &> /dev/null
 
+meteo () {
+	curl -s "http://meteo.connectical.com/$1"
+}
+
 # Golang environment and binaries directory
 if [[ -x /usr/bin/go && -d ${HOME}/go ]] ; then
 	export GOPATH="${HOME}/go"
