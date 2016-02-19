@@ -311,10 +311,16 @@ for command in find wget curl; alias ${command}="noglob ${command}"
 alias -- '-'=popd
 alias -- '+'=pushd
 alias -- '..'='cd ..'
-alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 alias clip='xclip -selection clipboard'
 alias sprunge='curl -s -S -F "sprunge=<-" http://sprunge.us'
+
+if ls --version && ls --version | grep GNU ; then
+	alias ls='ls --color=auto'
+else
+	# In BSD systems, usually setting this makes "ls" user colors.
+	export CLICOLOR=1
+fi &> /dev/null
 
 # Golang environment and binaries directory
 if [[ -x /usr/bin/go && -d ${HOME}/go ]] ; then
