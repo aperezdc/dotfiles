@@ -28,8 +28,12 @@ if [[ -d ~/.zsh/zgen ]] ; then
 		zgen save
 	fi
 else
-	echo "zgen not available, please run:"
-	echo "git clone git://github.com/tarjoilija/zgen ~/.zsh/zgen"
+	echo "zgen not available, set it up with 'zgen-install' (needs Git and Internet access)"
+	zgen-install () {
+		[[ -d ~/.zsh ]] || mkdir ~/.zsh
+		git clone git://github.com/tarjoilija/zgen ~/.zsh/zgen
+		exec "${SHELL}" -l
+	}
 fi
 
 autoload -Uz compinit
