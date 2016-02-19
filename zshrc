@@ -227,7 +227,8 @@ if [[ -n ${TMUX} ]] ; then
 	fi
 fi
 
-## workaround for handling TERM variable in multiple tmux sessions properly from http://sourceforge.net/p/tmux/mailman/message/32751663/ by Nicholas Marriott
+# Workaround for handling TERM variable in multiple tmux sessions properly from
+# http://sourceforge.net/p/tmux/mailman/message/32751663/ by Nicholas Marriott.
 if [[ -n ${TMUX} && -n ${commands[tmux]} ]];then
 	case ${REAL_TERM} in
 		*256color) ;&
@@ -241,7 +242,7 @@ fi
 # Disable bracketes paste in terminals which won't gobble unrecognized
 # escapes. This fixes the trailing characters in prompts in some *BSD
 # consoles. Info: http://www.zsh.org/mla/users/2015/msg01055.html
-if [[ -z $(printf '%s %q\n' ${(kv)terminfo[(R)*[0-9](#c4)[hl]]}) ]] ; then
+if [[ -z $(printf '%s %q' ${(kv)terminfo[(R)*[0-9](#c4)[hl]]}) ]] ; then
 	unset zle_bracketed_paste
 fi
 
