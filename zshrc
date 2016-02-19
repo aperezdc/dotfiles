@@ -17,6 +17,11 @@ fi
 if [[ -d ~/.zsh/zgen ]] ; then
 	source ~/.zsh/zgen/zgen.zsh
 	if ! zgen saved ; then
+		zgen load aperezdc/virtualz
+		zgen load supercrabtree/k
+		zgen load jreese/zsh-titles
+		zgen load RobSis/zsh-completion-generator
+		zgen load RobSis/zsh-reentry-hook
 		zgen load zsh-users/zsh-syntax-highlighting
 		zgen load zsh-users/zsh-completions src
 		zgen load Tarrasch/zsh-autoenv
@@ -91,6 +96,7 @@ setopt correct correctall
 alias mv='nocorrect mv'
 alias man='nocorrect man'
 alias sudo='nocorrect sudo'
+alias exec='nocorrect exec'
 alias mkdir='nocorrect mkdir'
 
 autoload predict-on
@@ -290,7 +296,7 @@ if [[ -n ${zsh_chroot_info} ]] ; then
 fi
 
 # Final PROMPT setting
-PROMPT=$'%{%B%(!.$fg[red].$fg[green])%}%m%{%b%}${zsh_chroot_info}${zsh_jhbuild_info} ${vcs_info_msg_0_}%{%B$fg[blue]%}%1~ %{%(?.$fg[blue].%B$fg[red])%}%# %{%b%k%f%}'
+PROMPT=$'%{%B%(!.$fg[red].$fg[green])%}%m%{%b%}${zsh_chroot_info}${zsh_jhbuild_info} %{$fg[magenta]%}${VIRTUAL_ENV_NAME:+${VIRTUAL_ENV_NAME} }%{$reset_color%}${vcs_info_msg_0_}%{%B$fg[blue]%}%1~ %{%(?.$fg[blue].%B$fg[red])%}%# %{%b%k%f%}'
 
 # Don't count common path separators as word characters
 WORDCHARS=${WORDCHARS//[&.;\/]}
@@ -362,6 +368,11 @@ fi
 
 # Mark exports
 export PATH
+
+# VirtualZ settings
+if [[ -d /devel/.virtualenvs ]] ; then
+	VIRTUALZ_HOME=/devel/.virtualenvs
+fi
 
 # Syntax highlighting settings
 ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
