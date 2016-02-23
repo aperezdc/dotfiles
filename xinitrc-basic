@@ -1,0 +1,12 @@
+#! /bin/sh
+
+for f in Xdefaults Xresources ; do
+	if test -r ~/.$f ; then
+		xrdb -merge ~/.$f
+	elif test -r ~/.dotfiles/$f ; then
+		xrdb -merge ~/.dotfiles/$f
+	fi
+done
+
+setxkbmap -layout es -option 'ctrl:nocaps,compose:menu'
+xsetroot -solid steelblue
