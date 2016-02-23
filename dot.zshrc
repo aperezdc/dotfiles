@@ -354,9 +354,11 @@ if [[ -x /usr/bin/go && -d ${HOME}/go ]] ; then
 fi
 
 # Local binaries directory
-if [[ -d ${HOME}/.local/bin ]] ; then
-	path=( "${path[@]}" "${HOME}/.local/bin" )
-fi
+for dirpath in ${HOME}/.local/bin ${HOME}/.dotfiles/bin ; do
+	if [[ -d ${dirpath} ]] ; then
+		path=( "${path[@]}" "${dirpath}" )
+	fi
+done
 
 # Python startup file
 if [ -r "${HOME}/.startup.py" ] ; then
