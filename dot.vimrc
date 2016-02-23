@@ -28,14 +28,31 @@ call plug#begin('~/.vim/bundle')
 Plug 'tpope/vim-sensible'
 
 if s:completion_setup == 'lift'
-	Plug '~/devel/vim-lift'
+	if empty(glob('~aperez/devel/vim-lift'))
+		Plug 'aperezdc/vim-lift'
+	else
+		Plug '~aperez/devel/vim-lift'
+	endif
 elseif s:completion_setup == 'ycm'
 	Plug 'Valloric/YouCompleteMe', { 'do': 'python2 install.py --clang-completer --gocode-completer --system-boost --system-libclang --racer-completer' }
 endif
 
-Plug '~/devel/vim-template'
-Plug '~/devel/vim-elrond'
-Plug '~/devel/hipack-vim', { 'for' : 'hipack' }
+if empty(glob('~aperez/devel/vim-template'))
+	Plug 'aperezdc/vim-template'
+else
+	Plug '~aperez/devel/vim-template'
+endif
+if empty(glob('~aperez/devel/vim-elrond'))
+	Plug 'aperezdc/vim-elrond'
+else
+	Plug '~/devel/vim-elrond'
+endif
+if empty(glob('~aperez/devel/hipack-vim'))
+	Plug 'aperezdc/hipack-vim', { 'for' : 'hipack' }
+else
+	Plug '~aperez/devel/hipack-vim', { 'for' : 'hipack' }
+endif
+
 Plug 'tpope/vim-endwise'
 Plug 'vim-airline/vim-airline-themes' | Plug 'vim-airline/vim-airline'
 Plug 'ntpeters/vim-better-whitespace'
