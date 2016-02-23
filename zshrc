@@ -341,12 +341,12 @@ meteo () {
 # Golang environment and binaries directory
 if [[ -x /usr/bin/go && -d ${HOME}/go ]] ; then
 	export GOPATH="${HOME}/go"
-	PATH="${PATH}:${HOME}/go/bin"
+	path=( "${path[@]}" "${GOPATH}/bin" )
 fi
 
 # Local binaries directory
 if [[ -d ${HOME}/.local/bin ]] ; then
-	PATH="${PATH}:${HOME}/.local/bin"
+	path=( "${path[@]}" "${HOME}/.local/bin" )
 fi
 
 # Python startup file
@@ -381,15 +381,12 @@ fi
 
 if [[ -x /usr/bin/ccache ]] ; then
 	if [[ -d /usr/lib/ccache/bin ]] ; then
-		PATH="/usr/lib/ccache/bin:${PATH}"
+		path=( /usr/lib/ccache/bin "${path[@]}" )
 	fi
 	if [[ -d /home/devel/.ccache ]] ; then
 		export CCACHE_DIR=/home/devel/.ccache
 	fi
 fi
-
-# Mark exports
-export PATH
 
 # VirtualZ settings
 if [[ -d /devel/.virtualenvs ]] ; then
