@@ -1,0 +1,35 @@
+#! /usr/bin/env zsh
+
+if [[ -z ${DOTFILES} ]] ; then
+	DOTFILES=$(dirname "$0")
+fi
+
+if [[ ! -d ${DOTFILES} ]] ; then
+	echo "Directory '${DOTFILES}' does not exist" 1>&2
+	return 1
+fi
+
+integer retcode=0
+cd "${DOTFILES}"
+DOTFILES=$(pwd)
+for filename in * ; do
+	if [[ ${filename:0:4} = dot. ]] ; then
+		target=${filename:3}
+		target="${HOME}/${target//--/\/}"
+
+		if [[ -L ${target} ]] ; then
+			echo "Symlink '${target}' exists, skipping" 1>&2
+			continue
+		fi
+
+		if [[ -r ${target} ]] ; then
+			echo "Warning: '${target}' is not a symlink" 1>&2
+			retcode=1
+			continue
+		fi
+
+		echo "${target} -> ${DOTFILES}/${filename}"
+		ln -s "${target}" "${DOTFILES}/${filename}"
+	fi
+done
+exit ${retcode}
