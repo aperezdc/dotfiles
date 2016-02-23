@@ -323,9 +323,12 @@ for command in find wget curl; alias ${command}="noglob ${command}"
 alias -- '-'=popd
 alias -- '+'=pushd
 alias -- '..'='cd ..'
-alias grep='grep --color=auto'
 alias clip='xclip -selection clipboard'
 alias sprunge='curl -s -S -F "sprunge=<-" http://sprunge.us'
+
+if grep --version && grep --version | grep GNU ; then
+	alias grep='grep --color=auto'
+fi &> /dev/null
 
 if ls --version && ls --version | grep GNU ; then
 	alias ls='ls --color=auto'
