@@ -331,10 +331,16 @@ if grep --version && grep --version | grep GNU ; then
 fi &> /dev/null
 
 if ls --version && ls --version | grep GNU ; then
-	alias ls='ls --color=auto'
+	alias ls='ls --color=auto -F'
 else
 	# In BSD systems, usually setting this makes "ls" user colors.
 	export CLICOLOR=1
+	export LSCOLORS=ExGxFxdxCxDxDxhbabacae
+	if whence -p colorls ; then
+		alias ls='colorls -F'
+	else
+		alias ls='ls -F'
+	fi
 fi &> /dev/null
 
 meteo () {
