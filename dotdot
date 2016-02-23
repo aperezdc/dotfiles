@@ -29,7 +29,7 @@ for filename in * ; do
 		fi
 
 		echo "${target} -> ${DOTFILES}/${filename}"
-		ln -s "${target}" "${DOTFILES}/${filename}"
+		ln -s "${DOTFILES}/${filename}" "${target}"
 	fi
 done
 exit ${retcode}
