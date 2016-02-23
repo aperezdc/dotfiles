@@ -45,9 +45,9 @@ HISTFILE=~/.histfile
 HISTSIZE=1000
 SAVEHIST=${HISTSIZE}
 setopt appendhistory extendedglob inc_append_history share_history \
-	   hist_reduce_blanks hist_ignore_space extended_history \
-	   hist_no_store hist_ignore_dups hist_expire_dups_first \
-	   hist_find_no_dups hist_ignore_all_dups nomatch
+       hist_reduce_blanks hist_ignore_space extended_history \
+       hist_no_store hist_ignore_dups hist_expire_dups_first \
+       hist_find_no_dups hist_ignore_all_dups nomatch
 unsetopt beep
 bindkey -e
 # End of lines configured by zsh-newuser-install
@@ -85,15 +85,15 @@ bindkey "^[[3~" delete-char
 
 # Set a bunch of options :-)
 setopt prompt_subst pushd_silent auto_param_slash auto_list \
-	     hist_reduce_blanks auto_remove_slash chase_dots \
-	     pushd_ignore_dups auto_param_keys \
-	     mark_dirs cdablevars interactive_comments glob_complete \
-	     print_eight_bit always_to_end glob no_warn_create_global \
-	     hash_list_all hash_cmds hash_dirs hash_executables_only \
-	     auto_continue check_jobs complete_in_word rc_quotes \
-	     completealiases
+       hist_reduce_blanks auto_remove_slash chase_dots \
+       pushd_ignore_dups auto_param_keys \
+       mark_dirs cdablevars interactive_comments glob_complete \
+       print_eight_bit always_to_end glob no_warn_create_global \
+       hash_list_all hash_cmds hash_dirs hash_executables_only \
+       auto_continue check_jobs complete_in_word rc_quotes \
+       completealiases
 unsetopt menu_complete auto_remove_slash auto_menu list_ambiguous \
-	     pushd_to_home
+         pushd_to_home
 
 # Correct things, but not too aggressively for certain commands
 setopt correct correctall
@@ -133,7 +133,7 @@ zstyle ':completion:*:cd:*' noignore-parents noparent pwd
 
 # Bring up ${LS_COLORS}
 if [ -x /usr/bin/dircolors ] ; then
-	local dircolors_TERM=${TERM}
+    local dircolors_TERM=${TERM}
 	if [[ ${TERM} = xterm-termite ]] ; then
 		dircolors_TERM=xterm-color
 	fi
