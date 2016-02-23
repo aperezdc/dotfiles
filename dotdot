@@ -19,11 +19,9 @@ for filename in * ; do
 
 		if [[ -L ${target} ]] ; then
 			existing_target=$(readlink -f "${target}")
-			if [[ ${target} = ${existing_target} ]] ; then
+			if [[ ${DOTFILES}/${filename} != ${existing_target} ]] ; then
 				echo "Symlink '${target}' points to '${existing_target}' instead of '${DOTFILES}/${filename}'" 1>&2
 				retcode=2
-			else
-				echo "Symlink '${target}' exists, skipping" 1>&2
 			fi
 			continue
 		fi
@@ -34,7 +32,6 @@ for filename in * ; do
 			continue
 		fi
 
-		echo "${target} -> ${DOTFILES}/${filename}"
 		ln -s "${DOTFILES}/${filename}" "${target}"
 	fi
 done
