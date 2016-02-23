@@ -1,0 +1,16 @@
+borderwidth 2
+color activeborder blue
+color inactiveborder darkblue
+
+# Have a keybinding for reloading the config file
+bind CM-r reload
+
+# Disable moving the mouse with hotkeys
+bind CS-Left unmap
+bind CS-Right unmap
+bind CS-Up unmap
+bind CS-Down unmap
+bind C-Left unmap
+bind C-Right unmap
+bind C-Up unmap
+bind C-Down unmap
