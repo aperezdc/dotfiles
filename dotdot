@@ -18,7 +18,13 @@ for filename in * ; do
 		target="${HOME}/${target//--/\/}"
 
 		if [[ -L ${target} ]] ; then
-			echo "Symlink '${target}' exists, skipping" 1>&2
+			existing_target=$(readlink -f "${target}")
+			if [[ ${target} = ${existing_target} ]] ; then
+				echo "Symlink '${target}' points to '${existing_target}' instead of '${DOTFILES}/${filename}'" 1>&2
+				retcode=2
+			else
+				echo "Symlink '${target}' exists, skipping" 1>&2
+			fi
 			continue
 		fi
 
