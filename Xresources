@@ -23,6 +23,7 @@ XTerm*vt100.faceSize: 12
 XTerm*vt100.faceNameDoublesize: VL Gothic
 !XTerm*vt100.faceSize: 12
 !XTerm*vt100.faceName: unifont
+XTerm*termName: xterm-256color, xterm-color, xterm
 XTerm*charClass: 33:48,35-38:48,39:43,42-47:48,58-59:48,61:48,63-64:48,126:48
 
 UXTerm*vt100.utf8: true
@@ -44,6 +45,7 @@ UXTerm*vt100.faceSize: 12
 UXTerm*vt100.faceNameDoublesize: VL Gothic
 UXTerm*charClass: 33:48,35-38:48,39:43,42-47:48,58-59:48,61:48,63-64:48,126:48
 UXTerm*loginShell: true
+UXTerm*termName: xterm-256color, xterm-color, xterm
 
 Emacs*useXIM: false
 Notmuch*useXIM: false
