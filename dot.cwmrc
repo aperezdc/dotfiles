@@ -1,3 +1,5 @@
+command term uxterm
+
 borderwidth 2
 color activeborder blue
 color inactiveborder darkblue
