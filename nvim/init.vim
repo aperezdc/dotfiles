@@ -28,7 +28,11 @@ call plug#begin('~/.config/nvim/bundle')
 Plug 'tpope/vim-sensible'
 
 if s:completion_setup == 'lift'
-	Plug '~/devel/vim-lift'
+	if empty(glob('~aperez/devel/vim-lift'))
+		Plug 'aperezdc/vim-lift'
+	else
+		Plug '~aperez/devel/vim-lift'
+	endif
 elseif s:completion_setup == 'deoplete'
 	Plug 'Shougo/deoplete.nvim'
 	Plug 'Shougo/neco-vim'
@@ -38,8 +42,26 @@ elseif s:completion_setup == 'ycm'
 	Plug 'Valloric/YouCompleteMe', { 'do': 'python2 install.py --clang-completer --gocode-completer --system-boost --system-libclang --racer-completer' }
 endif
 
-Plug '~/devel/vim-template'
-Plug '~/devel/hipack-vim', { 'for' : 'hipack' }
+if empty(glob('~aperez/devel/vim-template'))
+	Plug 'aperezdc/vim-template'
+else
+	Plug '~aperez/devel/vim-template'
+endif
+if empty(glob('~aperez/devel/vim-elrond'))
+	Plug 'aperezdc/vim-elrond'
+else
+	Plug '~aperez/devel/vim-elrond'
+endif
+if empty(glob('~aperez/devel/hipack-vim'))
+	Plug 'aperezdc/hipack-vim'
+else
+	Plug '~aperez/devel/hipack-vim'
+endif
+
+if !empty(glob('~aperez/devel/urbit/extras/hoon.vim'))
+	Plug '~aperez/devel/urbit/extras/hoon.vim'
+endif
+
 Plug 'tpope/vim-endwise'
 Plug 'vim-airline/vim-airline-themes' | Plug 'vim-airline/vim-airline'
 Plug 'ntpeters/vim-better-whitespace'
