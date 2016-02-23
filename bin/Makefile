@@ -4,7 +4,7 @@
 #
 
 O := ~/.local/bin
-all_bin := $(shell find . -maxdepth 1 -type f -executable -print0 | xargs -0 -n 1 basename)
+all_bin := $(shell for i in * ; do test -x "$$i" && echo "$$i" ; done)
 all_lnk := $(addprefix $O/,$(all_bin))
 
 all: $(all_lnk)
