@@ -1,19 +1,17 @@
-# i3status configuration file.
-# see "man i3status" for documentation.
+#! /usr/bin/env zsh
 
-# It is important that this file is edited as UTF-8.
-# The following line should contain a sharp s:
-# ß
-# If the above line is not correctly displayed, fix your editor first!
-
+cat <<EOF
 general {
         colors = true
         interval = 5
 }
+EOF
 
 #order += "ipv6"
-order += "disk /"
-order += "disk /devel"
+echo 'order += "disk /"'
+[[ -d /devel ]] && echo 'order += "disk /devel"'
+
+cat <<EOF
 #order += "run_watch DHCP"
 #order += "run_watch VPN"
 order += "wireless _first_"
@@ -62,3 +60,4 @@ disk "/" {
 disk "/devel" {
 	format = " /devel   %avail "
 }
+EOF
