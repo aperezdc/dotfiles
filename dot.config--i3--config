@@ -7,9 +7,6 @@ font pango:terminus, Icons bold 11
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
-# start a terminal
-bindsym $mod+Return exec i3-sensible-terminal
-
 # kill focused window
 bindsym $mod+Shift+q kill
 
@@ -149,6 +146,12 @@ elif whence -p dmenu_run &> /dev/null ; then
 	echo 'bindsym $mod+d exec env DMENU_OPTIONS="-fn terminus:bold:size=14 -h 20 -x 0" dmenu_run'
 fi
 
+for item in dwt uxterm i3-sensible-terminal ; do
+	if whence -p "${item}" &> /dev/null ; then
+		echo "bindsym \$mod+Return exec ${item}"
+		break
+	fi
+done
 
 if [[ -r ${HOME}/.fehbg ]] ; then
 	echo "exec --no-startup-id sh '${HOME}/.fehbg'"
