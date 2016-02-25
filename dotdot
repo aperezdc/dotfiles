@@ -31,7 +31,7 @@ for filename in * ; do
 			else
 				echo "[---] ${target}"
 			fi
-		elif [[ -x ${DOTFILES}/${filename} ]] ; then
+		elif [[ ! -d ${DOTFILES}/${filename} && -x ${DOTFILES}/${filename} ]] ; then
 			# This is a generator program, send its output to the target file
 			echo "[GEN] ${target}"
 			output=$(OSTYPE=${OSTYPE} MACHTYPE=${MACHTYPE} CPUTYPE=${CPUTYPE} \
