@@ -172,8 +172,8 @@ autoload -Uz vcs_info
 zstyle ':vcs_info:*' enable git hg bzr svn
 zstyle ':vcs_info:bzr:prompt:*' use-simple true
 zstyle ':vcs_info:*:prompt:*' check-for-changes true
-zstyle ':vcs_info:*:prompt:*' unstagedstr   "%B%{$fg[cyan]%}¹%{$fg[default]%}%b"
-zstyle ':vcs_info:*:prompt:*' stagedstr     "%B%{$fg[cyan]%}²%{$fg[default]%}%b"
+zstyle ':vcs_info:*:prompt:*' unstagedstr   "%B%{$fg[cyan]%}+%{$fg[default]%}%b"
+zstyle ':vcs_info:*:prompt:*' stagedstr     "%B%{$fg[cyan]%}=%{$fg[default]%}%b"
 zstyle ':vcs_info:*:prompt:*' actionformats "${FMT_BRANCH}${FMT_ACTION} "
 zstyle ':vcs_info:*:prompt:*' formats       "${FMT_BRANCH} "
 zstyle ':vcs_info:*:prompt:*' nvcsformats   ""
