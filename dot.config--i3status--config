@@ -1,5 +1,23 @@
 #! /usr/bin/env zsh
 
+FORMAT_LOAD=' load [%1min %5min %15min] '
+FORMAT_DISK='[%avail] '
+FORMAT_WIFI_UP=' %essid [%quality] '
+FORMAT_WIFI_DOWN=' [wifi] '
+BATT_STATUS_CHR='[C]'
+BATT_STATUS_BAT='[B]'
+BATT_STATUS_FULL='[F]'
+
+if [[ -n $(fc-list Icons) ]] ; then
+	FORMAT_LOAD='   %1min %5min %15min '
+	FORMAT_DISK='  %avail '
+	FORMAT_WIFI_UP=' %quality   %essid '
+	FORMAT_WIFI_DOWN='   down '
+	BATT_STATUS_CHR=' '
+	BATT_STATUS_BAT=' '
+	BATT_STATUS_FULL=' '
+fi
+
 cat <<EOF
 general {
         colors = true
@@ -21,8 +39,8 @@ order += "load"
 order += "tztime local"
 
 wireless _first_ {
-        format_up = " %quality   %essid "
-        format_down = "   down "
+        format_up = "${FORMAT_WIFI_UP}"
+        format_down = "${FORMAT_WIFI_DOWN}"
 }
 
 ethernet _first_ {
@@ -32,10 +50,10 @@ ethernet _first_ {
 }
 
 battery 0 {
-        format = " %remaining %status  %percentage "
-        status_chr = ""
-        status_bat = ""
-        status_full = ""
+        format = " %remaining %status %percentage "
+        status_chr = "${BATT_STATUS_CHR}"
+        status_bat = "${BATT_STATUS_BAT}"
+        status_full = "${BATT_STATUS_FULL}"
 }
 
 run_watch DHCP {
@@ -51,13 +69,13 @@ tztime local {
 }
 
 load {
-        format = "   %1min %5min %15min "
+        format = "${FORMAT_LOAD}"
 }
 
 disk "/" {
-        format = " /   %avail "
+        format = " / ${FORMAT_DISK}"
 }
 disk "/devel" {
-	format = " /devel   %avail "
+	format = " /devel ${FORMAT_DISK}"
 }
 EOF
