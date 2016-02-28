@@ -22,7 +22,7 @@ endif
 
 "let g:templates_directory = '~/t'
 
-let s:completion_setup = 'lift'
+let s:completion_setup = 'neocomplete'
 
 call plug#begin('~/.vim/bundle')
 Plug 'tpope/vim-sensible'
@@ -33,6 +33,11 @@ if s:completion_setup == 'lift'
 	else
 		Plug '~aperez/devel/vim-lift'
 	endif
+elseif s:completion_setup == 'neocomplete'
+	Plug 'Shougo/neocomplete.vim'
+	Plug 'Shougo/context_filetype.vim'
+	Plug 'Shougo/neoinclude.vim'
+	Plug 'Shougo/neco-syntax'
 elseif s:completion_setup == 'ycm'
 	Plug 'Valloric/YouCompleteMe', { 'do': 'python2 install.py --clang-completer --gocode-completer --system-boost --system-libclang --racer-completer' }
 endif
@@ -310,6 +315,43 @@ elseif executable('ack')
 endif
 nnoremap <silent> <leader>g :<C-u>Unite grep:. -buffer-name=Find<cr>
 nnoremap <silent> <leader>L :<C-u>UniteResume<cr>
+
+" Plugin: neocomplete
+if s:completion_setup == 'neocomplete'
+	let g:neocomplete#enable_at_startup = 1
+	let g:neocomplete#enable_smart_case = 0
+	let g:neocomplete#disable_auto_complete = 0
+	let g:neocomplete#auto_completion_start_length = 4
+	let g:neocomplete#manual_completion_start_length = 2
+	let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
+
+	if !exists('g:neocomplete#keyword_patterns')
+		let g:neocomplete#keyword_patterns = {}
+	endif
+	let g:neocomplete#keyword_patterns['default'] = '\h\w*'
+
+	function! s:cr_neocomplete()
+		return pumvisible() ? "\<C-y>" : "\<CR>"
+	endfunction
+
+	inoremap <silent><CR> <C-r>=<sid>cr_neocomplete()<CR>
+
+	function! s:completion_tab_neocomplete()
+		if pumvisible()
+			return "\<C-n>"
+		endif
+		if s:completion_check_bs()
+			return "\<Tab>"
+		endif
+		return neocomplete#start_manual_complete()
+	endfunction
+
+	inoremap <silent><expr><Tab> <sid>completion_tab_neocomplete()
+	inoremap <expr><C-g> neocomplete#undo_completion()
+	inoremap <expr><C-l> neocomplete#complete_common_string()
+	inoremap <expr><C-h> neocomplete#smart_close_popup() . "\<C-h>"
+	inoremap <expr><BS>  neocomplete#smart_close_popup() . "\<C-h>"
+endif
 
 " Plugin: YouCompleteMe
 if s:completion_setup == 'ycm'
