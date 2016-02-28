@@ -141,9 +141,9 @@ bar {
 echo "bindsym \$mod+Shift+e exec \"i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'\""
 
 if whence -p dmenu-launch &> /dev/null ; then
-	echo 'bindsym $mod+d exec env DMENU_OPTIONS="-fn terminus:bold:size=14 -h 20 -x 0" dmenu-launch'
+	echo 'bindsym $mod+d dmenu-launch'
 elif whence -p dmenu_run &> /dev/null ; then
-	echo 'bindsym $mod+d exec env DMENU_OPTIONS="-fn terminus:bold:size=14 -h 20 -x 0" dmenu_run'
+	echo 'bindsym $mod+d exec dmenu_run'
 fi
 
 for item in dwt uxterm i3-sensible-terminal ; do

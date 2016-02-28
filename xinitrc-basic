@@ -8,5 +8,7 @@ for f in Xdefaults Xresources ; do
 	fi
 done
 
+export DMENU_OPTIONS='-fn terminus:bold:size=15 -h 20 -x 0'
+
 setxkbmap -layout es -option 'ctrl:nocaps,compose:menu'
 xsetroot -solid steelblue
