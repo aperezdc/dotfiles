@@ -59,7 +59,7 @@ else
 endif
 
 Plug 'tpope/vim-endwise'
-Plug 'vim-airline/vim-airline-themes' | Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline'
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'chrisbra/vim-diff-enhanced'
 Plug 'tmux-plugins/vim-tmux-focus-events'
@@ -201,21 +201,7 @@ else
 endif
 
 
-colorscheme elflord
-highlight CursorLine NONE
-if &t_Co == 256
-	highlight CursorLine   ctermbg=235
-	highlight CursorLineNr ctermbg=235 ctermfg=246
-	highlight LineNr       ctermbg=234 ctermfg=238
-	highlight SignColumn   ctermbg=234
-	highlight Pmenu        ctermbg=235 ctermfg=white
-	highlight PmenuSel     ctermbg=238 ctermfg=white
-	highlight PmenuSbar    ctermbg=238
-	highlight PmenuThumb   ctermbg=240
-	highlight VertSplit    ctermbg=235 ctermfg=235
-	highlight StatusLineNC ctermfg=235
-endif
-
+colorscheme elrond
 
 command! -nargs=0 -bang Q q<bang>
 command! -bang W write<bang>
@@ -269,7 +255,6 @@ let g:airline_mode_map = {
 			\ '__' : '-', 'n'  : 'N', 'i'  : 'I', 'R'  : 'R',
 			\ 'c'  : 'C', 'v'  : 'V', 'V'  : 'V', '' : 'V',
 			\ 's'  : 'S', 'S'  : 'S', '' : 'S' }
-let g:airline_theme = 'bubblegum'
 let g:airline_detect_crypt = 0
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#buffer_min_count = 2
