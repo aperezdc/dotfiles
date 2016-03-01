@@ -1,8 +1,13 @@
 #! /usr/bin/env zsh
 
+FONT_NAME='terminus'
+FONT_SIZE='11'
+typeset -i FONT_SIZE
+
+echo "font pango:${FONT_NAME} bold ${FONT_SIZE}"
+
 cat <<< '
 set $mod Mod4
-font pango:terminus, Icons bold 11
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
@@ -130,7 +135,6 @@ bindsym $mod+r mode "resize"
 # finds out, if available)
 bar {
         status_command i3status
-        #status_command exec j4status -o i3bar
         tray_output primary
         #mode hide
         #modifier $mod
@@ -143,15 +147,19 @@ echo "bindsym \$mod+Shift+e exec \"i3-nagbar -t warning -m 'You pressed the exit
 if whence -p dmenu-launch &> /dev/null ; then
 	echo 'bindsym $mod+d dmenu-launch'
 elif whence -p dmenu_run &> /dev/null ; then
-	echo 'bindsym $mod+d exec dmenu_run'
+	echo "bindsym \$mod+d exec dmenu_run -fn '${FONT_NAME}:bold:size=$(( FONT_SIZE + 1))' -p 'run '"
 fi
 
-for item in dwt uxterm i3-sensible-terminal ; do
-	if whence -p "${item}" &> /dev/null ; then
-		echo "bindsym \$mod+Return exec ${item}"
-		break
-	fi
-done
+if whence -p st &> /dev/null ; then
+	echo "bindsym \$mod+Return exec st -f '${FONT_NAME}:bold:size=$(( FONT_SIZE + 6))'"
+else
+	for item in dwt uxterm i3-sensible-terminal ; do
+		if whence -p "${item}" &> /dev/null ; then
+			echo "bindsym \$mod+Return exec ${item}"
+			break
+		fi
+	done
+fi
 
 if [[ -r ${HOME}/.fehbg ]] ; then
 	echo "exec --no-startup-id sh '${HOME}/.fehbg'"
