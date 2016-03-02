@@ -87,6 +87,7 @@ Plug 'othree/html5.vim', { 'for' : ['html', 'html.handlebars'] }
 Plug 'cespare/vim-toml'
 Plug 'plasticboy/vim-markdown'
 Plug 'godlygeek/tabular', { 'on' : 'Tabularize' }
+Plug 'justincampbell/vim-eighties'
 Plug 'reedes/vim-pencil'
 Plug 'reedes/vim-wheel'
 Plug 'reedes/vim-wordy', { 'on' : ['Wordy', 'NextWordy'] }
@@ -401,6 +402,12 @@ if s:completion_setup == 'ycm'
 				\ 're!\\[A-Za-z]*(ref|cite)[A-Za-z]*([^]]*])?{([^}]*, ?)*'
 				\ ]
 endif
+
+" Plugin: eighties
+let g:eighties_enabled = 1
+let g:eighties_compute = 1
+let g:eighties_extra_width = 15
+let g:eighties_minimum_width = 80
 
 " Plugin: quickhl
 nmap <leader>h <Plug>(quickhl-manual-this)

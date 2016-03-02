@@ -75,6 +75,7 @@ Plug 'othree/html5.vim', { 'for' : ['html', 'html.handlebars'] }
 Plug 'cespare/vim-toml'
 Plug 'plasticboy/vim-markdown'
 Plug 'godlygeek/tabular', { 'on' : 'Tabularize' }
+Plug 'justincampbell/vim-eighties'
 Plug 'reedes/vim-pencil'
 Plug 'reedes/vim-wheel'
 Plug 'reedes/vim-wordy', { 'on' : ['Wordy', 'NextWordy'] }
@@ -369,6 +370,12 @@ let g:clang_make_default_keymappings = 0
 let g:clang_c_options   = '-Qunused-arguments -std=gnu99'
 let g:clang_cpp_options = '-Qunused-arguments -std=gnu++11 -stdlib=libc++'
 let g:clang_auto        = 0
+
+" Plugin: eighties
+let g:eighties_enabled = 1
+let g:eighties_compute = 1
+let g:eighties_extra_width = 15
+let g:eighties_minimum_width = 80
 
 " Plugin: quickhl
 nmap <leader>h <Plug>(quickhl-manual-this)
