@@ -51,6 +51,11 @@ if empty(glob('~aperez/devel/vim-template'))
 else
 	Plug '~aperez/devel/vim-template'
 endif
+if empty(glob('~aperez/devel/vim-lining'))
+	Plug 'aperezdc/vim-lining'
+else
+	Plug '~aperez/devel/vim-lining'
+endif
 if empty(glob('~aperez/devel/vim-elrond'))
 	Plug 'aperezdc/vim-elrond'
 else
@@ -68,7 +73,7 @@ endif
 
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-sleuth'
-Plug 'vim-airline/vim-airline'
+Plug 'tpope/vim-fugitive'
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'chrisbra/vim-diff-enhanced'
 Plug 'tmux-plugins/vim-tmux-focus-events'
@@ -305,19 +310,6 @@ imap <silent> <F8> <Esc>:GitGutterToggle<cr>a
 let g:caw_no_default_keymappings = 1
 nmap <leader>c <Plug>(caw:i:toggle)
 xmap <leader>c <Plug>(caw:i:toggle)
-
-" Plugin: Airline
-let g:airline_powerline_fonts = 0
-let g:airline_left_sep = ''
-let g:airline_right_sep = ''
-let g:airline_mode_map = {
-			\ '__' : '-', 'n'  : 'N', 'i'  : 'I', 'R'  : 'R',
-			\ 'c'  : 'C', 'v'  : 'V', 'V'  : 'V', '' : 'V',
-			\ 's'  : 'S', 'S'  : 'S', '' : 'S' }
-let g:airline_detect_crypt = 0
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#buffer_min_count = 2
-let g:airline_section_x = '%{PencilMode()}'
 
 " Plugin: Indent Guides
 let g:indent_guides_exclude_filetypes = ['help', 'unite', 'qf']
