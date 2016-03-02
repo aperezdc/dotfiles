@@ -31,50 +31,29 @@ q = bclose
   [[search]]
     d = toggletags deleted
     J = toggletags spam
-  [[thread]]
+    h = toggletags ham
+    i = toggletags fyi
     s = toggletags unread
+    A = untag unread,inbox
+  [[thread]]
+    d = toggletags deleted
+    J = toggletags spam
+    h = toggletags ham
+    i = toggletags fyi
+    & = toggletags killed
+    s = toggletags unread
+    A = untag unread,inbox
 
 [tags]
   [[flagged]]
-	translated = ‼
-	#translated = ⚑
+	translated = !
 	normal = '','','light red','','light red',''
 	focus = '','','light red','','light red',''
   [[replied]]
-	#translated = 
-	#translated = ⭍
-	#translated = ⮌
-	translated = ↩
+	translated = ↑
   [[sent]]
-	translated = ↗
-	#translated = 🡕
-  [[encrypted]]
-	#translated = Θ
-	translated = 
-	#translated = 🔒
-	#translated = 🗝
-	#translated = ⛊
-  [[inbox]]
-	#translated = 
-	#translated = 📨
-	#translated = 🖂
-	#translated = 📂
-	#translated = ⛳
+	translated = →
   [[signed]]
 	translated = §
-	#translated = 🖆
-	#translated = ⛉
-  [[fyi]]
-	#translated = ⌘
-	translated = ℹ
   [[unread]]
-	#translated = "#"
-	translated = ★
-	#translated = 🔰
-	#translated = 🗲
-	#normal = '','','light green','','light green',''
-    focus = '','','light green','','light green',''
-  [[deleted]]
-    #translated = ♻
-  [[attachment]]
-    #translated = 📎
+	focus = '','','light green','','light green',''
