@@ -5,11 +5,182 @@
 #
 # Distributed under terms of the MIT license.
 #
+set -e
 
-# Common build options
-declare -a build_options=(
-	--gtk
+# Toolchain to use: 'clang' or 'gcc'
+compiler='clang'
+
+# Build type: 'make' or 'ninja'
+buildtype='release'
+
+# Whether to use Icecream (IceCC) to do a distributed build.
+# Seeting to true forcs compiler='gcc'.
+use_icecc=false
+
+# Whether to use clang's Address Sanitizer (ASAN).
+# Setting to true forces compiler='clang' above.
+use_asan=false
+
+# Use Clang's libc++ instead of GNU libstdc++
+use_libcxx=false
+
+# Number of parallel jobs. By default, it's set to the number of online
+# CPUs. When doing a distributed build, this is multiplied by five.
+parallel_jobs=$(getconf _NPROCESSORS_ONLN)
+
+
+declare -r clang_opts=(
+	'-ferror-limit=1'
+	'-Qunused-arguments'
 )
+declare -r clang_asan_opts=(
+	'-g'
+	'-O1'
+	'-fsanitize=address'
+	'-fno-omit-frame-pointer'
+)
+declare -r clang_libcxx_opts=(
+	'-stdlib=libc++'
+)
+declare -r link_libcxx_opts=(
+	"${clang_libcxx_opts[@]}"
+	'-lc++abi'
+)
+
+info () {
+	printf -- "[1;1m%10s[0;0m → %s\n" "$1" "$2"
+}
+
+die () {
+	echo "*" 1>&2
+	exit 1
+}
+
+
+setup_icecc () {
+	if ${use_asan} ; then
+		die "Cannot use --asan and --icecc at the same time"
+	fi
+
+	export CCACHE_PREFIX=/usr/lib/icecream/bin/icecc
+	if [[ -n ${ICECC_VERSION} ]] ; then
+		info "icecc" "Using preset toolchain"
+	else
+		info "icecc" "Creating toolchain tarball"
+		export ICECC_VERSION="$(pwd)/$(/usr/lib/icecream/bin/icecc --build-native 2>&1 | awk '/^creating/{print $2}')"
+	fi
+	info "icecc" "${ICECC_VERSION}"
+
+	parallel_jobs=$(( parallel_jobs * 5 ))
+	compiler='gcc'
+}
+
+
+setup_asan () {
+	if ${use_icecc} ; then
+		die "Cannot use --asan and --icecc at the same time"
+	fi
+
+	local clang_dir=$(dirname "$(which clang)")
+	if [[ -z ${ASAN_SYMBOLIZER_PATH} ]] ; then
+		if [[ -x /usr/bin/llvm-symbolizer ]] ; then
+			ASAN_SYMBOLIZER_PATH=/usr/bin/llvm-symbolizer
+		else
+			ASAN_SYMBOLIZER_PATH="${clang_dir}/llvm-symbolizer"
+		fi
+	fi
+
+	[[ -x ${ASAN_SYMBOLIZER_PATH} ]] \
+		|| die "${ASAN_SYMBOLIZER_PATH}: missing or it is not executable"
+	export ASAN_SYMBOLIZER_PATH
+
+	CXX="${clang_dir}/clang++ ${clang_opts[*]} ${clang_asan_opts[*]}"
+	LD="${clang_dir}/clang++ ${clang_asan_opts[*]}"
+	CC="${clang_dir}/clang ${clang_opts[*]} ${clang_asan_opts[*]}"
+
+	compiler='clang'
+	use_libcxx=true
+}
+
+
+setup_compiler_clang () {
+	[[ -n ${CXX} ]] || CXX="clang++ ${clang_opts[*]}"
+	[[ -n ${LD} ]] || LD="clang++ ${clang_opts[*]}"
+	[[ -n ${CC} ]] || CC="clang ${clang_opts[*]}"
+
+	if ${use_libcxx} ; then
+		CXX="${CXX} ${clang_libcxx_opts[@]}"
+		CC="${CC} ${clang_libcxx_opts[@]}"
+		LD="${LD} ${link_libcxx_opts[@]}"
+	fi
+}
+
+
+setup_compiler_gcc () {
+	[[ -n ${CXX} ]] || CXX="g++"
+	[[ -n ${LD} ]] || LD="g++"
+	[[ -n ${CC} ]] || CC="gcc"
+}
+
+
+do_help () { cat <<EOM
+Usage: $(basename "$0") [options]
+
+Availabl options:
+
+  --jobs=N          Use N parallel jobs.
+  --debug, --dbg    Make a debug build
+  --release, --rel  Make a release build.
+  --clang           Build with Clang (usually the default).
+  --gcc             Build with GCC.
+  --libc++          Use Clang's libc++.
+  --icecc           Use IceCC to do a distributed builf (forces --gcc).
+  --asan            Build with Clang's Address Sanitizer (forces --clang).
+
+Unrecognized options are passed down to the build system.
+
+EOM
+}
+
+
+declare -a build_options=( --gtk )
+for flag in "$@"
+do
+	case ${flag} in
+		--jobs=*)
+			parallel_jobs=${flag#*=}
+			;;
+		--debug | --dbg)
+			buildtype='debug'
+			;;
+		--release | --rel)
+			buildtype='release'
+			;;
+		--clang)
+			compiler='clang'
+			;;
+		--gcc)
+			compiler='gcc'
+			;;
+		--libc++)
+			use_libcxx=true
+			;;
+		--icecc)
+			use_icecc=true
+			;;
+		--asan)
+			use_asan=true
+			;;
+		--help | -h)
+			do_help
+			exit 0
+			;;
+		*)
+			# Pass down unrecognized flags to build-webkit
+			build_options=( "${build_options[@]}" "${flag}" )
+			;;
+	esac
+done
 
 # Detect whether we are building inside jhbuild, to adjust paths accordingly
 if [[ -n ${JHBUILD_PREFIX} ]] ; then
@@ -19,21 +190,20 @@ if [[ -n ${JHBUILD_PREFIX} ]] ; then
 	fi
 fi
 
-: ${CC:='clang -Qunused-arguments'}
-: ${CXX:='clang++ -Qunused-arguments'}
 
-if [[ ${CXX} = *clang++\ * && -z ${NO_LIBCXX} ]] ; then
-	CXXFLAGS='-stdlib=libc++'
-	LDFLAGS='-stdlib=libc++ -lc++abi'
-fi
+if ${use_icecc} ; then setup_icecc ; fi
+if ${use_asan}  ; then setup_asan  ; fi
 
-cat <<EOF
-CC      : ${CC}
-CXX     : ${CXX}
-CXXFLAGS: ${CXXFLAGS}
-LDFLAGS : ${LDFLAGS}
-EOF
+setup_compiler_${compiler}
 
-export PKG_CONFIG_PATH CC CXX CXXFLAGS LDFLAGS
+export PKG_CONFIG_PATH LD CC CXX CXXFLAGS LDFLAGS
+
+info "build"   "${buildtype}"
+info "jobs"    "${parallel_jobs}"
+info "env:LD"  "${LD} ${LDFLAGS}"
+info "env:CC"  "${CC}"
+info "env:CXX" "${CXX}"
+echo
+
 set -x
-exec build-webkit "${build_options[@]}" "$@"
+exec build-webkit "${build_options[@]}" "$@" "--${buildtype}" --makeargs="-j${parallel_jobs}"
