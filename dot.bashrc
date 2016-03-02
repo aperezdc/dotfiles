@@ -30,8 +30,22 @@ if ${use_color} ; then
 		PS1='\[\033[01;32m\]\u@\h\[\033[01;34m\] \w \$\[\033[00m\] '
 	fi
 
-	alias ls='ls --color=auto'
-	alias grep='grep --colour=auto'
+	if ls --version && ls --version | grep GNU ; then
+		alias ls='ls --color=auto -F'
+	else
+		# In BSD systems, usually setting this makes "ls" use colors
+		export CLICOLOR=1
+		export LSCOLORS=ExGxFxdxCxDxDxhbabacae
+		if [[ $(type -pt colorls) = file ]] ; then
+			alias ls='colorls -F'
+		else
+			alias ls='ls -F'
+		fi
+	fi &> /dev/null
+
+	if grep --version && grep --version | grep GNU ; then
+		alias grep='grep --colour=auto'
+	fi &> /dev/null
 else
 	if [[ ${EUID} == 0 ]] ; then
 		# show root@ when we don't have colors
@@ -52,12 +66,21 @@ alias -- '..'='cd ..'
 case $TERM in
 	# Unicode for the masses!
 	xterm* | uxterm* | gnome-terminal | urxvt*)
-		export LANG=en_US.UTF-8
+		LANG=en_US.UTF-8
 	;;
 esac
 
-export EDITOR=vim
+for editor in nvim vim vi e3vi ; do
+	if [[ $(type -pt ${editor}) = file ]] ; then
+		EDITOR=${editor}
+		break
+	fi
+done
 
-if [[ -d ~/.local/bin ]] ; then
-	PATH="$PATH:$HOME/.local/bin"
-fi
+for dirpath in ${HOME}/.local/bin ${HOME}/.dotfiles/bin ; do
+	if [[ -d ${dirpath} ]] ; then
+		PATH="$PATH:${dirpath}"
+	fi
+done
+
+export PATH EDITOR
