@@ -18,13 +18,11 @@ if has('python')
 	let g:python_host_prog = '/usr/bin/python2'
 endif
 
-
 if empty(glob('~/.config/nvim/autoload/plug.vim'))
 	silent !curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs
 				\ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 	autocmd vimrc VimEnter * PlugInstall
 endif
-
 
 let s:completion_setup = 'ycm'
 
@@ -42,6 +40,8 @@ elseif s:completion_setup == 'deoplete'
 	Plug 'Shougo/neco-vim'
 	Plug 'Shougo/neco-syntax'
 	Plug 'Shougo/neoinclude.vim'
+	Plug 'racer-rust/vim-racer'
+	Plug 'zchee/deoplete-jedi', { 'for' : 'python' }
 elseif s:completion_setup == 'ycm'
 	Plug 'Valloric/YouCompleteMe', { 'do': 'python2 install.py --clang-completer --gocode-completer --system-boost --system-libclang --racer-completer' }
 endif
@@ -67,14 +67,17 @@ if !empty(glob('~aperez/devel/urbit/extras/hoon.vim'))
 endif
 
 Plug 'tpope/vim-endwise'
-Plug 'vim-airline/vim-airline-themes' | Plug 'vim-airline/vim-airline'
+Plug 'tpope/vim-sleuth'
+Plug 'vim-airline/vim-airline'
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'chrisbra/vim-diff-enhanced'
 Plug 'tmux-plugins/vim-tmux-focus-events'
 Plug 'gcmt/wildfire.vim'
 Plug 'jamessan/vim-gnupg'
 Plug 'wting/rust.vim'
+Plug 'dag/vim-fish'
 "Plug 'lervag/vimtex'
+Plug 'vim-scripts/rcshell.vim'
 Plug 'vim-scripts/a.vim', { 'on': ['A', 'AV', 'AS'] }
 Plug 'tyru/caw.vim', { 'on' : '<Plug>(caw:' }
 Plug 'ledger/vim-ledger', { 'for' : 'ledger' }
@@ -310,7 +313,6 @@ let g:airline_mode_map = {
 			\ '__' : '-', 'n'  : 'N', 'i'  : 'I', 'R'  : 'R',
 			\ 'c'  : 'C', 'v'  : 'V', 'V'  : 'V', '' : 'V',
 			\ 's'  : 'S', 'S'  : 'S', '' : 'S' }
-let g:airline_theme = 'bubblegum'
 let g:airline_detect_crypt = 0
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#buffer_min_count = 2
