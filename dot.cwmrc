@@ -16,3 +16,6 @@ bind C-Left unmap
 bind C-Right unmap
 bind C-Up unmap
 bind C-Down unmap
+
+# Disable SSH menu
+bind M-\. unmap
