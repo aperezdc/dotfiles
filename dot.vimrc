@@ -22,7 +22,7 @@ endif
 
 "let g:templates_directory = '~/t'
 
-let s:completion_setup = 'neocomplete'
+let s:completion_setup = 'vcm'
 
 call plug#begin('~/.vim/bundle')
 Plug 'tpope/vim-sensible'
@@ -38,6 +38,9 @@ elseif s:completion_setup == 'neocomplete'
 	Plug 'Shougo/context_filetype.vim'
 	Plug 'Shougo/neoinclude.vim'
 	Plug 'Shougo/neco-syntax'
+elseif s:completion_setup == 'vcm'
+	Plug 'ajh17/vimcompletesme'
+	Plug 'davidhalter/jedi-vim'
 elseif s:completion_setup == 'ycm'
 	Plug 'Valloric/YouCompleteMe', { 'do': 'python2 install.py --clang-completer --gocode-completer --system-boost --system-libclang --racer-completer' }
 endif
@@ -143,6 +146,8 @@ if s:completion_setup == 'lift'
 	let g:lift#close_preview_window = 0
 	let g:lift#shortcut_single_source = 1
 	inoremap <expr><silent><Tab> lift#trigger_completion()
+elseif s:completion_setup == 'vcm'
+	set completeopt+=longest
 else
 	function! s:completion_check_bs()
 		let l:col = col('.') - 1
