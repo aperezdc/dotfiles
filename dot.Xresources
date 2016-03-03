@@ -19,11 +19,12 @@ XTerm*vt100.background: black
 XTerm*vt100.foreground: grey80
 XTerm*vt100.cursorColor: green
 !XTerm*vt100.font: -*-unifont-medium-*-*-*-16-*-*-*-*-*-iso10646-1
-!XTerm*vt100.font: -*-terminus-medium-r-*-*-14-*-*-*-*-*-iso10646-*
-!XTerm*vt100.faceName: terminus:bold
-XTerm*vt100.faceName: PragmataPro
+! XTerm*vt100.font: -*-terminus-medium-r-*-*-14-*-*-*-*-*-iso10646-*
+XTerm*vt100.faceName: terminus:bold
+! XTerm*vt100.faceName: PragmataPro
 XTerm*vt100.faceSize: 12
 XTerm*vt100.faceNameDoublesize: VL Gothic
+XTerm*vt100.deleteIsDEL: true
 !XTerm*vt100.faceSize: 12
 !XTerm*vt100.faceName: unifont
 XTerm*termName: xterm-256color
@@ -45,10 +46,11 @@ UXTerm*vt100.cursorColor: green
 !UXTerm*vt100.font: -*-terminus-bold-r-normal-*-18-*-*-*-*-*-iso10646-*
 !UXTerm*vt100.faceSize: 12
 !UXTerm*vt100.faceName: unifont
-!UXTerm*vt100.faceName: terminus:bold
-UXTerm*vt100.faceName: PragmataPro
+UXTerm*vt100.faceName: terminus:bold
+! UXTerm*vt100.faceName: PragmataPro
 UXTerm*vt100.faceSize: 12
 UXTerm*vt100.faceNameDoublesize: VL Gothic
+UXTerm*vt100.deleteIsDEL: true
 UXTerm*charClass: 33:48,35-38:48,39:43,42-47:48,58-59:48,61:48,63-64:48,126:48
 UXTerm*loginShell: true
 UXTerm*termName: xterm-256color
