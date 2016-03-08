@@ -184,7 +184,7 @@ fi
 if [[ -r ${HOME}/.fehbg ]] && whence -p feh &> /dev/null ; then
 	echo "exec --no-startup-id sh '${HOME}/.fehbg'"
 fi
-if whence -p redshift-scheduler ; then
+if whence -p redshift-scheduler &> /dev/null ; then
 	echo 'exec --no-startup-id redshift-scheduler'
 fi
 if whence -p xss-lock &> /dev/null && whence -p i3lock &> /dev/null ; then
