@@ -53,20 +53,22 @@ endif
 if empty(glob('~aperez/devel/vim-lining'))
 	Plug 'aperezdc/vim-lining'
 else
-	Plug '~/devel/vim-lining'
+	Plug '~aperez/devel/vim-lining'
 endif
 if empty(glob('~aperez/devel/vim-elrond'))
 	Plug 'aperezdc/vim-elrond'
 else
-	Plug '~/devel/vim-elrond'
+	Plug '~aperez/devel/vim-elrond'
 endif
 if empty(glob('~aperez/devel/hipack-vim'))
-	Plug 'aperezdc/hipack-vim', { 'for' : 'hipack' }
+	Plug 'aperezdc/hipack-vim'
 else
-	Plug '~aperez/devel/hipack-vim', { 'for' : 'hipack' }
+	Plug '~aperez/devel/hipack-vim'
 endif
 
 Plug 'tpope/vim-endwise'
+Plug 'tpope/vim-sleuth'
+Plug 'tpope/vim-fugitive'
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'chrisbra/vim-diff-enhanced'
 Plug 'tmux-plugins/vim-tmux-focus-events'
@@ -96,17 +98,23 @@ Plug 'airblade/vim-gitgutter', { 'on' : [ '<Plug>GitGutter',
 Plug 'Valloric/ListToggle'
 call plug#end()
 
+" Add system-wide Vim files directory, if it exists
+if isdirectory('/usr/share/vim/vimfiles')
+	set runtimepath+=/usr/share/vim/vimfiles
+endif
+
 call unite#custom#profile('default', 'context', {
 			\ 'winheight'    : 15,
 			\ 'start_insert' : 1,
 			\ 'no_split'     : 1,
-			\ 'prompt'       : ': ' })
+			\ 'prompt'          : ': ',
+			\ })
 call unite#filters#matcher_default#use(['matcher_fuzzy'])
 call unite#custom#source('neomru/file', 'matchers',
 			\ ['matcher_project_files', 'matcher_fuzzy'])
 
 syntax on
-colorscheme elflord
+colorscheme elrond
 filetype indent plugin on
 
 set nobomb
@@ -121,7 +129,9 @@ set nowrap
 set showmode
 set textwidth=78
 set fileformats=unix,mac,dos
-set completeopt-=longest
+" set completeopt=longest,menu,menuone,preview,noinsert
+set completeopt=menu,preview
+set hidden
 set infercase
 set diffopt+=iwhite
 set nobackup
@@ -138,7 +148,7 @@ if len($DISPLAY) > 0
 endif
 
 
-if s:completion_setup == 'lift'
+if exists('g:loaded_lift_plugin') && s:completion_setup == 'lift'
     let g:lift#sources = {
 				\   '_': ['near', 'omni', 'user', 'syntax'],
 				\   'c': ['omni', 'near'],
@@ -197,7 +207,6 @@ if &term =~ "screen"
 	set t_fs=\
 endif
 
-set t_Co=16
 if $TERM =~ "xterm-256color" || $TERM =~ "screen-256color" || $TERM =~ "xterm-termite" || $TERM =~ "gnome-256color" || $COLORTERM =~ "gnome-terminal"
 	set t_Co=256
 	set t_AB=[48;5;%dm
@@ -210,8 +219,6 @@ else
 	endif
 endif
 
-
-colorscheme elrond
 
 command! -nargs=0 -bang Q q<bang>
 command! -bang W write<bang>
@@ -234,9 +241,11 @@ autocmd vimrc BufReadPost *
 			\ if line("'\"") > 0 && line("'\"") <= line("$") |
 			\		execute "normal g'\"" |
 			\ endif
-autocmd vimrc FileType markdown setlocal expandtab tabstop=2 shiftwidth=2
+autocmd vimrc FileType mkdc,markdown setlocal expandtab tabstop=2 shiftwidth=2
+autocmd vimrc FileType yaml setlocal tabstop=2 shiftwidth=2
 autocmd vimrc FileType objc setlocal expandtab cinoptions+=(0
 autocmd vimrc FileType cpp setlocal expandtab cinoptions+=(0
+autocmd vimrc FileType lua setlocal expandtab tabstop=3 shiftwidth=3
 autocmd vimrc FileType c setlocal expandtab cinoptions+=(0
 autocmd vimrc FileType d setlocal expandtab cinoptions+=(0
 
@@ -246,9 +255,26 @@ if exists('/usr/share/clang/clang-format.py')
 	imap <C-k> <Esc>:pyf /usr/share/clang/clang-format.py<cr>i
 endif
 
+" Plugin: pencil
+nnoremap <silent> Q gwip
+noremap  <buffer> <silent> <F9> :<C-u>PFormatToggle<cr>
+inoremap <buffer> <silent> <F9>  <C-o>:PFormatToggle<cr>
+nmap <silent> <F10> :PencilToggle<CR>
+imap <silent> <F10> <Esc>:PencilToggle<CR>a
+nmap <silent> <C-i> :PencilToggle<CR>a
+let g:pencil#mode_indicators = {'hard': 'H', 'auto': 'A', 'soft': 'S', 'off': '',}
+let g:pencil#conceallevel = 3
+let g:pencil#concealcursor = 'c'
+
+augroup pencil
+	autocmd!
+	autocmd FileType markdown,mkd,mkdc call pencil#init()
+	autocmd FileType text              call pencil#init()
+augroup END
+
 " Plugin: GitGutter
 let g:gitgutter_enabled = 0
-let g:gitgutter_diff_args = '-2'
+let g:gitgutter_diff_args = '-w -2'
 nmap <silent> <F8> :GitGutterToggle<cr>
 imap <silent> <F8> <Esc>:GitGutterToggle<cr>a
 
@@ -256,15 +282,6 @@ imap <silent> <F8> <Esc>:GitGutterToggle<cr>a
 let g:caw_no_default_keymappings = 1
 nmap <leader>c <Plug>(caw:i:toggle)
 xmap <leader>c <Plug>(caw:i:toggle)
-
-" Plugin: Indent Guides
-let g:indent_guides_exclude_filetypes = ['help', 'unite', 'qf']
-let g:indent_guides_enable_on_vim_startup = 1
-let g:indent_guides_guide_size = 1
-let g:indent_guides_start_level = 2
-let g:indent_guides_auto_colors = 0
-highlight IndentGuidesOdd  ctermbg=234
-highlight IndentGuidesEven ctermbg=233
 
 " Plugin: better-whitespace
 let g:better_whitespace_filetypes_blacklist = ['help', 'unite', 'qf']
@@ -342,6 +359,7 @@ if s:completion_setup == 'ycm'
 	let g:ycm_always_populate_location_list = 1
 	let g:ycm_key_detailed_diagnostics = '<leader>D'
 	let g:ycm_extra_conf_globlist = ['~/devel/*', '/devel/*', '~/pfc/eol/*', '!~/*']
+	let g:ycm_rust_src_path = '/usr/src/rust/src'
 
 	if &t_Co == 256
 		highlight YcmErrorSign   ctermbg=124 ctermfg=9
@@ -359,15 +377,6 @@ if s:completion_setup == 'ycm'
 				\ ]
 endif
 
-" Plugin: clang_complete
-let g:clang_library_path = '/usr/lib/libclang.so'
-let g:clang_make_default_keymappings = 0
-
-" Plugin: vim-clang
-let g:clang_c_options   = '-Qunused-arguments -std=gnu99'
-let g:clang_cpp_options = '-Qunused-arguments -std=gnu++11 -stdlib=libc++'
-let g:clang_auto        = 0
-
 " Plugin: eighties
 let g:eighties_enabled = 1
 let g:eighties_compute = 1
@@ -380,6 +389,33 @@ xmap <leader>h <Plug>(quickhl-manual-this)
 nmap <leader>H <Plug>(quickhl-manual-reset)
 xmap <leader>H <Plug>(quickhl-manual-reset)
 nmap <leader>j <Plug>(quickhl-cword-toggle)
+
+" Plugin: Markdown
+let g:vim_markdown_folding_disabled = 1
+
+" Plugin: vimtex
+let g:vimtex_fold_enabled = 0
+let g:vimtex_syntax_minted = [
+			\ { 'lang': 'c', 'environments': ['ccode'] },
+			\ { 'lang': 'lua', 'environments': ['luacode'] },
+			\ ]
+
+" Show "git diff --cached" in split window when committing changes.
+function! s:SplitGitDiffCached()
+    vnew
+    silent 0read! git diff --cached --no-color
+    silent file! git-diff-cached
+    setlocal filetype=git buftype=nowrite nobuflisted noswapfile nomodifiable
+    " Go to the top of the buffer: always shown diff from the beginning
+    execute ':1'
+    wincmd r | wincmd p
+    autocmd QuitPre <buffer> wincmd w | wincmd q
+    " Convert the split into an horizontal one in not-so-wide terminals.
+    if &columns < 140
+		wincmd K
+    endif
+endfunction
+autocmd vimrc FileType gitcommit call s:SplitGitDiffCached()
 
 " dwm-like window movements
 nnoremap <A-h> <C-w>h

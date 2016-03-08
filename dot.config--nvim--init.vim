@@ -42,6 +42,9 @@ elseif s:completion_setup == 'deoplete'
 	Plug 'Shougo/neoinclude.vim'
 	Plug 'racer-rust/vim-racer'
 	Plug 'zchee/deoplete-jedi', { 'for' : 'python' }
+elseif s:completion_setup == 'vcm'
+	Plug 'ajh17/vimcompletesme'
+	Plug 'devidhalter/jedi-vim'
 elseif s:completion_setup == 'ycm'
 	Plug 'Valloric/YouCompleteMe', { 'do': 'python2 install.py --clang-completer --gocode-completer --system-boost --system-libclang --racer-completer' }
 endif
@@ -122,6 +125,7 @@ call unite#custom#source('neomru/file', 'matchers',
 			\ ['matcher_project_files', 'matcher_fuzzy'])
 
 syntax on
+colorscheme elrond
 filetype indent plugin on
 
 set nobomb
@@ -169,6 +173,8 @@ if exists('g:loaded_lift_plugin') && s:completion_setup == 'lift'
     let g:lift#close_preview_window = 0
     let g:lift#shortcut_single_source = 1
 	inoremap <expr><silent><Tab> lift#trigger_completion()
+elseif s:completion_setup == 'vcm'
+	set completeopt+=longest
 else
 	function! s:completion_check_bs()
 		let l:col = col('.') - 1
@@ -209,7 +215,7 @@ else
 endif
 
 
-if $TERM =~ "^screen"
+if &term =~ "screen"
     map  <silent> [1;5D <C-Left>
     map  <silent> [1;5C <C-Right>
     lmap <silent> [1;5D <C-Left>
@@ -243,7 +249,6 @@ else
 	endif
 endif
 
-colorscheme elrond
 
 command! -nargs=0 -bang Q q<bang>
 command! -bang W write<bang>
@@ -302,7 +307,7 @@ augroup END
 
 " Plugin: GitGutter
 let g:gitgutter_enabled = 0
-let g:gitgutter_diff_args = '-w'
+let g:gitgutter_diff_args = '-w -2'
 nmap <silent> <F8> :GitGutterToggle<cr>
 imap <silent> <F8> <Esc>:GitGutterToggle<cr>a
 
@@ -310,14 +315,6 @@ imap <silent> <F8> <Esc>:GitGutterToggle<cr>a
 let g:caw_no_default_keymappings = 1
 nmap <leader>c <Plug>(caw:i:toggle)
 xmap <leader>c <Plug>(caw:i:toggle)
-
-" Plugin: Indent Guides
-let g:indent_guides_exclude_filetypes = ['help', 'unite', 'qf']
-let g:indent_guides_enable_on_vim_startup = 1
-let g:indent_guides_start_level = 1
-let g:indent_guides_auto_colors = 0
-highlight IndentGuidesOdd  ctermbg=black
-highlight IndentGuidesEven ctermbg=233
 
 " Plugin: better-whitespace
 let g:better_whitespace_filetypes_blacklist = ['help', 'unite', 'qf']
