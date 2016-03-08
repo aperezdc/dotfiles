@@ -1,7 +1,7 @@
 #! /usr/bin/env zsh
 
 if [[ -z ${DOTFILES} ]] ; then
-	DOTFILES=$(dirname "$0")
+	DOTFILES=$(dirname "$(dirname "$0")")
 fi
 
 if [[ ! -d ${DOTFILES} ]] ; then
