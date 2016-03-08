@@ -15,7 +15,12 @@ DOTFILES=$(pwd)
 for filename in * ; do
 	if [[ ${filename:0:4} = dot. ]] ; then
 		target=${filename:3}
-		target="${HOME}/${target//--//}"
+		target_name="${target//--//}"
+		if [[ ${HOME} = */ ]] ; then
+			target="${HOME}${target_name}"
+		else
+			target="${HOME}/${target_name}"
+		fi
 		target_dir=$(dirname "${target}")
 
 		if [[ ! -d ${target_dir} ]] ; then
@@ -26,24 +31,24 @@ for filename in * ; do
 		if [[ -L ${target} ]] ; then
 			existing_target=$(readlink -f "${target}")
 			if [[ ${DOTFILES}/${filename} != ${existing_target} ]] ; then
-				echo "[ERR] Symlink '${target}' points to '${existing_target}' instead of '${DOTFILES}/${filename}'" 1>&2
+				echo "[ERR] Symlink '${target_name}' points to '${existing_target}' instead of '${DOTFILES}/${filename}'" 1>&2
 				retcode=2
 			else
-				echo "[---] ${target}"
+				echo "[---] ${target_name}"
 			fi
 		elif [[ ! -d ${DOTFILES}/${filename} && -x ${DOTFILES}/${filename} ]] ; then
 			# This is a generator program, send its output to the target file
-			echo "[GEN] ${target}"
+			echo "[GEN] ${target_name}"
 			output=$(OSTYPE=${OSTYPE} MACHTYPE=${MACHTYPE} CPUTYPE=${CPUTYPE} \
 				"${DOTFILES}/${filename}" "${target}")
 			if [[ -n ${output} ]] ; then
 				cat > "${target}" <<< "${output}"
 			fi
 		elif [[ -r ${target} ]] ; then
-			echo "Warning: '${target}' is not a symlink" 1>&2
+			echo "Warning: '${target_name}' is not a symlink" 1>&2
 			retcode=1
 		else
-			echo "[SYM] ${target}"
+			echo "[SYM] ${target_name}"
 			ln -s "${DOTFILES}/${filename}" "${target}"
 		fi
 	fi
