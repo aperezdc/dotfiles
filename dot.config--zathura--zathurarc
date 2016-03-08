@@ -1,0 +1,2 @@
+set font "PragmataPro 12"
+set database "sqlite"
