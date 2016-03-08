@@ -1,13 +1,15 @@
 # vim: ft=cfg
 auto_remove_unread = False
+auto_replyto_mailinglist = True
 honor_followup_to = True
 folowup_to = True
-terminal_cmd = /home/aperez/.local/bin/alot-run-editor
+terminal_cmd = /home/aperez/.dotfiles/bin/alot-run-editor
 initial_command = search tag:inbox AND NOT ( tag:killed OR tag:deleted OR tag:spam )
 ask_subject = True
 editor_spawn = True
 editor_in_thread = True
 prefer_plaintext = True
+input_timeout = 0.4
 tabwidth = 4
 
 [accounts]
