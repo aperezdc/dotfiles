@@ -286,7 +286,7 @@ if [[ ${COLORTERM} = gnome-terminal || ${COLORTERM} = drop-down-terminal || -n $
 		if [[ ${TERM} != xterm-termite ]] ; then
 			if [[ -n ${VTE_VERSION} && -r /usr/share/terminfo/g/gnome-256color ]] ; then
 				TERM='gnome-256color'
-			else
+			elif [[ ${TERM} = xterm* ]] ; then
 				TERM='xterm-256color'
 			fi
 		fi
