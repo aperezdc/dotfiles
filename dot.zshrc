@@ -18,7 +18,7 @@ if [[ -d ~/.zsh/zgen ]] ; then
 	source ~/.zsh/zgen/zgen.zsh
 	if ! zgen saved ; then
 		zgen load aperezdc/virtualz
-		zgen load supercrabtree/k
+		zgen load kyanagi/faster-vcs-info
 		zgen load jreese/zsh-titles
 		zgen load RobSis/zsh-completion-generator
 		zgen load RobSis/zsh-reentry-hook
