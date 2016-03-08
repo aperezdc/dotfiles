@@ -161,13 +161,23 @@ else
 	done
 fi
 
-if [[ -r ${HOME}/.fehbg ]] ; then
-	echo "exec --no-startup-id sh '${HOME}/.fehbg'"
+has_compositing=false
+if [[ -r ${HOME}/.compton.conf ]] && whence -p compton &> /dev/null ; then
+        has_compositing=true
+        echo 'exec --no-startup-id compton'
 fi
+
 if [[ -r ${HOME}/.xsettingsd ]] && whence -p xsettingsd &> /dev/null ; then
 	echo 'exec --no-startup-id xsettingsd'
 fi
-if whence -p dunst &> /dev/null ; then
+
+#
+# Try notify-osd first, otherwise fall-back to dunst, otherwise let libnotify
+# use D-Bus activation to bring up some kind of notification-daemon lookalike.
+#
+if ${has_compositing} && [[ -x /usr/lib/notify-osd/notify-osd ]] ; then
+        echo 'exec /usr/lib/notify-osd/notify-osd'
+elif whence -p dunst &> /dev/null ; then
 	echo 'exec --no-startup-id dunst'
 fi
 if whence -p redshift-scheduler ; then
