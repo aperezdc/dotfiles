@@ -106,7 +106,8 @@ unsetopt menu_complete auto_remove_slash auto_menu list_ambiguous \
 	pushd_to_home
 
 # Correct things, but not too aggressively for certain commands
-setopt correct correctall
+setopt correct
+alias ':'='nocorrect :'
 alias mv='nocorrect mv'
 alias man='nocorrect man'
 alias sudo='nocorrect sudo'
