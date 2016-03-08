@@ -36,6 +36,16 @@ else
 	}
 fi
 
+if [[ ! -d ~/.tmux/plugins/tpm ]] ; then
+	echo "tpm not available, set it up with 'tpm-install' (needs Git and Internet access)"
+	tpm-install () {
+		mkdir -p ~/.tmux/plugins
+		git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+		echo "not (re)start tmux and use 'C-b I' to install configured plugins"
+		unfunction tpm-install
+	}
+fi
+
 autoload -Uz compinit
 compinit
 
