@@ -8,7 +8,7 @@ BATT_STATUS_CHR='[C]'
 BATT_STATUS_BAT='[B]'
 BATT_STATUS_FULL='[F]'
 
-if [[ -n $(fc-list Icons) ]] ; then
+if whence -p fc-list &> /dev/null && [[ -n $(fc-list Icons) ]] ; then
 	FORMAT_LOAD='   %1min %5min %15min '
 	FORMAT_DISK='  %avail '
 	FORMAT_WIFI_UP=' %quality   %essid '
