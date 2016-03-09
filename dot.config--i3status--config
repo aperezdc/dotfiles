@@ -4,6 +4,8 @@ FORMAT_LOAD=' load [%1min %5min %15min] '
 FORMAT_DISK='[%avail] '
 FORMAT_WIFI_UP=' %essid [%quality] '
 FORMAT_WIFI_DOWN=' [wifi] '
+FORMAT_ETH_UP=' eth [%ip] '
+FORMAT_ETH_DOWN=' [eth] '
 BATT_STATUS_CHR='[C]'
 BATT_STATUS_BAT='[B]'
 BATT_STATUS_FULL='[F]'
@@ -16,6 +18,8 @@ if whence -p fc-list &> /dev/null && [[ -n $(fc-list Icons) ]] ; then
 	BATT_STATUS_CHR=' '
 	BATT_STATUS_BAT=' '
 	BATT_STATUS_FULL=' '
+	FORMAT_ETH_UP='  %ip '
+	FORMAT_ETH_DOWN='  '
 fi
 
 cat <<EOF
@@ -45,8 +49,8 @@ wireless _first_ {
 
 ethernet _first_ {
         # if you use %speed, i3status requires root privileges
-        format_up = " eth: %speed "
-        format_down = " [eth] "
+        format_up = "${FORMAT_ETH_UP}"
+        format_down = "${FORMAT_ETH_DOWN}"
 }
 
 battery 0 {
