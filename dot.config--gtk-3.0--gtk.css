@@ -1,0 +1,10 @@
+/*
+ * dot.config--gtk-3.0--gtk.css
+ * Copyright (C) 2016 Adrian Perez
+ *
+ * Distributed under terms of the MIT license.
+ */
+
+VteTerminal {
+	padding: 6px;
+}
