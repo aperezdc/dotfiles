@@ -1,0 +1,5 @@
+text/html; w3m -dump -o document_charset=%{charset} '%s'; nametemplate=%s.html; copiousoutput
+text/plain; less '%s'
+image/*; xdg-open '%s'
+application/pdf; xdg-open '%s'
+application/postscript; xdg-open '%s'
