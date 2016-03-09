@@ -103,7 +103,8 @@ bindsym $mod+Shift+c reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
 bindsym $mod+Shift+r restart
 
-bindsym $mod+Shift+period exec systemctl suspend
+bindsym $mod+Shift+Control+period exec --no-startup-id systemctl suspend
+bindsym $mod+Shift+period exec --no-startup-id loginctl lock-sessions
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
@@ -187,12 +188,8 @@ fi
 if whence -p redshift-scheduler &> /dev/null ; then
 	echo 'exec --no-startup-id redshift-scheduler'
 fi
-if whence -p xss-lock &> /dev/null ; then
-        if whence -p slimlock &> /dev/null ; then
-	        echo 'exec --no-startup-id xss-lock -- slimlock'
-        elif whence -p i3lock &> /dev/null ; then
-	        echo 'exec --no-startup-id xss-lock -- i3lock -n'
-        fi
+if whence -p xss-lock &> /dev/null && whence -p i3lock &> /dev/null ; then
+        echo 'exec --no-startup-id xss-lock -- i3lock -n -c 1A1A1A'
 fi
 if whence -p nm-applet &> /dev/null ; then
 	echo 'exec --no-startup-id nm-applet'
