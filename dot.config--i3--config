@@ -187,8 +187,12 @@ fi
 if whence -p redshift-scheduler &> /dev/null ; then
 	echo 'exec --no-startup-id redshift-scheduler'
 fi
-if whence -p xss-lock &> /dev/null && whence -p i3lock &> /dev/null ; then
-	echo 'exec --no-startup-id xss-lock -- i3lock -n'
+if whence -p xss-lock &> /dev/null ; then
+        if whence -p slimlock &> /dev/null ; then
+	        echo 'exec --no-startup-id xss-lock -- slimlock'
+        elif whence -p i3lock &> /dev/null ; then
+	        echo 'exec --no-startup-id xss-lock -- i3lock -n'
+        fi
 fi
 if whence -p nm-applet &> /dev/null ; then
 	echo 'exec --no-startup-id nm-applet'
