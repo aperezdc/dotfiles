@@ -33,8 +33,8 @@ cat <<EOF
 #order += "run_watch DHCP"
 #order += "run_watch VPN"
 order += "wireless _first_"
-#order += "ethernet _first_"
-order += "battery 0"
+order += "ethernet _first_"
+order += "battery 1"
 order += "load"
 order += "tztime local"
 
@@ -45,11 +45,20 @@ wireless _first_ {
 
 ethernet _first_ {
         # if you use %speed, i3status requires root privileges
-        format_up = "E: %ip (%speed)"
-        format_down = "E: down"
+        format_up = " eth: %speed "
+        format_down = " [eth] "
 }
 
 battery 0 {
+        path = "/sys/class/power_supply/BAT%d/uevent"
+        format = " %remaining %status %percentage "
+        status_chr = "${BATT_STATUS_CHR}"
+        status_bat = "${BATT_STATUS_BAT}"
+        status_full = "${BATT_STATUS_FULL}"
+}
+
+battery 1 {
+        path = "/sys/class/power_supply/BAT%d/uevent"
         format = " %remaining %status %percentage "
         status_chr = "${BATT_STATUS_CHR}"
         status_bat = "${BATT_STATUS_BAT}"
