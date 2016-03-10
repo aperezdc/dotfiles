@@ -84,3 +84,6 @@ for dirpath in ${HOME}/.local/bin ${HOME}/.dotfiles/bin ; do
 done
 
 export PATH EDITOR
+if [[ $(type -pt systemctl) == file ]] ; then
+	systemctl --user import environment PATH EDITOR LANG
+fi

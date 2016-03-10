@@ -450,4 +450,8 @@ else
 	unset MPD_HOST
 fi
 
+if whence -p systemctl &> /dev/null ; then
+	systemctl --user import-environment PATH EDITOR LANG
+fi
+
 set +e
