@@ -143,7 +143,7 @@ bar {
 '
 
 # exit i3 (logs you out of your X session)
-echo "bindsym \$mod+Shift+e exec \"i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'\""
+echo "bindsym \$mod+Shift+e exec \"i3-nagbar -f 'pango:${FONT_NAME} $((FONT_SIZE))' -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'\""
 
 if whence -p rofi &> /dev/null ; then
 	echo 'bindsym $mod+d exec --no-startup-id rofi -show run'
@@ -154,11 +154,11 @@ if whence -p rofi &> /dev/null ; then
 elif whence -p dmenu-launch &> /dev/null ; then
 	echo 'bindsym $mod+d exec --no-startup-id dmenu-launch'
 elif whence -p dmenu_run &> /dev/null ; then
-	echo "bindsym \$mod+d exec dmenu_run -fn '${FONT_NAME}:size=$(( FONT_SIZE + 1))' -p 'run '"
+	echo "bindsym \$mod+d exec dmenu_run -fn '${FONT_NAME}:size=$((FONT_SIZE + 1))' -p 'run '"
 fi
 
 if whence -p st &> /dev/null ; then
-	echo "bindsym \$mod+Return exec st -f '${FONT_NAME}:size=$(( FONT_SIZE + 4))'"
+	echo "bindsym \$mod+Return exec st -f '${FONT_NAME}:size=$((FONT_SIZE + 4))'"
 else
 	for item in dwt uxterm i3-sensible-terminal ; do
 		if whence -p "${item}" &> /dev/null ; then

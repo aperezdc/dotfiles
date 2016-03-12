@@ -19,7 +19,7 @@ if whence -p fc-list &> /dev/null && [[ -n $(fc-list Icons) ]] ; then
 	BATT_STATUS_BAT=' '
 	BATT_STATUS_FULL=' '
 	FORMAT_ETH_UP='  %ip '
-	FORMAT_ETH_DOWN='  '
+	FORMAT_ETH_DOWN='  down '
 fi
 
 cat <<EOF
