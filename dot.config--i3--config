@@ -145,8 +145,14 @@ bar {
 # exit i3 (logs you out of your X session)
 echo "bindsym \$mod+Shift+e exec \"i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'\""
 
-if whence -p dmenu-launch &> /dev/null ; then
-	echo 'bindsym $mod+d dmenu-launch'
+if whence -p rofi &> /dev/null ; then
+	echo 'bindsym $mod+d exec --no-startup-id rofi -show run'
+	echo 'bindsym $mod+q exec --no-startup-id rofi -show window'
+	if whence -p rofi-pass &> /dev/null ; then
+		echo 'bindsym $mod+Shift+p exec --no-startup-id rofi-pass'
+	fi
+elif whence -p dmenu-launch &> /dev/null ; then
+	echo 'bindsym $mod+d exec --no-startup-id dmenu-launch'
 elif whence -p dmenu_run &> /dev/null ; then
 	echo "bindsym \$mod+d exec dmenu_run -fn '${FONT_NAME}:size=$(( FONT_SIZE + 1))' -p 'run '"
 fi
