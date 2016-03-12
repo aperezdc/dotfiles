@@ -1,0 +1,41 @@
+# fields to be used
+URL_field='url'
+USERNAME_field='user'
+AUTOTYPE_field='autotype'
+
+delay=2
+
+EDITOR='gvim -f'
+BROWSER='xdg-open'
+
+default_do='autopass' # copyPass, typeUser, typePass, copyUser, copyUrl, viewEntry, typeMenu, actionMenu, copyMenu, openUrl
+auto_enter='false'
+notify='false'
+passlength='20'
+
+# seconds to wait before re-opening showEntry-menu
+# after autotyping an entry. Set to "off" to disable
+count=off
+
+help_color=""
+
+# Clipboard settings
+# Possible options: primary, clipboard, both
+clip=both
+
+# Custom Keybindings
+# autotype="Alt+1"
+# type_user="Alt+2"
+# type_pass="Alt+3"
+# open_url="Alt+4"
+# copy_name="Alt+u"
+# copy_url="Alt+l"
+# copy_pass="Alt+p"
+# show="Alt+o"
+# copy_entry="Alt+2"
+# type_entry="Alt+1"
+# copy_menu="Alt+c"
+# action_menu="Alt+a"
+# type_menu="Alt+t"
+# help="Alt+h"
+# switch="Alt+x"

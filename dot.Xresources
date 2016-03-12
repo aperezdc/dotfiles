@@ -1,3 +1,5 @@
+! vim: ft=xdefaults
+
 Xcursor.theme: OpenZone_Ice
 
 Xft.autohint: 0
@@ -101,4 +103,21 @@ URxvt.color14 : #55ffff
 URxvt.color7  : #aaaaaa
 URxvt.color15 : #ffffff
 
-
+rofi.modi:                           window,run,ssh
+rofi.font:                           PragmataPro 13
+! Color scheme for normal row
+rofi.color-normal:                   #fdf6e3,#002b36,#eee8d5,#586e75,#eee8d5
+! Color scheme for urgent row
+rofi.color-urgent:                   #fdf6e3,#dc322f,#eee8d5,#dc322f,#fdf6e3
+! Color scheme for active row
+rofi.color-active:                   #fdf6e3,#268bd2,#eee8d5,#268bd2,#fdf6e3
+! Color scheme window
+rofi.color-window:                   #fdf6e3,#002b36
+! Border width
+rofi.bw:                             1
+rofi.terminal:                       rofi-sensible-terminal
+rofi.levenshtein-sort:               true
+rofi.fuzzy:                          true
+rofi.separator-style:                solid
+rofi.threads:                        2
+rofi.scroll-method:                  1
