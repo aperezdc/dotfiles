@@ -53,4 +53,15 @@ for filename in * ; do
 		fi
 	fi
 done
+
+if whence -p systemctl &> /dev/null ; then
+	# For systemd we use hard link to circumvent the "too many symbolic
+	# links" issue (https://bugzilla.redhat.com/show_bug.cgi?id=955379)
+	mkdir -p ~/.config/systemd/user
+	for item in "${DOTFILES}"/systemd/* ; do
+		echo "[LNK] .config/systemd/user/$(basename "${item}")"
+		ln -f "${item}" ~/.config/systemd/user
+	done
+fi
+
 exit ${retcode}
