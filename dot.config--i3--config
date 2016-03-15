@@ -163,7 +163,7 @@ fi
 if whence -p st &> /dev/null ; then
 	echo "bindsym \$mod+Return exec st -f '${FONT_NAME}:size=$((FONT_SIZE + 4))'"
 else
-	for item in dwt uxterm i3-sensible-terminal ; do
+	for item in termite dwt uxterm i3-sensible-terminal ; do
 		if whence -p "${item}" &> /dev/null ; then
 			echo "bindsym \$mod+Return exec ${item}"
 			break
