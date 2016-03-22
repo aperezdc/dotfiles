@@ -125,7 +125,6 @@ Plug 'othree/html5.vim'
 Plug 'mustache/vim-mustache-handlebars'
 Plug 'cespare/vim-toml'
 Plug 'godlygeek/tabular', { 'on' : 'Tabularize' }
-Plug 'justincampbell/vim-eighties'
 Plug 'reedes/vim-wordy', { 'on' : ['Wordy', 'NextWordy'] }
 " Plug 'Shougo/vimproc.vim', { 'do' : 'make' } |
 " 			\ Plug 'Shougo/unite.vim' |
