@@ -121,7 +121,8 @@ Plug 'tyru/caw.vim', { 'on' : '<Plug>(caw:' }
 Plug 'ledger/vim-ledger', { 'for' : 'ledger' }
 Plug 'vim-scripts/gtk-vim-syntax', { 'for' : ['c', 'cpp'] }
 Plug 'othree/yajs.vim', { 'for' : 'javascript' }
-Plug 'othree/html5.vim', { 'for' : ['html', 'html.handlebars'] }
+Plug 'othree/html5.vim'
+Plug 'mustache/vim-mustache-handlebars'
 Plug 'cespare/vim-toml'
 Plug 'godlygeek/tabular', { 'on' : 'Tabularize' }
 Plug 'justincampbell/vim-eighties'
