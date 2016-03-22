@@ -200,3 +200,6 @@ fi
 if whence -p nm-applet &> /dev/null ; then
 	echo 'exec --no-startup-id nm-applet'
 fi
+if [[ -x /usr/lib/lxpolkit/lxpolkit ]] ; then
+	echo 'exec --no-startup-id /usr/lib/lxpolkit/lxpolkit'
+fi
