@@ -39,7 +39,7 @@ endif
 
 "let g:templates_directory = '~/t'
 
-let s:completion_setup = 'vcm'
+let s:completion_setup = 'neocomplete'
 
 call plug#begin(s:plug_bundle_path)
 Plug 'tpope/vim-sensible'
