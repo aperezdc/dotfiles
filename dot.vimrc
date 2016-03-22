@@ -3,6 +3,10 @@ augroup vimrc
 	autocmd!
 augroup END
 
+if &shell =~# 'fish$'
+    set shell=sh
+endif
+
 let g:email = "aperez@igalia.com"
 let g:user  = "Adrian Perez"
 
