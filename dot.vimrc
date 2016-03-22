@@ -54,12 +54,12 @@ if s:completion_setup == 'lift'
 	Plug 'racer-rust/vim-racer', { 'for' : 'rust' }
 elseif s:completion_setup == 'neocomplete'
 	" Load jedi-vim before deoplete-jedi
-	Plug 'davidhalter/jedi-vim', { 'for' : 'python' }
 	Plug 'racer-rust/vim-racer', { 'for' : 'rust' }
 
 	if has('nvim')
-		Plug 'Shougo/deoplete.vim'
-		Plug 'zchee/deoplete-jedi', { 'for' : 'python' }
+		Plug 'Shougo/deoplete.nvim'
+		Plug 'zchee/deoplete-jedi', { 'for' : 'python' } |
+					\ Plug 'davidhalter/jedi-vim', { 'for' : 'python' }
 	else
 		Plug 'Shougo/neocomplete.vim'
 	endif
@@ -74,6 +74,9 @@ elseif s:completion_setup == 'vcm'
 	Plug 'racer-rust/vim-racer', { 'for' : 'rust' }
 elseif s:completion_setup == 'ycm'
 	Plug 'Valloric/YouCompleteMe', { 'do': 'python2 install.py --clang-completer --gocode-completer --system-boost --system-libclang --racer-completer' }
+elseif s:completion_setup == 'simple'
+	Plug 'davidhalter/jedi-vim', { 'for' : 'python' }
+	Plug 'racer-rust/vim-racer', { 'for' : 'rust' }
 endif
 
 if empty(glob('~aperez/devel/vim-template'))
@@ -102,8 +105,7 @@ if !empty(glob('~aperez/devel/urbit/extras/hoon.vim'))
 endif
 
 Plug 'tpope/vim-endwise'
-" Plug 'tpope/vim-sleuth'
-" Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-fugitive'
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'chrisbra/vim-diff-enhanced'
 Plug 'tmux-plugins/vim-tmux-focus-events'
@@ -124,10 +126,11 @@ Plug 'cespare/vim-toml'
 Plug 'godlygeek/tabular', { 'on' : 'Tabularize' }
 Plug 'justincampbell/vim-eighties'
 Plug 'reedes/vim-wordy', { 'on' : ['Wordy', 'NextWordy'] }
-Plug 'Shougo/vimproc.vim', { 'do' : 'make' } |
-			\ Plug 'Shougo/unite.vim' |
-			\ Plug 'Shougo/unite-outline' |
-			\ Plug 'Shougo/neomru.vim'
+" Plug 'Shougo/vimproc.vim', { 'do' : 'make' } |
+" 			\ Plug 'Shougo/unite.vim' |
+" 			\ Plug 'Shougo/unite-outline' |
+" 			\ Plug 'Shougo/neomru.vim'
+Plug 'junegunn/fzf' | Plug 'junegunn/fzf.vim'
 Plug 't9md/vim-quickhl', { 'on' : '<Plug>(quickhl-' }
 Plug 'airblade/vim-gitgutter'
 " Plug 'Valloric/ListToggle'
@@ -367,6 +370,17 @@ if s:plug_loaded('unite.vim')
 	nnoremap <silent> <leader>L :<C-u>UniteResume<cr>
 endif
 
+" Plugin: fzf.vim
+if s:plug_loaded('fzf.vim')
+	nnoremap <silent> <Leader>f :<C-u>Files<cr>
+	nnoremap <silent> <Leader>F :<C-u>GitFiles<cr>
+	nnoremap <silent> <Leader>m :<C-u>History<cr>
+	nnoremap <silent> <Leader>b :<C-u>Buffers<cr>
+	nnoremap <silent> <Leader><F1> :<C-u>Helptags<cr>
+	nmap <C-A-p> <leader>f
+	nmap <C-A-m> <leader>m
+endif
+
 " Plugin: neocomplete
 if s:completion_setup == 'neocomplete' && s:plug_loaded('neocomplete.vim')
 	let g:neocomplete#enable_at_startup = 1
@@ -403,7 +417,7 @@ if s:completion_setup == 'neocomplete' && s:plug_loaded('neocomplete.vim')
 	inoremap <expr><C-l> neocomplete#complete_common_string()
 	inoremap <expr><C-h> neocomplete#smart_close_popup() . "\<C-h>"
 	inoremap <expr><BS>  neocomplete#smart_close_popup() . "\<C-h>"
-elseif s:completion_setup == 'neocomplete' && s:plug_loaded('deoplete.vim')
+elseif s:completion_setup == 'neocomplete' && s:plug_loaded('deoplete.nvim')
 	let g:deoplete#enable_at_startup = 1
 	let g:deoplete#auto_completion_start_length = 4
 	let g:deoplete#enable_ignore_case = 1
