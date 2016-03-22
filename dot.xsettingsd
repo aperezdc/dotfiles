@@ -3,7 +3,8 @@ Gtk/CursorTheme "OpenZone_Ice"
 Gtk/DialogsUseHeader 0
 Gtk/EnableAnimations 1
 Gtk/EnablePrimaryPaste 1
-Gtk/FontName "Work Sans 12"
+Gtk/FontName "Source Sans Pro 13"
+Gtk/DecorationLayout ":menu"
 Gtk/ShellShowsAppMenu 0
 Gtk/ShellShowsDesktop 0
 Net/CursorBlink 0
@@ -12,6 +13,6 @@ Net/EnableInputFeedbackSounds 0
 Net/FallbackIconTheme "hicolor"
 Net/IconThemeName "elementary"
 Net/SoundThemeName "freedesktop"
-Net/ThemeName "Arc-Darker"
+Net/ThemeName "Arc-Dark"
 Xft/HintStyle "hintslight"
 Xft/RGBA "rgb"
