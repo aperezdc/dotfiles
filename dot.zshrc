@@ -320,7 +320,7 @@ if [[ -n ${zsh_chroot_info} ]] ; then
 fi
 
 # Final PROMPT setting
-PROMPT=$'%{%B%(!.$fg[red].$fg[green])%}%m%{%b%}${zsh_chroot_info}${zsh_jhbuild_info} %{$fg[magenta]%}${VIRTUAL_ENV_NAME:+${VIRTUAL_ENV_NAME} }${ROCK_ENV_NAME:+${ROCK_ENV_NAME} }%{$reset_color%}${vcs_info_msg_0_}%{%B$fg[blue]%}%1~ %{%(?.$fg[blue].%B$fg[red])%}%# %{%b%k%f%}'
+PROMPT=$'%{%B%(!.$fg[red].$fg[green])%}%m%{%b%}${zsh_chroot_info}${zsh_jhbuild_info} %{$fg[magenta]%}${VIRTUAL_ENV_NAME:+py:${VIRTUAL_ENV_NAME} }${ROCK_ENV_NAME:+lua:${ROCK_ENV_NAME} }%{$reset_color%}${vcs_info_msg_0_}%{%B$fg[blue]%}%1~ %{%(?.$fg[blue].%B$fg[red])%}%# %{%b%k%f%}'
 
 # Don't count common path separators as word characters
 WORDCHARS=${WORDCHARS//[&.;\/]}
