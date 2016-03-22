@@ -139,7 +139,7 @@ call plug#end()
 unlet s:plug_path
 unlet s:plug_bundle_path
 
-function s:plug_loaded(name)
+function! s:plug_loaded(name)
 	return has_key(g:, 'plugs') && has_key(g:plugs, a:name)
 endfunction
 
