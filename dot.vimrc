@@ -109,6 +109,7 @@ Plug 'wting/rust.vim'
 Plug 'dag/vim-fish'
 "Plug 'lervag/vimtex'
 Plug 'vim-scripts/rcshell.vim'
+Plug 'vim-scripts/FastFold'
 Plug 'vim-scripts/a.vim', { 'on': ['A', 'AV', 'AS'] }
 Plug 'tyru/caw.vim', { 'on' : '<Plug>(caw:' }
 Plug 'ledger/vim-ledger', { 'for' : 'ledger' }
