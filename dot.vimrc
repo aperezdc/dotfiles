@@ -313,8 +313,8 @@ endif
 " Plugin: caw
 if s:plug_loaded('caw.vim')
 	let g:caw_no_default_keymappings = 1
-	nmap <leader>c <Plug>(caw:i:toggle)
-	xmap <leader>c <Plug>(caw:i:toggle)
+	nmap <leader>c <Plug>(caw:tildepos:toggle)
+	xmap <leader>c <Plug>(caw:tildepos:toggle)
 endif
 
 " Plugin: better-whitespace
