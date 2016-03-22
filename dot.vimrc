@@ -154,6 +154,7 @@ colorscheme elrond
 filetype indent plugin on
 
 set nobomb
+set notitle
 set smartcase
 set ignorecase
 set tabstop=4
@@ -258,11 +259,11 @@ if $TERM =~ "xterm-256color" || $TERM =~ "screen-256color" || $TERM =~ "xterm-te
 	set t_Co=256
 	set t_AB=[48;5;%dm
 	set t_AF=[38;5;%dm
-	set cursorline
+	set t_ZH=[3m
+	set t_ZR=[23m
 else
 	if $TERM =~ "st-256color"
 		set t_Co=256
-		set cursorline
 	endif
 endif
 
