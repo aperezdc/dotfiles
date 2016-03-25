@@ -149,9 +149,11 @@ if isdirectory('/usr/share/vim/vimfiles')
 	set runtimepath+=/usr/share/vim/vimfiles
 endif
 
-syntax on
-colorscheme elrond
-filetype indent plugin on
+if s:plug_loaded('vim-elrond')
+	colorscheme elrond
+else
+	colorscheme elflord
+endif
 
 set nobomb
 set notitle
@@ -182,13 +184,15 @@ set linebreak                   " break on what looks like boundaries
 set showbreak=↳\                " shown at the start of a wrapped line
 
 if has('nvim')
+	" Make double Ctrl-t exit insert mode in terminals.
+	tnoremap <C-t><C-t> <C-\><C-n>
 	set undodir=~/.nvim/undo
 	set undofile
 
-	" Make double Ctrl-t exit insert mode in terminals.
-	tnoremap <C-t><C-t> <C-\><C-n>
 else
 	set viminfo+=n~/.viminfo
+	filetype indent plugin on
+	syntax on
 endif
 
 if len($DISPLAY) > 0
