@@ -355,6 +355,7 @@ if s:plug_loaded('unite.vim')
 	nnoremap <silent> <leader>O :<C-u>Unite outline -no-split -buffer-name=Outline<cr>
 	nmap <C-A-p> <leader>f
 	nmap <C-A-m> <leader>m
+	nmap <C-A-b> <leader>b
 
 	if executable('pt')
 		let g:unite_source_grep_command = 'pt'
@@ -384,6 +385,7 @@ if s:plug_loaded('fzf.vim')
 	nnoremap <silent> <Leader><F1> :<C-u>Helptags<cr>
 	nmap <C-A-p> <leader>f
 	nmap <C-A-m> <leader>m
+	nmap <C-A-b> <leader>b
 endif
 
 " Plugin: neocomplete
