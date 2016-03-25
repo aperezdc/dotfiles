@@ -378,6 +378,7 @@ endif
 
 " Plugin: fzf.vim
 if s:plug_loaded('fzf.vim')
+	let g:fzf_buffers_jump = 1
 	nnoremap <silent> <Leader>f :<C-u>Files<cr>
 	nnoremap <silent> <Leader>F :<C-u>GitFiles<cr>
 	nnoremap <silent> <Leader>m :<C-u>History<cr>
