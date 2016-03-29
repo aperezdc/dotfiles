@@ -148,6 +148,10 @@ bar {
 # exit i3 (logs you out of your X session)
 echo "bindsym \$mod+Shift+e exec \"i3-nagbar -f 'pango:${FONT_NAME} $((FONT_SIZE))' -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'\""
 
+if whence -p xprofile &> /dev/null ; then
+	echo 'bindsym $mod+Shift+m exec --no-startup-id xprofile activate'
+fi
+
 if whence -p rofi &> /dev/null ; then
 	echo 'bindsym $mod+d exec --no-startup-id rofi -show run'
 	echo 'bindsym $mod+q exec --no-startup-id rofi -show window'
