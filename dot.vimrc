@@ -189,11 +189,26 @@ if has('nvim')
 	tnoremap <C-t><C-t> <C-\><C-n>
 	set undodir=~/.nvim/undo
 	set undofile
-
 else
 	set viminfo+=n~/.viminfo
 	filetype indent plugin on
 	syntax on
+endif
+
+if has('gui_running')
+	set guifont=PragmataPro\ Mono\ 12
+	set guifontwide=PragmataPro\ 12
+	set guiheadroom=0
+	set guioptions-=m
+	set guioptions-=M
+	set guioptions-=t
+	set guioptions-=T
+	set guioptions-=r
+	set guioptions-=R
+	set guioptions-=l
+	set guioptions-=L
+	set guioptions-=b
+	set guioptions+=c
 endif
 
 if len($DISPLAY) > 0
