@@ -22,7 +22,7 @@ if [[ -d ~/.zsh/zgen ]] ; then
 		zgen load kyanagi/faster-vcs-info
 		zgen load jreese/zsh-titles
 		zgen load RobSis/zsh-completion-generator
-		zgen load RobSis/zsh-reentry-hook
+		zgen load aperezdc/zsh-reentry-hook . mute-stdout-stderr
 		zgen load zsh-users/zsh-syntax-highlighting
 		zgen load zsh-users/zsh-completions src
 		zgen load Tarrasch/zsh-autoenv
