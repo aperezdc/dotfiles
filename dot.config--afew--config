@@ -12,7 +12,6 @@ sent_tag = sent
 tags = +unread;+inbox
 
 [MailMover]
-folders = INBOX Spam Spam/Undecided
-INBOX = 'tag:spam':Spam/ReSpam 'tag:ham':Spam/ReHam 'NOT ( tag:inbox OR tag:unread OR tag:flagged ) AND date:..30days':Archives
-Spam = 'tag:spam':Spam/ReSpam 'tag:ham':Spam/ReHam
-Spam/Undecided = 'tag:spam':Spam/ReSpam 'tag:ham':Spam/ReHam
+folders = INBOX Spam
+INBOX = 'tag:spam':Spam
+Spam = 'not tag:spam':INBOX
