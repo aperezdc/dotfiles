@@ -60,6 +60,7 @@ elseif s:completion_setup == 'neocomplete'
 		Plug 'Shougo/deoplete.nvim'
 		Plug 'zchee/deoplete-jedi', { 'for' : 'python' } |
 					\ Plug 'davidhalter/jedi-vim', { 'for' : 'python' }
+		Plug 'zchee/deoplete-go'
 	else
 		Plug 'Shougo/neocomplete.vim'
 	endif
@@ -445,10 +446,14 @@ elseif s:completion_setup == 'neocomplete' && s:plug_loaded('deoplete.nvim')
 	let g:deoplete#enable_at_startup = 1
 	let g:deoplete#auto_completion_start_length = 4
 	let g:deoplete#enable_ignore_case = 1
+	let g:deoplete#enable_camel_case = 1
 	let g:deoplete#enable_smart_case = 0
+	let g:deoplete#max_menu_width = 35
+	let g:deoplete#file#enable_buffer_path = 1
 
 	" inoremap <expr><C-Space> deoplete#mappings#manual_complete()
 	" inoremap <expr><Nul> deoplete#mappings#manual_complete()
+	inoremap <expr><C-l> deoplete#mappings#refresh()
 	inoremap <expr><C-y> deoplete#mappings#close_popup()
 	inoremap <expr><C-e> deoplete#mappings#cancel_popup()
 	inoremap <expr><C-g> deoplete#mappings#undo_completion()
