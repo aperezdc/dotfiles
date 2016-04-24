@@ -105,7 +105,7 @@ if !empty(glob('~aperez/devel/urbit/extras/hoon.vim'))
 	Plug '~aperez/devel/urbit/extras/hoon.vim'
 endif
 
-Plug 'tpope/vim-endwise'
+" Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-fugitive'
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'chrisbra/vim-diff-enhanced'
@@ -113,21 +113,21 @@ Plug 'tmux-plugins/vim-tmux-focus-events'
 Plug 'gcmt/wildfire.vim'
 Plug 'jamessan/vim-gnupg'
 Plug 'wting/rust.vim'
-Plug 'dag/vim-fish'
-"Plug 'lervag/vimtex'
-Plug 'vim-scripts/rcshell.vim'
+" Plug 'dag/vim-fish'
+" Plug 'lervag/vimtex'
+" Plug 'vim-scripts/rcshell.vim'
 Plug 'vim-scripts/FastFold'
 Plug 'justincampbell/vim-eighties'
 Plug 'vim-scripts/a.vim', { 'on': ['A', 'AV', 'AS'] }
 Plug 'tyru/caw.vim', { 'on' : '<Plug>(caw:' }
 Plug 'ledger/vim-ledger', { 'for' : 'ledger' }
-Plug 'vim-scripts/gtk-vim-syntax', { 'for' : ['c', 'cpp'] }
+" Plug 'vim-scripts/gtk-vim-syntax', { 'for' : ['c', 'cpp'] }
 Plug 'othree/yajs.vim', { 'for' : 'javascript' }
 Plug 'othree/html5.vim'
 Plug 'mustache/vim-mustache-handlebars'
 Plug 'cespare/vim-toml'
 Plug 'godlygeek/tabular', { 'on' : 'Tabularize' }
-Plug 'reedes/vim-wordy', { 'on' : ['Wordy', 'NextWordy'] }
+" Plug 'reedes/vim-wordy', { 'on' : ['Wordy', 'NextWordy'] }
 " Plug 'Shougo/vimproc.vim', { 'do' : 'make' } |
 " 			\ Plug 'Shougo/unite.vim' |
 " 			\ Plug 'Shougo/unite-outline' |
