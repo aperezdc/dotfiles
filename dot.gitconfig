@@ -51,6 +51,7 @@
 [user]
 	email = aperez@igalia.com
 	name = Adrian Perez de Castro
+	signingkey = E4C9123B
 [rebase]
 	autosquash = true
 	stat = true
@@ -67,3 +68,5 @@
 	diff = diff-highlight | less -r
 [diff]
 	algorithm = patience
+[commit]
+	gpgsign = on
