@@ -525,6 +525,9 @@ function! s:SplitGitDiffCached()
 endfunction
 autocmd vimrc FileType gitcommit call s:SplitGitDiffCached()
 
+" Works with the default Vim Markdown support files
+let g:markdown_fenced_languages = ['html', 'c', 'lua', 'bash=sh']
+
 " dwm-like window movements
 nnoremap <A-h> <C-w>h
 nnoremap <A-j> <C-w>j
