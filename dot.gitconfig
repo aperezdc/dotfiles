@@ -5,6 +5,7 @@
 	co = checkout
 	br = branch -a
 	cp = cherry-pick
+	rup = remote update
 	logs = log --stat --decorate
 	logl = log --abbrev-commit --pretty=oneline --decorate
 	logp = log --abbrev-commit --patch-with-stat --decorate
