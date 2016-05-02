@@ -3,8 +3,9 @@
 	st = status
 	ci = commit
 	co = checkout
-	br = branch -a
+	br = branch -vv
 	cp = cherry-pick
+	ff = merge --ff-only
 	rup = remote update
 	logs = log --stat --decorate
 	logl = log --abbrev-commit --pretty=oneline --decorate
