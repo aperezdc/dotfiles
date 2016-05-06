@@ -11,12 +11,8 @@ let g:email = "aperez@igalia.com"
 let g:user  = "Adrian Perez"
 
 " To avoid mistankenly using one for the other, always point to the versioned binaries.
-if has('python3')
-	let g:python3_host_prog = '/usr/bin/python3'
-endif
-if has('python')
-	let g:python_host_prog = '/usr/bin/python2'
-endif
+let g:python3_host_prog = '/usr/bin/python3'
+let g:python_host_prog = '/usr/bin/python2'
 
 let s:plug_path = has('nvim')
 			\ ? '~/.config/nvim/autoload/plug.vim'
