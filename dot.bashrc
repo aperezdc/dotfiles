@@ -83,6 +83,8 @@ for dirpath in ${HOME}/.local/bin ${HOME}/.dotfiles/bin ; do
 	fi
 done
 
+export GPG_TTY=$(tty)
+
 export PATH EDITOR
 if [[ $(type -pt systemctl) == file ]] ; then
 	systemctl --user import environment PATH EDITOR LANG
