@@ -84,6 +84,11 @@ for dirpath in ${HOME}/.local/bin ${HOME}/.dotfiles/bin ; do
 done
 
 export GPG_TTY=$(tty)
+if [[ $(type -pt gpg-connect-agent) = file ]] ; then
+	gpg-connect-agent -q updatestartuptty /bye > /dev/null
+	unset SSH_AGENT_PID
+	export SSH_AUTH_SOCK=${HOME}/.gnupg/S.gpg-agent.ssh
+fi
 
 export PATH EDITOR
 if [[ $(type -pt systemctl) == file ]] ; then

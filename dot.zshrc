@@ -456,5 +456,10 @@ if whence -p systemctl &> /dev/null ; then
 fi
 
 export GPG_TTY=$(tty)
+if whence -p gpg-connect-agent &> /dev/null ; then
+	gpg-connect-agent -q updatestartuptty /bye > /dev/null
+	unset SSH_AGENT_PID
+	export SSH_AUTH_SOCK=${HOME}/.gnupg/S.gpg-agent.ssh
+fi
 
 set +e
