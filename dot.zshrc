@@ -455,4 +455,6 @@ if whence -p systemctl &> /dev/null ; then
 	systemctl --user import-environment PATH EDITOR LANG
 fi
 
+export GPG_TTY=$(tty)
+
 set +e
