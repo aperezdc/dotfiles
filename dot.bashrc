@@ -92,5 +92,5 @@ fi
 
 export PATH EDITOR
 if [[ $(type -pt systemctl) == file ]] ; then
-	systemctl --user import environment PATH EDITOR LANG
+	systemctl --user import-environment PATH EDITOR LANG
 fi
