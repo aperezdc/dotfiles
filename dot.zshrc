@@ -443,6 +443,8 @@ fi
 # Source the fzf helpers last, to make sure its keybindings prevail
 if [[ -r /etc/profile.d/fzf.zsh ]] ; then
 	source /etc/profile.d/fzf.zsh
+elif [[ -r /usr/share/fzf/key-bindings.zsh ]] ; then
+	source /usr/share/fzf/key-bindings.zsh
 fi
 
 if [[ -S ~/.mpd/socket ]] ; then
