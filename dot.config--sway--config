@@ -131,6 +131,7 @@ mode "resize" {
 bindsym $mod+r mode "resize"
 
 bindsym $mod+Return exec dwt -N
+bindsym $mod+d exec dmenu_run -fn 'PragmataPro Mono:size=12'
 
 bar {
 	status_command i3status
