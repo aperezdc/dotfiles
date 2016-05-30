@@ -92,6 +92,13 @@ bindsym $mod+Shift+Tab move container to workspace back_and_forth; workspace bac
 bindsym $mod+minus scratchpad show
 bindsym $mod+Shift+minus move scratchpad
 
+# Media keys
+bindsym XF86AudioRaiseVolume  exec pactl set-sink-volume 0 +15%
+bindsym XF86AudioLowerVolume  exec pactl set-sink-volume 0 -15%
+bindsym XF86AudioToggle       exec pactl set-sink-mute   0 toggle
+bindsym XF86MonBrightnessDown exec dsplight down 10
+bindsym XF86MonBrightnessUp   exec dsplight up   10
+
 # reload the configuration file
 bindsym $mod+Shift+c reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
