@@ -232,7 +232,7 @@ build_gyp_cli_options () {
 
 build_ninja () {
   build_gyp_cli_options
-  ./build/gyp_v8 "${gyp_cli_options[@]}"
+  ./gypfiles/gyp_v8 "${gyp_cli_options[@]}"
   ln -fs Debug out/x64.debug
   ln -fs Release out/x64.release
   exec ninja -j${parallel_jobs} "${build_opts[@]}"
