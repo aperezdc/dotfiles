@@ -58,7 +58,7 @@
 	autosquash = true
 	stat = true
 [core]
-	autocrlf = input
+	autocrlf = false
 	excludesfile = /home/aperez/.gitignore-global
 [rerere]
 	enabled = true
