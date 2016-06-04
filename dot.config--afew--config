@@ -5,6 +5,11 @@
 [KillThreadsFilter]
 [ListMailsFilter]
 
+[Filter.1]
+query = tag:killed and tag:unread
+tags = -unread
+
+[SentMailsFilter]
 [ArchiveSentMailsFilter]
 sent_tag = sent
 
