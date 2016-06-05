@@ -146,6 +146,12 @@ input "2:7:SynPS/2_Synaptics_TouchPad" {
 	tap enabled
 	dwt enabled
 }
+input "2:8:AlpsPS/2_ALPS_GlidePoint" {
+	middle_emulation enabled
+	natural_scroll disabled
+	tap enabled
+	dwt enabled
+}
 input "3823:41225.eGalax_Inc._eGalaxTouch_EXC7910_1032_11" {
 	natural_scroll enabled
 	tap enabled
