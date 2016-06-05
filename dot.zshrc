@@ -26,6 +26,7 @@ if [[ -d ~/.zsh/zgen ]] ; then
 		zgen load zsh-users/zsh-syntax-highlighting
 		zgen load zsh-users/zsh-completions src
 		zgen load Tarrasch/zsh-autoenv
+		zgen load b4b4r07/enhancd
 		zgen save
 	fi
 else
