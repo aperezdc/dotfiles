@@ -28,6 +28,10 @@ use_asan=false
 # CPUs. When doing a distributed build, this is multiplied by five.
 parallel_jobs=$(getconf _NPROCESSORS_ONLN)
 
+# Target. Valid values (other than empty, which means "all") are:
+# parser-shell
+build_target=''
+
 
 declare -r clang_opts=(
   '-ferror-limit=1'
@@ -165,6 +169,10 @@ setup_compiler_gcc () {
 
 
 setup_builder_ninja () {
+  if [[ -n ${build_target} ]] ; then
+    echo 'Ninja builder does not support specifying targets (yet)' 1>&2
+    exit 1
+  fi
   if [[ ${buildtype} = debug ]] ; then
     build_opts=( "${build_opts[@]}" '-C' 'out/Debug' )
   else
@@ -174,11 +182,47 @@ setup_builder_ninja () {
 }
 
 
+declare -r builder_make_targets=(
+  parser-shell
+)
 setup_builder_make () {
-  if [[ ${buildtype} = debug ]] ; then
-    build_opts=( "${build_opts[@]}" 'x64.debug' )
+  if [[ -z ${build_target} ]] ; then
+    if [[ ${buildtype} = debug ]] ; then
+      build_opts=( "${build_opts[@]}" 'x64.debug' )
+    else
+      build_opts=( "${build_opts[@]}" 'x64.release' )
+    fi
+  elif [[ ${build_target} = help ]] ; then
+    echo 'Supported targets:'
+    for target in "${builder_make_targets[@]}" ; do
+      printf '  * %s\n' "${target}"
+    done
+    exit 0
   else
-    build_opts=( "${build_opts[@]}" 'x64.release' )
+    local invalid_target=true
+    for target in "${builder_make_targets[@]}" ; do
+      if [[ ${target} = ${build_target} ]] ; then
+        invalid_target=false
+        break
+      fi
+    done
+    if ${invalid_target} ; then
+      printf 'Invalid target "%s" (hint: use --target=help for a list)\n' \
+        "${build_target}" 1>&2
+      exit 1
+    fi
+    local var_buildtype=$(python -c \
+      'print raw_input().replace("opt", "").capitalize()' <<< ${buildtype})
+
+    # XXX: This uses knowledge about how the top-level V8 Makefile works, and
+    #      may break horribly if the logic in there ever changes. Also, it
+    #      assumes that $(OUTDIR) is always "out" and it won't be changed.
+    build_opts=( "${build_opts[@]}"
+      -C out -f Makefile.x64.${buildtype}
+      "BUILDTYPE=${var_buildtype}"
+      "builddir=$(pwd)/out/x64.${buildtype}"
+      "${build_target}"
+    )
   fi
 }
 
@@ -250,6 +294,7 @@ Usage: $(basename "$0") [options]
 
 Available options:
 
+  --target=NAME      Build target NAME instead of "all".
   --jobs=N           Use N parallel jobs.
   --debug, --dbg     Make a debug build.
   --release, --rel   Make a release build.
@@ -269,6 +314,9 @@ EOM
 for flag in "$@"
 do
   case ${flag} in
+    --target=*)
+      build_target=${flag#*=}
+      ;;
     --jobs=*)
       parallel_jobs=${flag#*=}
       ;;
