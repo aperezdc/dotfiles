@@ -37,6 +37,10 @@ endif
 
 let s:completion_setup = 'neocomplete'
 
+if s:completion_setup == 'neocomplete' && !has("lua")
+	let s:completion_setup = 'vcm'
+endif
+
 call plug#begin(s:plug_bundle_path)
 Plug 'tpope/vim-sensible'
 
