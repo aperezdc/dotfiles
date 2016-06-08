@@ -1,5 +1,7 @@
 #! /bin/bash
-#
+
+if [[ $- == *i* ]] ; then
+
 # Set colorful PS1 only on colorful terminals.
 # dircolors --print-database uses its own built-in database
 # instead of using /etc/DIR_COLORS.  Try to use the external file
@@ -98,3 +100,5 @@ fi
 if [[ -r /usr/share/fzf/key-bindings.bash ]] ; then
 	source /usr/share/fzf/key-bindings.bash
 fi
+
+fi # Interactive shell
