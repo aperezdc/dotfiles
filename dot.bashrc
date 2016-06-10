@@ -1,5 +1,11 @@
 #! /bin/bash
 
+for dirpath in ${HOME}/.local/bin ${HOME}/.dotfiles/bin ; do
+	if [[ -d ${dirpath} ]] ; then
+		PATH="$PATH:${dirpath}"
+	fi
+done
+
 if [[ $- == *i* ]] ; then
 
 # Set colorful PS1 only on colorful terminals.
@@ -76,12 +82,6 @@ for editor in nvim vim vi e3vi ; do
 	if [[ $(type -pt ${editor}) = file ]] ; then
 		EDITOR=${editor}
 		break
-	fi
-done
-
-for dirpath in ${HOME}/.local/bin ${HOME}/.dotfiles/bin ; do
-	if [[ -d ${dirpath} ]] ; then
-		PATH="$PATH:${dirpath}"
 	fi
 done
 
