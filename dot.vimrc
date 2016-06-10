@@ -37,7 +37,7 @@ endif
 
 let s:completion_setup = 'neocomplete'
 
-if s:completion_setup == 'neocomplete' && !has("lua")
+if s:completion_setup == 'neocomplete' && !(has("nvim") || has("lua"))
 	let s:completion_setup = 'vcm'
 endif
 
