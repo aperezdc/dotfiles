@@ -102,8 +102,8 @@ setopt prompt_subst pushd_silent auto_param_slash auto_list \
 	print_eight_bit always_to_end glob no_warn_create_global \
 	hash_list_all hash_cmds hash_dirs hash_executables_only \
 	auto_continue check_jobs complete_in_word rc_quotes \
-	completealiases
-unsetopt menu_complete auto_remove_slash auto_menu list_ambiguous \
+	completealiases menu_complete
+unsetopt auto_remove_slash auto_menu list_ambiguous \
 	pushd_to_home
 
 # Correct things, but not too aggressively for certain commands
@@ -130,8 +130,12 @@ zstyle ':completion:*' accept-exact '*(N)'
 
 # Fuzzy completion
 zstyle ':completion:*' completer _complete _match _approximate
+zstyle ':completion:*' matcher-list '' \
+	'm:{a-z\-}={A-Z\_}' \
+	'r:[^[:alpha:]]||[[:alpha:]]=** r:|=* m:{a-z\-}={A-Z\_}' \
+	'r:[[:ascii:]]||[[:ascii:]]=** r:|=* m:{a-z\-}={A-Z\_}'
 zstyle ':completion:*:match:*' original only
-zstyle -e ':completion:*:approximate:*' max-errors 'reply=($((($#PREFIX+$#SUFFIX)/3))numeric)'
+zstyle ':completion:*:approximate:*' max-errors 'reply=($((($#PREFIX+$#SUFFIX)/3))numeric)'
 zstyle ':completion:*:functions' ignored-patterns '_*'
 
 
