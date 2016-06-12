@@ -175,6 +175,13 @@ else
 	done
 fi
 
+if whence -p light &> /dev/null ; then
+	cat <<-EOF
+	bindsym XF86MonBrightnessDown exec --no-startup-id light -U 10
+	bindsym XF86MonBrightnessUp   exec --no-startup-id light -A 10
+	EOF
+fi
+
 has_compositing=false
 if [[ -r ${HOME}/.compton.conf ]] && whence -p compton &> /dev/null ; then
         has_compositing=true
