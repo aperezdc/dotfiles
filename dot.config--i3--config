@@ -1,6 +1,6 @@
 #! /usr/bin/env zsh
 
-FONT_NAME='PragmataPro Mono'
+FONT_NAME='Iosevka'
 FONT_SIZE='11'
 typeset -i FONT_SIZE
 
