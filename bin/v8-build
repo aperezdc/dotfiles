@@ -13,7 +13,7 @@ compiler='clang'
 # Build system to use: 'make' or 'ninja'
 builder='make'
 
-# Build type: 'release' or 'debug'
+# Build type: 'release', 'debug', or 'optdebug'
 buildtype='debug'
 
 # Whether to use Icrecream (IceCC) to do a distributed build.
@@ -184,14 +184,11 @@ setup_builder_ninja () {
 
 declare -r builder_make_targets=(
   parser-shell
+  d8
 )
 setup_builder_make () {
   if [[ -z ${build_target} ]] ; then
-    if [[ ${buildtype} = debug ]] ; then
-      build_opts=( "${build_opts[@]}" 'x64.debug' )
-    else
-      build_opts=( "${build_opts[@]}" 'x64.release' )
-    fi
+    build_opts=( "${build_opts[@]}" "x64.${buildtype}" )
   elif [[ ${build_target} = help ]] ; then
     echo 'Supported targets:'
     for target in "${builder_make_targets[@]}" ; do
@@ -296,6 +293,7 @@ Available options:
 
   --target=NAME      Build target NAME instead of "all".
   --jobs=N           Use N parallel jobs.
+  --optdebug         Make an optimized debug build.
   --debug, --dbg     Make a debug build.
   --release, --rel   Make a release build.
   --clang            Build with Clang (usually the default).
@@ -314,40 +312,18 @@ EOM
 for flag in "$@"
 do
   case ${flag} in
-    --target=*)
-      build_target=${flag#*=}
-      ;;
-    --jobs=*)
-      parallel_jobs=${flag#*=}
-      ;;
-    --debug | --dbg)
-      buildtype='debug'
-      ;;
-    --release | --rel)
-      buildtype='release'
-      ;;
-    --clang)
-      compiler='clang'
-      ;;
-    --gcc)
-      compiler='gcc'
-      ;;
-    --ninja)
-      builder='ninja'
-      ;;
-    --make)
-      builder='make'
-      ;;
-    --icecc)
-      use_icecc=true
-      ;;
-    --asan)
-      use_asan=true
-      ;;
-    --help)
-      do_help
-      exit 0
-      ;;
+    --target=*)        build_target=${flag#*=}  ;;
+    --jobs=*)          parallel_jobs=${flag#*=} ;;
+    --optdebug)        buildtype='optdebug'     ;;
+    --debug | --dbg)   buildtype='debug'        ;;
+    --release | --rel) buildtype='release'      ;;
+    --clang)           compiler='clang'         ;;
+    --gcc)             compiler='gcc'           ;;
+    --ninja)           builder='ninja'          ;;
+    --make)            builder='make'           ;;
+    --icecc)           use_icecc=true           ;;
+    --asan)            use_asan=true            ;;
+    --help)            do_help ; exit 0         ;;
     *)
       # Pass down unrecognized flags to the builder.
       build_opts=( "${build_opts[@]}" "${flag}" )
