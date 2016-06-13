@@ -1,6 +1,6 @@
 # vim: ft=conf
 
-set $font PragmataPro Mono 11
+set $font Iosevka 11
 set $mod  Mod4
 
 font $font
