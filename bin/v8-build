@@ -1,4 +1,5 @@
 #! /bin/bash
+# vim:set ts=2 sw=2 et:
 #
 # v8-build
 # Copyright (C) 2013-2015 Adrian Perez <aperez@igalia.com>
@@ -109,7 +110,7 @@ setup_icecc () {
     die "Cannot use --asan and --icecc at the same time"
   fi
 
-	export CCACHE_PREFIX=/usr/lib/icecream/bin/icecc
+  export CCACHE_PREFIX=/usr/lib/icecream/bin/icecc
   if [[ -n ${ICECC_VERSION} ]] ; then
     info "icecc" "Using preset toolchain"
   else
