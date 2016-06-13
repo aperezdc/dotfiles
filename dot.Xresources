@@ -1,7 +1,6 @@
 ! vim: ft=xdefaults
 
-!Xcursor.theme: OpenZone_Ice
-Xcursor.theme: pixelfun3
+Xcursor.theme: Paper
 
 Xft.autohint: 0
 Xft.lcdfilter: lcdlight
