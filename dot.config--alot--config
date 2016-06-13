@@ -16,8 +16,8 @@ tabwidth = 4
   [[igalia]]
     realname = Adrián Pérez de Castro
     address = aperez@igalia.com
-    sent_box = maildir:///home/aperez/.mail/Sent
-    draft_box = maildir:///home/aperez/.mail/Drafts
+    sent_box = maildir:///home/aperez/Maildir/Sent
+    draft_box = maildir:///home/aperez/Maildir/Drafts
 		signature_filename = file:///home/aperez/.signature
 		gpg_key = E4C9123B
 		sign_by_default = True
