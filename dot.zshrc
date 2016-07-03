@@ -279,6 +279,14 @@ case ${REAL_TERM} in
 		}
 		precmd_functions+=(precmd_xterm_title)
 		;;
+	st | st-256color)
+		# See: http://git.suckless.org/st/plain/FAQ
+		function zle-line-init   () { echoti smkx }
+		function zle-line-finish () { echoti rmkx }
+		zle -N zle-line-init
+		zle -N zle-line-finish
+		#tput smkx
+		;;
 esac
 
 if [[ ${COLORTERM} = gnome-terminal || ${COLORTERM} = drop-down-terminal || -n ${VTE_VERSION} ]] ; then
