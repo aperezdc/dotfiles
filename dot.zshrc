@@ -303,6 +303,8 @@ if [[ ${COLORTERM} = gnome-terminal || ${COLORTERM} = drop-down-terminal || -n $
 	if [[ -r /etc/profile.d/vte.sh ]] ; then
 		TERM=${REAL_TERM} source /etc/profile.d/vte.sh
 	fi
+elif [[ ${TERM} = screen* ]] ; then
+	tput smkx  # SRSLY?
 fi
 
 unset REAL_TERM
