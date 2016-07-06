@@ -72,3 +72,5 @@
 	algorithm = patience
 [commit]
 	gpgsign = on
+[credential]
+	helper = cache --timeout=3600
