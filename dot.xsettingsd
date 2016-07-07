@@ -3,7 +3,7 @@ Gtk/CursorTheme "OpenZone_Ice"
 Gtk/DialogsUseHeader 0
 Gtk/EnableAnimations 1
 Gtk/EnablePrimaryPaste 1
-Gtk/FontName "Work Sans 11"
+Gtk/FontName "Roboto 11"
 Gtk/DecorationLayout "menu:close"
 Gtk/ShellShowsAppMenu 0
 Gtk/ShellShowsDesktop 0
