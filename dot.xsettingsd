@@ -11,8 +11,8 @@ Net/CursorBlink 0
 Net/EnableEventSounds 0
 Net/EnableInputFeedbackSounds 0
 Net/FallbackIconTheme "hicolor"
-Net/IconThemeName "elementary"
+Net/IconThemeName "Paper"
 Net/SoundThemeName "freedesktop"
-Net/ThemeName "Flat-Plat"
+Net/ThemeName "Arc-Flatabulous-Darker"
 Xft/HintStyle "hintslight"
 Xft/RGBA "rgb"
