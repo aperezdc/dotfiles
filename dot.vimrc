@@ -110,6 +110,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'chrisbra/vim-diff-enhanced'
 Plug 'tmux-plugins/vim-tmux-focus-events'
+Plug 'christoomey/vim-tmux-navigator'
 Plug 'gcmt/wildfire.vim'
 Plug 'jamessan/vim-gnupg'
 Plug 'rust-lang/rust.vim'
@@ -503,6 +504,25 @@ if s:plug_loaded('vim-quickhl')
 	nmap <leader>j <Plug>(quickhl-cword-toggle)
 endif
 
+" Plugin: tmux-navigator
+if !s:plug_loaded('vim-tmux-navigator')
+	if has('nvim')
+		nnoremap <silent> <BS>  :TmuxNavigateLeft<cr>
+		nnoremap <silent> <NL>  :TmuxNavigateDown<cr>
+	endif
+else
+	" dwm-like window movements
+	if has('nvim')
+		nnoremap <silent> <BS>  <C-w>h
+		nnoremap <silent> <NL>  <C-w>j
+	else
+		nnoremap <silent> <C-h> <C-w>h
+		nnoremap <silent> <C-j> <C-w>j
+	endif
+	nnoremap <silent> <C-k> <C-w>k
+	nnoremap <silent> <C-l> <C-w>l
+endif
+
 " Plugin: diff-enhanced
 if s:plug_loaded('vim-diff-enhanced')
 	let &diffexpr='EnhancedDiff#Diff("git diff", "--diff-algorithm=patience")'
@@ -527,12 +547,6 @@ autocmd vimrc FileType gitcommit call s:SplitGitDiffCached()
 
 " Works with the default Vim Markdown support files
 let g:markdown_fenced_languages = ['html', 'c', 'lua', 'bash=sh']
-
-" dwm-like window movements
-nnoremap <A-h> <C-w>h
-nnoremap <A-j> <C-w>j
-nnoremap <A-k> <C-w>k
-nnoremap <A-l> <C-w>l
 
 " Manually re-format a paragraph of text
 nnoremap <silent> Q gwip
