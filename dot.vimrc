@@ -319,12 +319,6 @@ autocmd vimrc FileType lua setlocal expandtab tabstop=3 shiftwidth=3
 autocmd vimrc FileType c setlocal expandtab cinoptions+=(0
 autocmd vimrc FileType d setlocal expandtab cinoptions+=(0
 
-
-if exists('/usr/share/clang/clang-format.py')
-	map  <C-k>      :pyf /usr/share/clang/clang-format.py<cr>
-	imap <C-k> <Esc>:pyf /usr/share/clang/clang-format.py<cr>i
-endif
-
 " Plugin: GitGutter
 if s:plug_loaded('vim-gitgutter')
 	" let g:gitgutter_enabled = 0
