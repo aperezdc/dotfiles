@@ -110,7 +110,6 @@ Plug 'tpope/vim-fugitive'
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'chrisbra/vim-diff-enhanced'
 Plug 'tmux-plugins/vim-tmux-focus-events'
-Plug 'christoomey/vim-tmux-navigator'
 Plug 'gcmt/wildfire.vim'
 Plug 'jamessan/vim-gnupg'
 Plug 'rust-lang/rust.vim'
@@ -505,24 +504,16 @@ if s:plug_loaded('vim-quickhl')
 	nmap <leader>j <Plug>(quickhl-cword-toggle)
 endif
 
-" Plugin: tmux-navigator
-if !s:plug_loaded('vim-tmux-navigator')
-	if has('nvim')
-		nnoremap <silent> <BS>  :TmuxNavigateLeft<cr>
-		nnoremap <silent> <NL>  :TmuxNavigateDown<cr>
-	endif
+" dwm-like window movements
+if has('nvim')
+	nnoremap <silent> <BS>  <C-w>h
+	nnoremap <silent> <NL>  <C-w>j
 else
-	" dwm-like window movements
-	if has('nvim')
-		nnoremap <silent> <BS>  <C-w>h
-		nnoremap <silent> <NL>  <C-w>j
-	else
-		nnoremap <silent> <C-h> <C-w>h
-		nnoremap <silent> <C-j> <C-w>j
-	endif
-	nnoremap <silent> <C-k> <C-w>k
-	nnoremap <silent> <C-l> <C-w>l
+	nnoremap <silent> <C-h> <C-w>h
+	nnoremap <silent> <C-j> <C-w>j
 endif
+nnoremap <silent> <C-k> <C-w>k
+nnoremap <silent> <C-l> <C-w>l
 
 " Plugin: diff-enhanced
 if s:plug_loaded('vim-diff-enhanced')
