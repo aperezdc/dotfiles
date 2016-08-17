@@ -69,8 +69,14 @@ setup_icecc () {
 	if [[ -n ${ICECC_VERSION} ]] ; then
 		info "icecc" "Using preset toolchain"
 	else
-		info "icecc" "Creating toolchain tarball"
-		export ICECC_VERSION="$(pwd)/$(/usr/lib/icecream/bin/icecc --build-native 2>&1 | awk '/^creating/{print $2}')"
+		local -a opts=( --build-native ${compiler} )
+		if [[ ${compiler} = clang ]] ; then
+			opts+=( "$(which clang)" "$(which clang++)" /usr/bin/clang /usr/bin/clang++ )
+		elif [[ ${compiler} = gcc ]] ; then
+			opts+=( "$(which gcc)" "$(which g++)" )
+		fi
+		info "icecc" "Creating toolchain tarball: ${opts[*]}"
+		export ICECC_VERSION="$(pwd)/$(/usr/lib/icecream/bin/icecc "${opts[@]}" 2>&1 | awk '/^creating/{print $2}')"
 	fi
 	info "icecc" "${ICECC_VERSION}"
 
