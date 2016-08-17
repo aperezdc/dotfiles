@@ -28,6 +28,9 @@ use_libcxx=false
 # CPUs. When doing a distributed build, this is multiplied by five.
 parallel_jobs=$(getconf _NPROCESSORS_ONLN)
 
+# Arguments passed down to Ninja in --cmakeargs= and --makeargs=
+cmakeargs=()
+makeargs=()
 
 declare -r clang_opts=(
 	'-ferror-limit=1'
@@ -70,6 +73,12 @@ setup_icecc () {
 		export ICECC_VERSION="$(pwd)/$(/usr/lib/icecream/bin/icecc --build-native 2>&1 | awk '/^creating/{print $2}')"
 	fi
 	info "icecc" "${ICECC_VERSION}"
+
+	# Debug Fission does not work with IceCC. Keeping it enabled prevents
+	# build jobs to be sent for distributed compilation.
+	if [[ ${buildtype} = debug ]] ; then
+		cmakeargs+=( '-DDEBUG_FISSION=OFF' )
+	fi
 
 	parallel_jobs=$(( parallel_jobs * 5 ))
 	compiler='gcc'
@@ -129,6 +138,8 @@ Usage: $(basename "$0") [options]
 Availabl options:
 
   --jobs=N          Use N parallel jobs.
+  --cmake=ARG       Pass ARG down to CMake.
+  --make=ARG        Pass ARG down to the build system.
   --debug, --dbg    Make a debug build
   --release, --rel  Make a release build.
   --clang           Build with Clang (usually the default).
@@ -149,6 +160,12 @@ do
 	case ${flag} in
 		--jobs=*)
 			parallel_jobs=${flag#*=}
+			;;
+		--make=*)
+			makeargs+=( "${flag#*=}" )
+			;;
+		--cmake=*)
+			cmakeargs+=( "${flag#*=}" )
 			;;
 		--debug | --dbg)
 			buildtype='debug'
@@ -196,14 +213,19 @@ if ${use_asan}  ; then setup_asan  ; fi
 
 setup_compiler_${compiler}
 
+makeargs=( "${makeargs[@]}" "-j${parallel_jobs}" )
+
 export PKG_CONFIG_PATH LD CC CXX CXXFLAGS LDFLAGS
 
-info "build"   "${buildtype}"
-info "jobs"    "${parallel_jobs}"
-info "env:LD"  "${LD} ${LDFLAGS}"
-info "env:CC"  "${CC}"
-info "env:CXX" "${CXX}"
+info "build"     "${buildtype}"
+info "jobs"      "${parallel_jobs}"
+info "makeargs"  "${makeargs[*]}"
+info "cmakeargs" "${cmakeargs[*]}"
+info "env:LD"    "${LD} ${LDFLAGS}"
+info "env:CC"    "${CC}"
+info "env:CXX"   "${CXX}"
 echo
 
 set -x
-exec build-webkit "${build_options[@]}" "$@" "--${buildtype}" --makeargs="-j${parallel_jobs}"
+exec build-webkit "${build_options[@]}" "$@" "--${buildtype}" \
+	--cmakeargs="${cmakeargs[*]}" --makeargs="${makeargs[*]}"
