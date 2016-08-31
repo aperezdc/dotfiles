@@ -86,6 +86,7 @@ for editor in nvim vim vi e3vi ; do
 done
 
 export GPG_TTY=$(tty)
+unset GPG_AGENT_INFO
 if [[ $(type -pt gpg-connect-agent) = file ]] ; then
 	gpg-connect-agent -q updatestartuptty /bye > /dev/null
 	unset SSH_AGENT_PID
