@@ -33,14 +33,14 @@ q = bclose
   [[search]]
     d = toggletags deleted
     J = toggletags spam
-    h = toggletags ham
+    t = toggletags ticket
     i = toggletags fyi
     s = toggletags unread
     A = untag unread,inbox
   [[thread]]
     d = toggletags deleted
     J = toggletags spam
-    h = toggletags ham
+    t = toggletags ticket
     i = toggletags fyi
     & = toggletags killed
     s = toggletags unread
