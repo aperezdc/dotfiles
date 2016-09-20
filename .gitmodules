@@ -1,6 +1,6 @@
 [submodule "dot.vim/bundle/elrond"]
 	path = dot.vim/bundle/elrond
-	url = git@github.com:aperezdc/vim-elrond
+	url = https://github.com/aperezdc/vim-elrond
 [submodule "dot.vim/bundle/unbundle"]
 	path = dot.vim/bundle/unbundle
 	url = https://github.com/sunaku/vim-unbundle
@@ -61,3 +61,9 @@
 [submodule "dot.vim/bundle/bracketed-paste"]
 	path = dot.vim/bundle/bracketed-paste
 	url = https://github.com/ConradIrwin/vim-bracketed-paste
+[submodule "dot.vim/bundle/rsi"]
+	path = dot.vim/bundle/rsi
+	url = https://github.com/tpope/vim-rsi.git
+[submodule "dot.vim/bundle/lion"]
+	path = dot.vim/bundle/lion
+	url = https://github.com/tommcdo/vim-lion
