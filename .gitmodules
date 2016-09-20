@@ -1,0 +1,63 @@
+[submodule "dot.vim/bundle/elrond"]
+	path = dot.vim/bundle/elrond
+	url = git@github.com:aperezdc/vim-elrond
+[submodule "dot.vim/bundle/unbundle"]
+	path = dot.vim/bundle/unbundle
+	url = https://github.com/sunaku/vim-unbundle
+[submodule "dot.vim/bundle/sensible"]
+	path = dot.vim/bundle/sensible
+	url = https://github.com/tpope/vim-sensible
+[submodule "dot.vim/bundle/lining"]
+	path = dot.vim/bundle/lining
+	url = https://github.com/aperezdc/vim-lining
+[submodule "dot.vim/ftbundle/python/jedi"]
+	path = dot.vim/ftbundle/python/jedi
+	url = https://github.com/davidhalter/jedi-vim
+[submodule "dot.vim/bundle/fugitive"]
+	path = dot.vim/bundle/fugitive
+	url = https://github.com/tpope/vim-fugitive
+[submodule "dot.vim/bundle/characterize"]
+	path = dot.vim/bundle/characterize
+	url = https://github.com/tpope/vim-characterize
+[submodule "dot.vim/bundle/commentary"]
+	path = dot.vim/bundle/commentary
+	url = https://github.com/tpope/vim-commentary
+[submodule "dot.vim/ftbundle/rust/racer"]
+	path = dot.vim/ftbundle/rust/racer
+	url = https://github.com/racer-rust/vim-racer
+[submodule "dot.vim/bundle/vimcompletesme"]
+	path = dot.vim/bundle/vimcompletesme
+	url = https://github.com/ajh17/vimcompletesme
+[submodule "dot.vim/bundle/dirvish"]
+	path = dot.vim/bundle/dirvish
+	url = https://github.com/justinmk/vim-dirvish
+[submodule "dot.vim/bundle/eunuch"]
+	path = dot.vim/bundle/eunuch
+	url = https://github.com/tpope/vim-eunuch
+[submodule "dot.vim/bundle/qf"]
+	path = dot.vim/bundle/qf
+	url = https://github.com/romainl/vim-qf
+[submodule "dot.vim/bundle/repeat"]
+	path = dot.vim/bundle/repeat
+	url = https://github.com/tpope/vim-repeat
+[submodule "dot.vim/bundle/template"]
+	path = dot.vim/bundle/template
+	url = https://github.com/aperezdc/vim-template
+[submodule "dot.vim/bundle/hipack"]
+	path = dot.vim/bundle/hipack
+	url = https://github.com/aperezdc/hipack-vim
+[submodule "dot.vim/bundle/mkdir"]
+	path = dot.vim/bundle/mkdir
+	url = https://github.com/pbrisbin/vim-mkdir
+[submodule "dot.vim/bundle/fzf.vim"]
+	path = dot.vim/bundle/fzf.vim
+	url = https://github.com/junegunn/fzf.vim
+[submodule "dot.vim/bundle/fzf"]
+	path = dot.vim/bundle/fzf
+	url = https://github.com/junegunn/fzf
+[submodule "dot.vim/bundle/targets"]
+	path = dot.vim/bundle/targets
+	url = https://github.com/wellle/targets.vim
+[submodule "dot.vim/bundle/bracketed-paste"]
+	path = dot.vim/bundle/bracketed-paste
+	url = https://github.com/ConradIrwin/vim-bracketed-paste
