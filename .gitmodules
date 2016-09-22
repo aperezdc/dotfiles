@@ -67,9 +67,6 @@
 [submodule "dot.vim/bundle/lion"]
 	path = dot.vim/bundle/lion
 	url = https://github.com/tommcdo/vim-lion
-[submodule "dot.vim/ftbundle/ledger/ledger"]
-	path = dot.vim/ftbundle/ledger/ledger
-	url = https://github.com/ledger/vim-ledger
 [submodule "dot.vim/bundle/ledger"]
 	path = dot.vim/bundle/ledger
 	url = https://github.com/ledger/vim-ledger
