@@ -1,0 +1,20 @@
+#! /bin/bash
+#
+# xinput-touchpad-tap
+# Copyright (C) 2016 Adrian Perez <aperez@igalia.com>
+#
+# Distributed under terms of the MIT license.
+set -e
+
+configure_device () {
+	xinput set-int-prop "${1}" 'libinput Tapping Enabled' 8 1
+	xinput set-int-prop "${1}" 'libinput Middle Emulation Enabled' 8 1
+}
+
+while read -r line ; do
+	case ${line} in
+		*[tT]ouch[pP]ad*)
+			configure_device "${line}"
+			;;
+	esac
+done < <( xinput list --name-only )
