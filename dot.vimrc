@@ -3,6 +3,7 @@ set nobomb
 set exrc
 set secure
 set hidden
+set smartcase
 set infercase
 set linebreak
 set tabstop=4
@@ -72,7 +73,6 @@ else
 endif
 
 command! -nargs=0 -bang Q q<bang>
-command! -bang W write<bang>
 command! -nargs=0 -bang Wq wq<bang>
 
 vnoremap J :m '>+1<CR>gv=gv
@@ -98,6 +98,13 @@ autocmd vimrc FileType cpp setlocal expandtab cinoptions+=(0
 autocmd vimrc FileType lua setlocal expandtab tabstop=3 shiftwidth=3
 autocmd vimrc FileType c setlocal expandtab cinoptions+=(0
 autocmd vimrc FileType d setlocal expandtab cinoptions+=(0
+
+if exists('*fugitive#detect')
+	autocmd vimrc FileType dirvish call fugitive#detect(@%)
+endif
+autocmd vimrc FileType dirvish keeppatterns g@\v/\.[^\/]+/?$@d
+
+autocmd vimrc FileType help wincmd L
 
 " dwm-like window movements
 if has('nvim')
