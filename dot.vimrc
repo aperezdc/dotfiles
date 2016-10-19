@@ -3,6 +3,7 @@ set nobomb
 set exrc
 set secure
 set hidden
+set ignorecase
 set smartcase
 set infercase
 set linebreak
