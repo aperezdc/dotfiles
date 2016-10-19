@@ -370,13 +370,18 @@ meteo () {
 # Golang environment and binaries directory
 if [[ -x /usr/bin/go && -d ${HOME}/go ]] ; then
 	export GOPATH="${HOME}/go"
-	path=( "${path[@]}" "${GOPATH}/bin" )
+	path+="${GOPATH}/bin"
+fi
+
+# Rust/Cargo binaries directory
+if [[ -d ${HOME}/.cargo/bin ]] ; then
+	path+="${HOME}/.cargo/bin"
 fi
 
 # Local binaries directory
 for dirpath in ${HOME}/.local/bin ${HOME}/.dotfiles/bin ; do
 	if [[ -d ${dirpath} ]] ; then
-		path=( "${path[@]}" "${dirpath}" )
+		path+=${dirpath}
 	fi
 done
 
