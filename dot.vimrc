@@ -31,7 +31,9 @@ augroup END
 
 colorscheme elrond
 
-if executable('ag')
+if executable('rg')
+	set grepprg=rg\ --vimgrep
+elseif executable('ag')
     set grepprg=ag\ --nogroup\ --nocolor\ --ignore-case\ --column
     set grepformat=%f:%l:%c:%m,%f:%l:%m
 endif
