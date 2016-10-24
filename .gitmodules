@@ -63,7 +63,7 @@
 	url = https://github.com/ConradIrwin/vim-bracketed-paste
 [submodule "dot.vim/bundle/rsi"]
 	path = dot.vim/bundle/rsi
-	url = https://github.com/tpope/vim-rsi.git
+	url = https://github.com/tpope/vim-rsi
 [submodule "dot.vim/bundle/lion"]
 	path = dot.vim/bundle/lion
 	url = https://github.com/tommcdo/vim-lion
@@ -73,3 +73,15 @@
 [submodule "dot.vim/bundle/gitgutter"]
 	path = dot.vim/bundle/gitgutter
 	url = https://github.com/airblade/vim-gitgutter
+[submodule "dot.vim/bundle/auto-pairs"]
+	path = dot.vim/bundle/auto-pairs
+	url = https://github.com/jiangmiao/auto-pairs
+[submodule "dot.vim/bundle/git"]
+	path = dot.vim/bundle/git
+	url = https://github.com/tpope/vim-git
+[submodule "dot.vim/bundle/sleuth"]
+	path = dot.vim/bundle/sleuth
+	url = https://github.com/tpope/vim-sleuth
+[submodule "dot.vim/bundle/repmo"]
+	path = dot.vim/bundle/repmo
+	url = https://github.com/vim-scripts/repmo.vim
