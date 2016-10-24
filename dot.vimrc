@@ -95,7 +95,7 @@ autocmd vimrc BufReadPost *
 			\		execute "normal g'\"" |
 			\ endif
 autocmd vimrc FileType mkdc,markdown setlocal expandtab tabstop=2 shiftwidth=2
-autocmd vimrc FileType yaml setlocal tabstop=2 shiftwidth=2
+autocmd vimrc FileType yaml setlocal tabstop=2 shiftwidth=2 expandtab
 autocmd vimrc FileType objc setlocal expandtab cinoptions+=(0
 autocmd vimrc FileType cpp setlocal expandtab cinoptions+=(0
 autocmd vimrc FileType lua setlocal expandtab tabstop=3 shiftwidth=3
