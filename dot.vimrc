@@ -108,6 +108,7 @@ endif
 autocmd vimrc FileType dirvish keeppatterns g@\v/\.[^\/]+/?$@d
 
 autocmd vimrc FileType help wincmd L
+autocmd vimrc FileType git wincmd L | wincmd x
 
 " dwm-like window movements
 if has('nvim')
