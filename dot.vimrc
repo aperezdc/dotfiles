@@ -131,6 +131,13 @@ nnoremap <silent> <C-l> <C-w>l
 " Manually re-format a paragraph of text
 nnoremap <silent> Q gwip
 
+" Forgot root?
+if executable('doas')
+    cmap w!! w !doas tee % > /dev/null
+elseif executable('sudo')
+    cmap w!! w !sudo tee % > /dev/null
+endif
+
 " Works with the default Vim Markdown support files
 let g:markdown_fenced_languages = ['html', 'c', 'lua', 'bash=sh']
 
