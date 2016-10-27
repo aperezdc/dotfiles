@@ -17,6 +17,8 @@ set encoding=utf-8
 set titlelen=0
 set titlestring=[%t]%m
 set whichwrap+=[,],<,>
+set wildignore+=*.o,*.a,a.out
+set sessionoptions-=options
 
 if len($DISPLAY)
 	set clipboard+=unnamed
