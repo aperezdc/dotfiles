@@ -101,6 +101,13 @@ set wildmode=longest,list:longest,full
 set wildignore+=*.o,*.a,a.out
 set sessionoptions-=options
 
+" Persistent undo!
+if !isdirectory(expand('~/.cache/vim/undo'))
+    call system('mkdir -p ' . shellescape(expand('~/.cache/vim/undo')))
+endif
+set undodir=~/.cache/vim/undo
+set undofile
+
 if len($DISPLAY)
     set clipboard+=unnamed
 endif
