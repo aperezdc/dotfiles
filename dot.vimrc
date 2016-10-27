@@ -39,6 +39,7 @@ call s:plug('ledger/vim-ledger')
 call s:plug('Shougo/vimproc.vim', {'build': 'make', 'rev': '*'})
 if has('nvim')
     call s:plug('Shougo/deoplete.nvim')
+    call s:plug('Shougo/denite.nvim')
 else
     call s:plug('junegunn/fzf')
     call s:plug('junegunn/fzf.vim', {'depends': 'fzf'})
@@ -235,12 +236,35 @@ if executable('racer')
 endif
 
 " Plugin: fzf
-let g:fzf_buffers_jump = 0
-nnoremap <silent> <Leader>f :<C-u>Files<cr>
-nnoremap <silent> <Leader>F :<C-u>GitFiles<cr>
-nnoremap <silent> <Leader>m :<C-u>History<cr>
-nnoremap <silent> <Leader>b :<C-u>Buffers<cr>
-nnoremap <silent> <Leader><F1> :<C-u>Helptags<cr>
+if dein#tap('fzf.vim')
+    let g:fzf_buffers_jump = 0
+    nnoremap <silent> <Leader>f :<C-u>Files<cr>
+    nnoremap <silent> <Leader>F :<C-u>GitFiles<cr>
+    nnoremap <silent> <Leader>m :<C-u>History<cr>
+    nnoremap <silent> <Leader>b :<C-u>Buffers<cr>
+    nnoremap <silent> <Leader><F1> :<C-u>Helptags<cr>
+elseif dein#tap('denite.nvim')
+    call denite#custom#source('_', 'matchers', ['matcher_fuzzy'])
+    call denite#custom#source('file_mru', 'converters', ['converter_relative_word'])
+
+    call denite#custom#alias('source', 'file_rec/git', 'file_rec')
+    call denite#custom#var('file_rec/git', 'command', 
+                \ ['git', 'ls-files', '-co', '--exclude-standard'])
+
+    if executable('rg')
+        call denite#custom#var('file_rec', 'command', ['rg', '--files'])
+        call denite#custom#var('grep', 'command', ['rg'])
+        call denite#custom#var('grep', 'recursive_opts', [])
+        call denite#custom#var('grep', 'final_opts', [])
+        call denite#custom#var('grep', 'separator', ['--'])
+        call denite#custom#var('greo', 'default_opts', ['--vimgrep', '--no-heading'])
+    endif
+
+    nnoremap <silent> <Leader>b :<C-u>Denite buffer<cr>
+    nnoremap <silent> <Leader>f :<C-u>Denite file_rec<cr>
+    nnoremap <silent> <Leader>F :<C-u>Denite file_rec/git<cr>
+endif
+
 nmap <C-A-p> <leader>f
 nmap <C-A-m> <leader>m
 nmap <C-A-b> <leader>b
