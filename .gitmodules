@@ -1,9 +1,6 @@
 [submodule "dot.vim/bundle/elrond"]
 	path = dot.vim/bundle/elrond
 	url = https://github.com/aperezdc/vim-elrond
-[submodule "dot.vim/bundle/unbundle"]
-	path = dot.vim/bundle/unbundle
-	url = https://github.com/sunaku/vim-unbundle
 [submodule "dot.vim/bundle/sensible"]
 	path = dot.vim/bundle/sensible
 	url = https://github.com/tpope/vim-sensible
@@ -41,7 +38,7 @@
 	path = dot.vim/bundle/template
 	url = https://github.com/aperezdc/vim-template
 [submodule "dot.vim/bundle/hipack"]
-	path = dot.vim/ftbundle/hipack
+	path = dot.vim/bundle/hipack
 	url = https://github.com/aperezdc/hipack-vim
 [submodule "dot.vim/bundle/mkdir"]
 	path = dot.vim/bundle/mkdir
@@ -53,29 +50,23 @@
 	path = dot.vim/bundle/fzf
 	url = https://github.com/junegunn/fzf
 [submodule "dot.vim/bundle/targets"]
-	path = dot.vim/bundle/targets
+	path = dot.vim/_bundle/targets
 	url = https://github.com/wellle/targets.vim
 [submodule "dot.vim/bundle/bracketed-paste"]
 	path = dot.vim/bundle/bracketed-paste
 	url = https://github.com/ConradIrwin/vim-bracketed-paste
-[submodule "dot.vim/bundle/rsi"]
-	path = dot.vim/bundle/rsi
-	url = https://github.com/tpope/vim-rsi
 [submodule "dot.vim/bundle/lion"]
 	path = dot.vim/bundle/lion
 	url = https://github.com/tommcdo/vim-lion
 [submodule "dot.vim/bundle/ledger"]
-	path = dot.vim/ftbundle/ledger
+	path = dot.vim/bundle/ledger
 	url = https://github.com/ledger/vim-ledger
 [submodule "dot.vim/bundle/gitgutter"]
-	path = dot.vim/bundle/gitgutter
+	path = dot.vim/_bundle/gitgutter
 	url = https://github.com/airblade/vim-gitgutter
 [submodule "dot.vim/bundle/auto-pairs"]
-	path = dot.vim/bundle/auto-pairs
+	path = dot.vim/_bundle/auto-pairs
 	url = https://github.com/jiangmiao/auto-pairs
-[submodule "dot.vim/bundle/git"]
-	path = dot.vim/bundle/git
-	url = https://github.com/tpope/vim-git
 [submodule "dot.vim/bundle/sleuth"]
 	path = dot.vim/bundle/sleuth
 	url = https://github.com/tpope/vim-sleuth
@@ -89,17 +80,11 @@
 	path = dot.vim/bundle/gnupg
 	url = https://github.com/jamessan/vim-gnupg
 [submodule "dot.vim/bundle/rust"]
-	path = dot.vim/ftbundle/rust
+	path = dot.vim/bundle/rust
 	url = https://github.com/wting/rust.vim
 [submodule "dot.vim/bundle/incsearch"]
 	path = dot.vim/bundle/incsearch
 	url = https://github.com/haya14busa/incsearch.vim
-[submodule "dot.vim/bundle/operator-user"]
-	path = dot.vim/bundle/operator-user
-	url = https://github.com/kana/vim-operator-user
-[submodule "dot.vim/bundle/operator-flashy"]
-	path = dot.vim/bundle/operator-flashy
-	url = https://github.com/haya14busa/vim-operator-flashy
 [submodule "dot.vim/bundle/expand-region"]
 	path = dot.vim/bundle/expand-region
 	url = https://github.com/terryma/vim-expand-region
@@ -109,3 +94,6 @@
 [submodule "dot.vim/bundle/incsearch-fuzzy"]
 	path = dot.vim/bundle/incsearch-fuzzy
 	url = https://github.com/haya14busa/incsearch-fuzzy.vim
+[submodule "dot.vim/bundle/pathogen"]
+	path = dot.vim/bundle/pathogen
+	url = https://github.com/tpope/vim-pathogen

@@ -1,4 +1,8 @@
 set nocompatible
+
+source ~/.vim/bundle/pathogen/autoload/pathogen.vim
+call pathogen#infect(expand('~/.vim/bundle/{}'))
+
 set nobomb
 set exrc
 set secure
@@ -20,10 +24,6 @@ endif
 
 filetype indent plugin on
 syntax on
-
-if filereadable(expand('~/.vim/bundle/unbundle/plugin/unbundle.vim'))
-    runtime bundle/unbundle/plugin/unbundle.vim
-endif
 
 augroup vimrc
     autocmd!
@@ -109,9 +109,7 @@ autocmd vimrc FileType lua setlocal expandtab tabstop=3 shiftwidth=3
 autocmd vimrc FileType c setlocal expandtab cinoptions+=(0
 autocmd vimrc FileType d setlocal expandtab cinoptions+=(0
 
-if exists('*fugitive#detect')
-	autocmd vimrc FileType dirvish call fugitive#detect(@%)
-endif
+autocmd vimrc FileType dirvish call fugitive#detect(@%)
 autocmd vimrc FileType dirvish keeppatterns g@\v/\.[^\/]+/?$@d
 
 autocmd vimrc FileType help wincmd L
