@@ -38,8 +38,15 @@ call s:plug('ledger/vim-ledger')
 
 call s:plug('Shougo/vimproc.vim', {'build': 'make', 'rev': '*'})
 if has('nvim')
-    call s:plug('Shougo/deoplete.nvim')
     call s:plug('Shougo/denite.nvim')
+    call s:plug('Shougo/neomru.vim')
+    call s:plug('Shougo/deoplete.nvim')
+    call s:plug('Shougo/neco-vim')
+    call s:plug('Shougo/neco-syntax')
+    call s:plug('Shougo/neoinclude.vim')
+    call s:plug('zchee/deoplete-jedi')
+    call s:plug('zchee/deoplete-clang')
+    call s:plug('iamcco/deoplete-ternjs')
 else
     call s:plug('junegunn/fzf')
     call s:plug('junegunn/fzf.vim', {'depends': 'fzf'})
@@ -269,6 +276,7 @@ elseif dein#tap('denite.nvim')
     endif
 
     nnoremap <silent> <Leader>b :<C-u>Denite buffer<cr>
+    nnoremap <silent> <Leader>m :<C-u>Denite file_mru<cr>
     nnoremap <silent> <Leader>f :<C-u>Denite file_rec<cr>
     nnoremap <silent> <Leader>F :<C-u>Denite file_rec/git<cr>
 endif
@@ -277,7 +285,7 @@ nmap <C-A-p> <leader>f
 nmap <C-A-m> <leader>m
 nmap <C-A-b> <leader>b
 
-if exists('#Lift')
+if dein#tap('vim-lift')
     " Plugin: Lift
     inoremap <expr> <Tab>  lift#trigger_completion()
     inoremap <expr> <Esc>  pumvisible() ? "\<C-e>" : "\<Esc>"
@@ -286,14 +294,7 @@ if exists('#Lift')
     inoremap <expr> <Up>   pumvisible() ? "\<C-p>" : "\<Up>"
     inoremap <expr> <C-d>  pumvisible() ? "\<PageDown>\<C-p>\<C-n>" : "\<C-d>"
     inoremap <expr> <C-u>  pumvisible() ? "\<PageUp>\<C-p>\<C-n>" : "\<C-u>"
-elseif get(g:, 'loaded_completor_plugin')
-    " Plugin: completor
-    let g:completor_python_binary = '/usr/bin/python3'
-    let g:completor_racer_binary = '/usr/bin/racer'
-    let g:completor_clang_binary = '/usr/bin/clang'
-    let g:completor_node_binary = '/usr/bin/node'
-    let g:completor_disable_ultisnips = 1
-
+else
     function! s:completor_tab(direction, or_keys)
         if pumvisible()
             if a:direction < 0
@@ -307,6 +308,21 @@ elseif get(g:, 'loaded_completor_plugin')
     endfunction
     inoremap <expr> <Tab>   <SID>completor_tab(1, "\<Tab>")
     inoremap <expr> <S-Tab> <SID>completor_tab(-1, "\<S-Tab>")
+
+    if dein#tap('completor.vim')
+        let g:completor_python_binary = '/usr/bin/python3'
+        let g:completor_racer_binary = '/usr/bin/racer'
+        let g:completor_clang_binary = '/usr/bin/clang'
+        let g:completor_node_binary = '/usr/bin/node'
+        let g:completor_disable_ultisnips = 1
+    elseif dein#tap('deoplete.nvim')
+        let g:deoplete#enable_at_startup = 1
+        call deoplete#custom#set('buffer', 'min_pattern_length', 3)
+        if dein#tap('deoplete-clang')
+            let g:deoplete#sources#clang#libclang_path = '/usr/lib/libclang.so'
+            let g:deoplete#sources#clang#clang_header = '/usr/lib/clang'
+        endif
+    endif
 endif
 
 " Plugin: insearch + insearch-fuzzy
