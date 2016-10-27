@@ -94,6 +94,11 @@ autocmd vimrc BufReadPost *
 			\ if line("'\"") > 0 && line("'\"") <= line("$") |
 			\		execute "normal g'\"" |
 			\ endif
+
+" Readjust split-windows when Vim is resized
+autocmd vimrc VimResized * :wincmd =
+
+" Per-filetype settings
 autocmd vimrc FileType mkdc,markdown setlocal expandtab tabstop=2 shiftwidth=2
 autocmd vimrc FileType yaml setlocal tabstop=2 shiftwidth=2 expandtab
 autocmd vimrc FileType objc setlocal expandtab cinoptions+=(0
