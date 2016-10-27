@@ -1,7 +1,10 @@
 set nocompatible
 
-source ~/.vim/bundle/pathogen/autoload/pathogen.vim
-call pathogen#infect(expand('~/.vim/bundle/{}'))
+set runtimepath+=~/.vim/bundle/dein.vim
+
+call dein#begin('~/.vim/bundle')
+call dein#local('~/.vim/bundle')
+call dein#end()
 
 set nobomb
 set exrc
@@ -17,11 +20,12 @@ set encoding=utf-8
 set titlelen=0
 set titlestring=[%t]%m
 set whichwrap+=[,],<,>
+set wildmode=longest,list:longest,full
 set wildignore+=*.o,*.a,a.out
 set sessionoptions-=options
 
 if len($DISPLAY)
-	set clipboard+=unnamed
+    set clipboard+=unnamed
 endif
 
 filetype indent plugin on
@@ -88,7 +92,6 @@ vnoremap > >gv
 nnoremap H :bprevious<CR>
 nnoremap L :bnext<CR>
 
-map <Space> /
 map <C-t> <C-]>
 map <C-p> :pop<cr>
 map __ ZZ
@@ -119,11 +122,11 @@ autocmd vimrc FileType git wincmd L | wincmd x
 
 " dwm-like window movements
 if has('nvim')
-	nnoremap <silent> <BS>  <C-w>h
-	nnoremap <silent> <NL>  <C-w>j
+    nnoremap <silent> <BS>  <C-w>h
+    nnoremap <silent> <NL>  <C-w>j
 else
-	nnoremap <silent> <C-h> <C-w>h
-	nnoremap <silent> <C-j> <C-w>j
+    nnoremap <silent> <C-h> <C-w>h
+    nnoremap <silent> <C-j> <C-w>j
 endif
 nnoremap <silent> <C-k> <C-w>k
 nnoremap <silent> <C-l> <C-w>l
@@ -162,3 +165,51 @@ nnoremap <silent> <Leader><F1> :<C-u>Helptags<cr>
 nmap <C-A-p> <leader>f
 nmap <C-A-m> <leader>m
 nmap <C-A-b> <leader>b
+
+if exists('#Lift')
+    " Plugin: Lift
+    inoremap <expr> <Tab>  lift#trigger_completion()
+    inoremap <expr> <Esc>  pumvisible() ? "\<C-e>" : "\<Esc>"
+    inoremap <expr> <CR>   pumvisible() ? "\<C-y>" : "\<CR>"
+    inoremap <expr> <Down> pumvisible() ? "\<C-n>" : "\<Down>"
+    inoremap <expr> <Up>   pumvisible() ? "\<C-p>" : "\<Up>"
+    inoremap <expr> <C-d>  pumvisible() ? "\<PageDown>\<C-p>\<C-n>" : "\<C-d>"
+    inoremap <expr> <C-u>  pumvisible() ? "\<PageUp>\<C-p>\<C-n>" : "\<C-u>"
+elseif get(g:, 'loaded_completor_plugin')
+    " Plugin: completor
+    let g:completor_python_binary = '/usr/bin/python3'
+    let g:completor_racer_binary = '/usr/bin/racer'
+    let g:completor_clang_binary = '/usr/bin/clang'
+    let g:completor_node_binary = '/usr/bin/node'
+    let g:completor_disable_ultisnips = 1
+
+    function! s:completor_tab(direction, or_keys)
+        if pumvisible()
+            if a:direction < 0
+                return "\<C-p>"
+            else
+                return "\<C-n>"
+            endif
+        else
+            return a:or_keys
+        endif
+    endfunction
+    inoremap <expr> <Tab>   <SID>completor_tab(1, "\<Tab>")
+    inoremap <expr> <S-Tab> <SID>completor_tab(-1, "\<S-Tab>")
+endif
+
+" Plugin: insearch + insearch-fuzzy
+map <Space>  <Plug>(incsearch-forward)
+map /        <Plug>(incsearch-forward)
+map ?        <Plug>(incsearch-backward)
+map g/       <Plug>(incsearch-stay)
+map z<Space> <Plug>(incsearch-fuzzyspell-/)
+map z/       <Plug>(incsearch-fuzzyspell-/)
+map z?       <Plug>(incsearch-fuzzyspell-?)
+map zg/      <Plug>(incsearch-fuzzyspell-stay)
+
+highlight Flashy term=reverse cterm=reverse
+
+" Plugin: expand-region
+map <CR>        <Plug>(expand_region_expand)
+map <Backspace> <Plug>(expand_region_shrink)
