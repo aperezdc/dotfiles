@@ -86,6 +86,7 @@ set nobomb
 set exrc
 set secure
 set hidden
+set nohlsearch
 set ignorecase
 set smartcase
 set infercase
