@@ -80,6 +80,8 @@ command! -nargs=0 -bang Wq wq<bang>
 
 vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
+vnoremap < <gv
+vnoremap > >gv
 
 nnoremap H :bprevious<CR>
 nnoremap L :bnext<CR>
