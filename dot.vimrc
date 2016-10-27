@@ -1,10 +1,85 @@
 set nocompatible
 
+if !isdirectory(expand('~/.vim/bundle/dein.vim'))
+	!mkdir -p ~/.vim/bundle && git clone https://github.com/Shougo/dein.vim ~/.vim/bundle/dein.vim
+endif
+
 set runtimepath+=~/.vim/bundle/dein.vim
 
-call dein#begin('~/.vim/bundle')
-call dein#local('~/.vim/bundle')
+let s:local_plugs = []
+
+function! s:plug(name, ...)
+    let dirname = fnamemodify(a:name, ':t')
+    let path = expand('~/devel/' . dirname)
+    let opts = len(a:000) > 0 ? a:1 : {}
+    if isdirectory(path)
+        call add(s:local_plugs, dirname)
+    else
+        call dein#add(a:name, opts)
+    endif
+endfunction
+
+call dein#begin('~/.vim/bundle', [expand('<sfile>')])
+call s:plug('tpope/vim-sensible')
+call s:plug('tpope/vim-fugitive')
+call s:plug('tpope/vim-commentary')
+call s:plug('tpope/vim-characterize')
+call s:plug('tpope/vim-eunuch')
+call s:plug('tpope/vim-sleuth')
+call s:plug('tpope/vim-surround')
+call s:plug('justinmk/vim-dirvish')
+
+call s:plug('aperezdc/vim-elrond', {'merged': 0})
+call s:plug('aperezdc/vim-lining')
+call s:plug('aperezdc/vim-template')
+call s:plug('aperezdc/hipack-vim')
+
+call s:plug('ledger/vim-ledger')
+
+call s:plug('Shougo/vimproc.vim', {'build': 'make', 'rev': '*'})
+if has('nvim')
+    call s:plug('Shougo/deoplete.nvim')
+else
+    call s:plug('junegunn/fzf')
+    call s:plug('junegunn/fzf.vim', {'depends': 'fzf'})
+    if v:version < 800
+        call s:plug('aperezdc/vim-lift')
+    else
+        call s:plug('maralla/completor.vim', {'build': 'make js'})
+    endif
+endif
+
+if !dein#tap('completor.vim')
+    call s:plug('racer-rust/vim-racer')
+endif
+
+call s:plug('romainl/vim-qf')
+call s:plug('tpope/vim-repeat')
+call s:plug('pbrisbin/vim-mkdir')
+call s:plug('wellle/targets.vim')
+call s:plug('ConradIrwin/vim-bracketed-paste')
+call s:plug('airblade/vim-gitgutter')
+call s:plug('jiangmiao/auto-pairs')
+call s:plug('jamessan/vim-gnupg')
+call s:plug('wting/rust.vim')
+call s:plug('haya14busa/incsearch.vim')
+call s:plug('haya14busa/incsearch-fuzzy.vim', {'depends': 'incsearch.vim'})
+call s:plug('terryma/vim-expand-region')
+call s:plug('junegunn/vim-easy-align')
+call s:plug('Shougo/dein.vim')
+
+if len(s:local_plugs)
+    call dein#local('~/devel', {'frozen': 1}, s:local_plugs)
+endif
+unlet s:local_plugs
+delfunction s:plug
+
+call dein#disable('vim-gitgutter')
+
 call dein#end()
+if dein#check_install()
+    call dein#install()
+endif
 
 set nobomb
 set exrc
@@ -35,7 +110,11 @@ augroup vimrc
     autocmd!
 augroup END
 
-colorscheme elrond
+if dein#tap('vim-elrond')
+    colorscheme elrond
+else
+    colorscheme elflord
+endif
 
 if executable('rg')
 	set grepprg=rg\ --vimgrep
