@@ -131,6 +131,9 @@ nnoremap <silent> <C-l> <C-w>l
 " Manually re-format a paragraph of text
 nnoremap <silent> Q gwip
 
+" For coherency with C/D
+cmap Y y$
+
 " Forgot root?
 if executable('doas')
     cmap w!! w !doas tee % > /dev/null
