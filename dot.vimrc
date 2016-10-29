@@ -315,6 +315,7 @@ else
         let g:completor_clang_binary = '/usr/bin/clang'
         let g:completor_node_binary = '/usr/bin/node'
         let g:completor_disable_ultisnips = 1
+        let g:completor_min_chars = 3
     elseif dein#tap('deoplete.nvim')
         let g:deoplete#enable_at_startup = 1
         call deoplete#custom#set('buffer', 'min_pattern_length', 3)
