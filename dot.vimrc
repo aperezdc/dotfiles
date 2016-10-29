@@ -46,10 +46,9 @@ if has('nvim')
     call s:plug('Shougo/neoinclude.vim')
     call s:plug('zchee/deoplete-jedi')
     call s:plug('zchee/deoplete-clang')
-    call s:plug('iamcco/deoplete-ternjs')
 else
-    call s:plug('junegunn/fzf')
-    call s:plug('junegunn/fzf.vim', {'depends': 'fzf'})
+    call s:plug('junegunn/fzf', {'merged': 0})
+    call s:plug('junegunn/fzf.vim', {'merged': 0})
     if v:version < 800
         call s:plug('aperezdc/vim-lift')
     else
