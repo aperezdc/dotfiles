@@ -20,7 +20,7 @@ function! s:plug(name, ...)
 endfunction
 
 call dein#begin('~/.vim/bundle', [expand('<sfile>')])
-call s:plug('tpope/vim-sensible')
+call s:plug('tpope/vim-sensible', {'if': '!has("nvim")'})
 call s:plug('tpope/vim-fugitive')
 call s:plug('tpope/vim-commentary')
 call s:plug('tpope/vim-characterize')
