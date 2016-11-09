@@ -1,0 +1,45 @@
+asciify_paths: yes
+
+import:
+  move: yes
+  resume: ask
+  languages: [en]
+
+match:
+  preferred:
+    countries: ['US', 'GB|UK', 'ES', 'FI']
+    media: ['CD', 'Vinyl', 'Digital Media|File']
+    original_year: yes
+
+paths:
+  singleton: '%the{${albumartist}}/${title}'
+  default: '${albumartist}/${album}%if{%aunique{}, %aunique{}}/${disc_and_track}${title}'
+  compilation: 'Various Artists/${album}%if{%aunique{}, %aunique{}}/${disc_and_track}${artist} - ${title}'
+
+plugins: discogs duplicates edit fetchart fromfilename fuzzy info inline lastgenre mbsync missing permissions play random replaygain scrub the web zero chroma acousticbrainz mbsubmit
+
+fetchart:
+  minwidth: 250
+  maxwidth: 600
+  enforce_ratio: yes
+
+item_fields:
+  disc_and_track: u'%02i. %02i. ' % (disc, track) if disctotal > 1 else u'%02i. ' % (track)
+
+chroma:
+  auto: no
+
+play:
+  command: 'mpv -vo null ${args}'
+  raw: yes
+
+replaygain:
+  backend: gstreamer
+
+zero:
+  update_database: true
+  fields: month day comments images
+  comments:
+    - EAC
+    - LAME
+    - from.+collection
