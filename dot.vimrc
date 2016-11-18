@@ -97,9 +97,12 @@ set infercase
 set linebreak
 set tabstop=4
 set shiftwidth=4
+set textwidth=78
+set colorcolumn=81
 set encoding=utf-8
 set titlelen=0
 set titlestring=[%t]%m
+set nowrap
 set whichwrap+=[,],<,>
 set wildmode=longest,list:longest,full
 set wildignore+=*.o,*.a,a.out
