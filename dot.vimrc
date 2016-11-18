@@ -61,6 +61,8 @@ if !dein#tap('completor.vim')
 endif
 
 call s:plug('romainl/vim-qf')
+call s:plug('yssl/QFEnter')
+call s:plug('mhinz/vim-grepper')
 call s:plug('tpope/vim-repeat')
 call s:plug('pbrisbin/vim-mkdir')
 call s:plug('wellle/targets.vim')
@@ -336,3 +338,23 @@ highlight Flashy term=reverse cterm=reverse
 " Plugin: expand-region
 map <CR>        <Plug>(expand_region_expand)
 map <Backspace> <Plug>(expand_region_shrink)
+
+" Plugin: Grepper
+let g:grepper = {
+            \   'tools': ['rg', 'git', 'grep'],
+            \   'simple_prompt': 1
+            \ }
+nmap gs  <Plug>(GrepperOperator)
+xmap gs  <Plug>(GrepperOperator)
+nnoremap <leader>* :Grepper -tool rg -cword -noprompt<cr>
+nnoremap <leader>g :Grepper -tool rg<cr>
+nnoremap <leader>G :Grepper -tool git<cr>
+
+" Plugin: qf
+nmap <F5>   <Plug>QfSwitch
+nmap <F6>   <Plug>QfCtoggle
+nmap <F7>   <Plug>QfCprevious
+nmap <F8>   <Plug>QfCnext
+nmap <C-F6> <Plug>QfLtoggle
+nmap <C-F7> <Plug>QfLprevious
+nmap <C-F8> <Plug>QfLnext
