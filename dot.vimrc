@@ -215,6 +215,24 @@ autocmd vimrc FileType dirvish keeppatterns g@\v/\.[^\/]+/?$@d
 autocmd vimrc FileType help wincmd L
 autocmd vimrc FileType git wincmd L | wincmd x
 
+" Try to show cursorline only in windows which have focus.
+autocmd vimrc WinEnter,FocusGained * set cursorline
+autocmd vimrc WinLeave,FocusLost * set nocursorline
+
+" Open location/quickfix window whenever a command is executed and the
+" list gets populated with at least one valid location.
+autocmd vimrc QuickFixCmdPost [^l]* cwindow
+autocmd vimrc QuickFixCmdPost    l* lwindow
+
+" Select whatever has just been pasted or read with :read!
+nnoremap gV `[V`]
+
+" Switch between the current and the last visited buffer.
+nnoremap <silent> <S-Tab> :b#<cr>
+
+" Make . work with visually selected lines
+vnoremap . :norm.<cr>
+
 " Alt-{arrow} for window movements
 nnoremap <silent> <M-Left>  <C-w>h
 nnoremap <silent> <M-Down>  <C-w>j
