@@ -72,7 +72,6 @@ call s:plug('jamessan/vim-gnupg')
 call s:plug('wting/rust.vim')
 call s:plug('haya14busa/incsearch.vim')
 call s:plug('haya14busa/incsearch-fuzzy.vim')
-call s:plug('terryma/vim-expand-region')
 call s:plug('junegunn/vim-easy-align')
 call s:plug('Shougo/dein.vim')
 
