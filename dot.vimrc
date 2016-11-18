@@ -79,8 +79,6 @@ endif
 unlet s:local_plugs
 delfunction s:plug
 
-call dein#disable('vim-gitgutter')
-
 call dein#end()
 if dein#check_install()
     call dein#install()
