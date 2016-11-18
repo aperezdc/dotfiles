@@ -61,6 +61,7 @@ if !dein#tap('completor.vim')
 endif
 
 call s:plug('romainl/vim-qf')
+call s:plug('romainl/vim-qlist')
 call s:plug('yssl/QFEnter')
 call s:plug('mhinz/vim-grepper')
 call s:plug('tpope/vim-repeat')
