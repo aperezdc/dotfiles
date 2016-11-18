@@ -36,10 +36,10 @@ call s:plug('aperezdc/hipack-vim')
 
 call s:plug('ledger/vim-ledger')
 
-call s:plug('Shougo/vimproc.vim', {'build': 'make', 'rev': '*'})
+call s:plug('junegunn/fzf', {'merged': 0})
+call s:plug('junegunn/fzf.vim', {'merged': 0})
+
 if has('nvim')
-    call s:plug('Shougo/denite.nvim')
-    call s:plug('Shougo/neomru.vim')
     call s:plug('Shougo/deoplete.nvim')
     call s:plug('Shougo/neco-vim')
     call s:plug('Shougo/neco-syntax')
@@ -48,8 +48,6 @@ if has('nvim')
     call s:plug('zchee/deoplete-clang')
     call s:plug('zchee/deoplete-zsh')
 else
-    call s:plug('junegunn/fzf', {'merged': 0})
-    call s:plug('junegunn/fzf.vim', {'merged': 0})
     if v:version < 800
         call s:plug('aperezdc/vim-lift')
     else
