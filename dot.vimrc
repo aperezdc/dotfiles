@@ -212,16 +212,11 @@ autocmd vimrc FileType dirvish keeppatterns g@\v/\.[^\/]+/?$@d
 autocmd vimrc FileType help wincmd L
 autocmd vimrc FileType git wincmd L | wincmd x
 
-" dwm-like window movements
-if has('nvim')
-    nnoremap <silent> <BS>  <C-w>h
-    nnoremap <silent> <NL>  <C-w>j
-else
-    nnoremap <silent> <C-h> <C-w>h
-    nnoremap <silent> <C-j> <C-w>j
-endif
-nnoremap <silent> <C-k> <C-w>k
-nnoremap <silent> <C-l> <C-w>l
+" Alt-{arrow} for window movements
+nnoremap <silent> <M-Left>  <C-w>h
+nnoremap <silent> <M-Down>  <C-w>j
+nnoremap <silent> <M-Up>    <C-w>k
+nnoremap <silent> <M-Right> <C-w>l
 
 " Manually re-format a paragraph of text
 nnoremap <silent> Q gwip
