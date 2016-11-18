@@ -47,6 +47,7 @@ if has('nvim')
     call s:plug('zchee/deoplete-jedi')
     call s:plug('zchee/deoplete-clang')
     call s:plug('zchee/deoplete-zsh')
+    call s:plug('carlitux/deoplete-ternjs')
 else
     if v:version < 800
         call s:plug('aperezdc/vim-lift')
