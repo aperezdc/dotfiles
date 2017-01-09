@@ -165,7 +165,7 @@ if &term =~ "screen"
     set t_Co=16
 endif
 
-if $TERM =~ "xterm-256color" || $TERM =~ "screen-256color" || $TERM =~ "xterm-termite" || $TERM =~ "gnome-256color" || $COLORTERM =~ "gnome-terminal"
+if $TERM =~ "tmux-256color" || $TERM =~ "xterm-256color" || $TERM =~ "screen-256color" || $TERM =~ "xterm-termite" || $TERM =~ "gnome-256color" || $COLORTERM =~ "gnome-terminal"
     set t_Co=256
     set t_AB=[48;5;%dm
     set t_AF=[38;5;%dm

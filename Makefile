@@ -29,11 +29,22 @@ endef
 
 $(foreach S,$(SUBDIRS),$(eval $(call subdir-template,$S)))
 
+all-topdir: $(HOME)/.terminfo/t/tmux-256color
+ALL_TARGETS += all-topdir
+
+$(HOME)/.terminfo/t/tmux-256color: tmux-256color.term
+	tic $<
+
+clean-topdir:
+	$(RM) $(HOME)/.terminfo/t/tmux-256color
+CLEAN_TARGETS += clean-topdir
+
+.PHONY: all-topdir clean-topdir
+
 all: $(ALL_TARGETS)
 dirs: $(DIRS_TARGETS)
 clean: $(CLEAN_TARGETS)
 .PHONY: all dirs clean
-
 
 # vim:ft=make
 #
