@@ -142,17 +142,16 @@ endif
 
 function! s:StripTrailingWhitespace()
     if !&binary && &filetype != 'diff'
-        normal mz
-        normal Hmy
-        %s/\s+$//e
-        normal 'yz<CR>
-        normal `z
+        let l = line('.')
+        let c = col('.')
+        %s/\s\+$//e
+        call cursor(l, c)
     endif
 endfunction
 
 command! -bar StripTrailingWhitespace silent call <SID>StripTrailingWhitespace()
 
-if &term =~ "screen"
+if &term =~# '^screen' || &term =~# '^tmux'
     map  <silent> [1;5D <C-Left>
     map  <silent> [1;5C <C-Right>
     lmap <silent> [1;5D <C-Left>

@@ -247,7 +247,11 @@ if [[ -n ${TMUX} && -n ${commands[tmux]} ]];then
 	case ${REAL_TERM} in
 		*256color) ;&
 		TERM=fbterm)
-			TERM=screen-256color ;;
+			if infocmp tmux-256color &> /dev/null ; then
+				TERM=tmux-256color
+			else
+				TERM=screen-256color
+			fi ;;
 		*)
 			TERM=screen
 	esac
@@ -283,25 +287,10 @@ case ${REAL_TERM} in
 		;;
 esac
 
-if [[ ${COLORTERM} = gnome-terminal || ${COLORTERM} = drop-down-terminal || -n ${VTE_VERSION} ]] ; then
-	if [[ -n ${TMUX} ]] ; then
-		TERM='screen-256color'
-	else
-		if [[ ${TERM} == xterm-termite && ! -r /usr/share/terminfo/x/xterm-termite ]] ; then
-			TERM='xterm-256color'
-		fi
-		if [[ ${TERM} != xterm-termite ]] ; then
-			if [[ -n ${VTE_VERSION} && -r /usr/share/terminfo/g/gnome-256color ]] ; then
-				TERM='gnome-256color'
-			elif [[ ${TERM} = xterm* ]] ; then
-				TERM='xterm-256color'
-			fi
-		fi
-	fi
-	if [[ -r /etc/profile.d/vte.sh ]] ; then
-		TERM=${REAL_TERM} source /etc/profile.d/vte.sh
-	fi
-elif [[ ${TERM} = screen* ]] ; then
+if [[ -r /etc/profile.d/vte.sh ]] ; then
+	TERM=${REAL_TERM} source /etc/profile.d/vte.sh
+fi
+if [[ ${TERM} = screen* || ${TERM} = tmux-256color ]] ; then
 	tput smkx  # SRSLY?
 fi
 
