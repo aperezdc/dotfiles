@@ -160,10 +160,17 @@ EOM
 }
 
 
-declare -a build_options=( --gtk )
+declare -a build_options=( )
+declare build_port='gtk'
 for flag in "$@"
 do
 	case ${flag} in
+		--gtk)
+			build_port='gtk'
+			;;
+		--wpe)
+			build_port='wpe'
+			;;
 		--jobs=*)
 			parallel_jobs=${flag#*=}
 			;;
@@ -200,10 +207,12 @@ do
 			;;
 		*)
 			# Pass down unrecognized flags to build-webkit
-			build_options=( "${build_options[@]}" "${flag}" )
+			build_options+=( "${flag}" )
 			;;
 	esac
 done
+# Prepend the flag used to indicate the port being built.
+build_options=( "--${build_port}" "${build_options[@]}" )
 
 # Detect whether we are building inside jhbuild, to adjust paths accordingly
 if [[ -n ${JHBUILD_PREFIX} ]] ; then
