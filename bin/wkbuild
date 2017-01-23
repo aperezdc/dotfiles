@@ -141,7 +141,7 @@ setup_compiler_gcc () {
 do_help () { cat <<EOM
 Usage: $(basename "$0") [options]
 
-Availabl options:
+Available options:
 
   --jobs=N          Use N parallel jobs.
   --cmake=ARG       Pass ARG down to CMake.
@@ -153,6 +153,7 @@ Availabl options:
   --libc++          Use Clang's libc++.
   --icecc           Use IceCC to do a distributed builf (forces --gcc).
   --asan            Build with Clang's Address Sanitizer (forces --clang).
+  --gtk, --wpe      Choose which port to build (default: gtk).
 
 Unrecognized options are passed down to the build system.
 
