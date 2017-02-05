@@ -10,10 +10,6 @@ stty -ixon -ixoff
 # The following lines were added by compinstall
 zstyle :compinstall filename '/home/aperez/.zshrc'
 
-if [[ -d ~/.zsh/functions ]] ; then
-	fpath=( ${fpath} ~/.zsh/functions )
-fi
-
 if [[ -d ~/.zsh/zgen ]] ; then
 	source ~/.zsh/zgen/zgen.zsh
 	if ! zgen saved ; then
@@ -47,8 +43,39 @@ if [[ ! -d ~/.tmux/plugins/tpm ]] ; then
 	}
 fi
 
-autoload -Uz compinit
-compinit
+function cmd-completion () {
+	local name=$1
+	shift
+	local binpath=$(whence "${name}")
+	local compfile="${HOME}/.zsh/functions/_${name}"
+
+	compdef "_${name}" "${name}"
+
+	# Check whether the program exists and is executable. Otherwise skip.
+	if [[ -z ${binpath} || ! -x ${binpath} ]] ; then
+		return
+	fi
+
+	# No need to update the completion file if it already exists and it's
+	# newer than the binary for which the completions are being generated.
+	if [[ -d ~/.zsh/functions && -r ${compfile} && ${compfile} -nt ${binpath} ]] ; then
+		return
+	fi
+
+	# Generate.
+	echo ">> Updating completion: ${binpath} $* → ${compfile})"
+	mkdir -p ~/.zsh/functions
+	"${binpath}" "$@" > "${compfile}"
+}
+
+cmd-completion rustup completions zsh
+
+unfunction cmd-completion  # Not needed anymore
+
+if [[ -d ~/.zsh/functions ]] ; then
+	fpath=( ~/.zsh/functions ${fpath} )
+	autoload -Uz ~/.zsh/functions/*(:t)
+fi
 
 # End of lines added by compinstall
 # Lines configured by zsh-newuser-install
