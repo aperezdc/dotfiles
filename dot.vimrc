@@ -358,14 +358,20 @@ else
 endif
 
 " Plugin: insearch + insearch-fuzzy
-map <Space>  <Plug>(incsearch-forward)
-map /        <Plug>(incsearch-forward)
-map ?        <Plug>(incsearch-backward)
-map g/       <Plug>(incsearch-stay)
-map z<Space> <Plug>(incsearch-fuzzyspell-/)
-map z/       <Plug>(incsearch-fuzzyspell-/)
-map z?       <Plug>(incsearch-fuzzyspell-?)
-map zg/      <Plug>(incsearch-fuzzyspell-stay)
+if dein#tap('haya14busa/incsearch.vim')
+    map <Space>  <Plug>(incsearch-forward)
+    map /        <Plug>(incsearch-forward)
+    map ?        <Plug>(incsearch-backward)
+    map g/       <Plug>(incsearch-stay)
+    if dein#tap('haya14busa/incsearch.vim')
+        map z<Space> <Plug>(incsearch-fuzzyspell-/)
+        map z/       <Plug>(incsearch-fuzzyspell-/)
+        map z?       <Plug>(incsearch-fuzzyspell-?)
+        map zg/      <Plug>(incsearch-fuzzyspell-stay)
+    endif
+else
+    map <Space> /
+endif
 
 highlight Flashy term=reverse cterm=reverse
 
