@@ -69,19 +69,29 @@ call s:plug('tpope/vim-repeat')
 call s:plug('pbrisbin/vim-mkdir')
 call s:plug('wellle/targets.vim')
 call s:plug('indentpython')
+call s:plug('a.vim')
 call s:plug('ConradIrwin/vim-bracketed-paste')
 call s:plug('jamessan/vim-gnupg')
 call s:plug('wting/rust.vim')
-call s:plug('haya14busa/incsearch.vim')
-call s:plug('haya14busa/incsearch-fuzzy.vim')
+" call s:plug('haya14busa/incsearch.vim')
+" call s:plug('haya14busa/incsearch-fuzzy.vim')
 call s:plug('junegunn/vim-easy-align')
 call s:plug('Shougo/dein.vim')
+
+call s:plug('vim-pandoc/vim-pandoc')
+call s:plug('vim-pandoc/vim-pandoc-syntax')
+call s:plug('thirtythreeforty/lessspace.vim')
 
 if len(s:local_plugs)
     call dein#local('~/devel', {'frozen': 1}, s:local_plugs)
 endif
 unlet s:local_plugs
 delfunction s:plug
+
+call dein#add('/usr/share/myrddin/vim', {
+            \ 'name': 'myrddin.vim',
+            \ 'if': isdirectory('/usr/share/myrddin/vim'),
+            \ 'frozen': 1 })
 
 call dein#end()
 if dein#check_install()
