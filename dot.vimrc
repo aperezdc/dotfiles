@@ -373,12 +373,6 @@ else
     map <Space> /
 endif
 
-highlight Flashy term=reverse cterm=reverse
-
-" Plugin: expand-region
-map <CR>        <Plug>(expand_region_expand)
-map <Backspace> <Plug>(expand_region_shrink)
-
 " Plugin: Grepper
 let g:grepper = {
             \   'tools': ['rg', 'git', 'grep'],
