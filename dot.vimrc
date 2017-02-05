@@ -246,11 +246,15 @@ nnoremap <silent> <S-Tab> :b#<cr>
 " Make . work with visually selected lines
 vnoremap . :norm.<cr>
 
-" Alt-{arrow} for window movements
-nnoremap <silent> <M-Left>  <C-w>h
-nnoremap <silent> <M-Down>  <C-w>j
-nnoremap <silent> <M-Up>    <C-w>k
-nnoremap <silent> <M-Right> <C-w>l
+" {Ctrl,Alt}-{arrow} for window movements
+nnoremap <silent> <M-Left>  <C-w><C-h>
+nnoremap <silent> <M-Down>  <C-w><C-j>
+nnoremap <silent> <M-Up>    <C-w><C-k>
+nnoremap <silent> <M-Right> <C-w><C-l>
+nnoremap <silent> <C-h>     <C-w><C-h>
+nnoremap <silent> <C-j>     <C-w><C-j>
+nnoremap <silent> <C-k>     <C-w><C-k>
+nnoremap <silent> <C-l>     <C-w><C-l>
 
 " Manually re-format a paragraph of text
 nnoremap <silent> Q gwip
