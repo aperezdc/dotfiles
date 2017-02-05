@@ -147,7 +147,7 @@ else
 endif
 
 if executable('rg')
-	set grepprg=rg\ --vimgrep
+    set grepprg=rg\ --vimgrep
 elseif executable('ag')
     set grepprg=ag\ --nogroup\ --nocolor\ --ignore-case\ --column
     set grepformat=%f:%l:%c:%m,%f:%l:%m
@@ -288,12 +288,13 @@ if dein#tap('fzf.vim')
     nnoremap <silent> <Leader>m :<C-u>History<cr>
     nnoremap <silent> <Leader>b :<C-u>Buffers<cr>
     nnoremap <silent> <Leader><F1> :<C-u>Helptags<cr>
+    nnoremap <silent> <F12> :<C-u>Buffers<cr>
 elseif dein#tap('denite.nvim')
     call denite#custom#source('_', 'matchers', ['matcher_fuzzy'])
     call denite#custom#source('file_mru', 'converters', ['converter_relative_word'])
 
     call denite#custom#alias('source', 'file_rec/git', 'file_rec')
-    call denite#custom#var('file_rec/git', 'command', 
+    call denite#custom#var('file_rec/git', 'command',
                 \ ['git', 'ls-files', '-co', '--exclude-standard'])
 
     if executable('rg')
