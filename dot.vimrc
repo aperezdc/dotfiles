@@ -408,3 +408,9 @@ let g:pandoc#keyboard#sections#header_style = 's'
 let g:pandoc#keyboard#wrap_cursor = 1
 let g:pandoc#command#latex_engine = 'pdflatex'
 let g:pandoc#formatting#mode = 'haA'
+
+" Find out where rustup has placed the Rust sources.
+if executable('rustup')
+    let $RUST_SRC_PATH = fnamemodify(system('rustup which cargo'), ':h:h')
+                \ . '/lib/rustlib/src/rust/src/'
+endif
