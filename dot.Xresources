@@ -16,11 +16,12 @@ XTerm*visualBellLine: true
 XTerm*eightBitInput: false
 XTerm*scrollBar: false
 XTerm*vt100.toolBar: false
-XTerm*vt100.allowBoldFonts: false
+XTerm*vt100.allowBoldFonts: true
 XTerm*vt100.background: black
 XTerm*vt100.foreground: grey80
-XTerm*vt100.cursorColor: green
-XTerm*vt100.faceName: PragmataPro Mono
+XTerm*vt100.cursorColor: #ff7a7a
+XTerm*vt100.faceName: Iosevka Term
+!XTerm*vt100.font: -*-terminus-bold-*-*-*-14-*-*-*-*-*-iso10646-1
 XTerm*vt100.faceSize: 12
 XTerm*vt100.faceNameDoublesize: VL Gothic
 XTerm*vt100.deleteIsDEL: true
@@ -36,14 +37,19 @@ UXTerm*visualBellLine: true
 UXTerm*eightBitInput: false
 UXTerm*scrollBar: false
 UXTerm*vt100.toolBar: false
-UXTerm*vt100.allowBoldFonts: false
+UXTerm*vt100.allowBoldFonts: true
 UXTerm*vt100.background: black
 UXTerm*vt100.foreground: grey80
-UXTerm*vt100.cursorColor: green
-UXTerm*vt100.faceName: PragmataPro Mono
-UXTerm*vt100.faceSize: 12
-UXTerm*vt100.faceNameDoublesize: VL Gothic
-UXTerm*vt100.deleteIsDEL: true
+UXTerm*vt100.cursorColor: #aa0033
+UXTerm*vt100.faceName: Inconsolata
+!UXTerm*vt100.faceName: PragmataPro Mono
+!UXTerm*vt100.font: -*-ttyp0-medium-r-*-*-17-*-*-*-*-*-iso10646-1
+!UXTerm*vt100.boldFont: -*-ttyp0-bold-r-*-*-17-*-*-*-*-*-iso10646-1
+UXTerm*vt100.font: -*-gohufont-medium-r-normal-*-14-*-*-*-c-80-iso10646-1
+UXTerm*vt100.boldFont: -*-gohufont-bold-r-normal-*-14-*-*-*-c-80-iso10646-1
+!UXTerm*vt100.faceSize: 13
+!UXTerm*vt100.faceNameDoublesize: VL Gothic
+UXTerm*vt100.deleteIsDEL: false
 UXTerm*charClass: 33:48,35-38:48,39:43,42-47:48,58-59:48,61:48,63-64:48,126:48
 UXTerm*loginShell: true
 UXTerm*termName: xterm-256color
@@ -54,7 +60,7 @@ Notmuch.iconName: evolution
 
 URxvt.geometry: 90x42
 URxvt.font: xft:PragmataPro:size=12
-URxvt.boldFont:
+URxvt.boldFont: xft:PragmataPro:size=12:bold
 URxvt.urgentOnBell: true
 URxvt.print-pipe: cat > $(TMPDIR=$HOME mktemp urxvt.XXXXXX)
 URxvt.scrollBar: false

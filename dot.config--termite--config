@@ -2,16 +2,27 @@
 scroll_on_output = false
 scroll_on_keystroke = true
 audible_bell = false
-mouse_autohide = false
+mouse_autohide = true
 allow_bold = true
 dynamic_title = true
 urgent_on_bell = true
 clickable_url = true
+# font = Fira Mono 11
 # font = Inconsolata 12
-# font = terminus 11
-# font = gohufont
-font = PragmataPro 12
-# font = mononoki 12
+# font = terminus bold 11
+# font = gohufont bold
+# font = PragmataPro 11.25
+# font = mononoki 11.5
+font = Iosevka Term 11.5
+# font = Source Code Pro 10.5
+# font = CamingoCode 10.5
+# font = Noto Mono 11
+# font = Anonymous Pro 11.75
+# font = Courier Prime Code 11.5
+# font = D2Coding 11
+# font = Fantasque Sans Mono 12
+# font = Hack 10.5
+# font = Roboto Mono 10.5
 scrollback_lines = 1000
 search_wrap = true
 icon_name = terminal
@@ -27,7 +38,7 @@ cursor_shape = block
 #browser = xdg-open
 
 # set size hints for the window
-#size_hints = false
+size_hints = true
 
 # Hide links that are no longer valid in url select overlay mode
 filter_unmatched_urls = true
@@ -36,16 +47,16 @@ filter_unmatched_urls = true
 #modify_other_keys = false
 
 [colors]
-cursor = #993333
-foreground = #dcdccc
+cursor = #aa0033
+foreground = #dcdcdc
 foreground_bold = #ffffff
-background = #0a0a0a
+background = #040404
 
 # 20% background transparency (requires a compositor)
 #background = rgba(63, 63, 63, 0.8)
 
 # if unset, will reverse foreground and background
-highlight = #2f2f2f
+highlight = #3f3f3f
 
 # colors from color0 to color254 can be set
 # color0 = #3f3f3f
@@ -65,13 +76,31 @@ highlight = #2f2f2f
 # color14 = #93e0e3
 # color15 = #ffffff
 
+color0  = #000000
+color1  = #aa0000
+color2  = #00aa00
+color3  = #aa5500
+color4  = #2244ff
+color5  = #aa00aa
+color6  = #00aaaa
+color7  = #bbbbbb
+color8  = #777777
+color9  = #ff5555
+color10 = #55ff55
+color11 = #ffff55
+color12 = #5599ff
+color13 = #ff55ff
+color14 = #55ffff
+color15 = #ffffff
+
 [hints]
-font = PragmataPro 13
+# font = PragmataPro 13
+# font = PragmataPro 11.25
 #foreground = #dcdccc
 #background = #3f3f3f
 #active_foreground = #e68080
 #active_background = #3f3f3f
-#padding = 2
+padding = 3
 #border = #3f3f3f
 #border_width = 0.5
 #roundness = 2.0
