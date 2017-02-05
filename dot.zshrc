@@ -382,13 +382,18 @@ fi
 export EMAIL='aperez@igalia.com'
 export NAME='Adrian Perez'
 
-for i in nvim vim e3vi vi zile nano pico ; do
+for i in vim nvim e3vi vi zile nano pico ; do
 	i=$(whence -p "${i}")
 	if [[ -x ${i} ]] ; then
 		export EDITOR=${i}
 		break
 	fi
 done
+if [[ ${EDITOR} = */nvim || ${EDITOR} = */vim ]] ; then
+	alias vi="${EDITOR}"
+	alias view="${EDITOR} -R"
+	alias vimdiff="${EDITOR} -d"
+fi
 
 for i in less most more ; do
 	i=$(whence -p "${i}")
