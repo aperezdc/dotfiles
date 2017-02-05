@@ -269,8 +269,14 @@ function precmd_vcs_info_prompt {
 }
 precmd_functions+=(precmd_vcs_info_prompt)
 
+# Have Zsh report the times used by commands. Also, use this value to determine
+# when to emit a bell to the terminal, so it does not beep so often.
+REPORTTIME=5
+
 function precmd_bell {
-	printf '\a'
+	if [[ ${TTYIDLE} -gt $(( REPORTTIME * 6 )) ]] ; then
+		printf '\a'
+	fi
 }
 precmd_functions+=(precmd_bell)
 
@@ -321,9 +327,6 @@ PROMPT=$'%{%B%(!.$fg[red].$fg[green])%}%m%{%b%}${zsh_chroot_info}${zsh_jhbuild_i
 
 # Don't count common path separators as word characters
 WORDCHARS=${WORDCHARS//[&.;\/]}
-
-# Words cannot express how fucking sweet this is
-REPORTTIME=5
 
 # Don't glob with find or wget
 for command in find wget curl; alias ${command}="noglob ${command}"
