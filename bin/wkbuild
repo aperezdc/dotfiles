@@ -29,8 +29,8 @@ use_libcxx=false
 parallel_jobs=$(getconf _NPROCESSORS_ONLN)
 
 # Arguments passed down to Ninja in --cmakeargs= and --makeargs=
-cmakeargs=()
-makeargs=()
+declare -a cmakeargs=()
+declare -a makeargs=()
 
 declare -r clang_opts=(
 	'-ferror-limit=1'
