@@ -114,6 +114,8 @@ set colorcolumn=81
 set encoding=utf-8
 set titlelen=0
 set titlestring=[%t]%m
+set scrolloff=3
+set sidescroll=5
 set nowrap
 set whichwrap+=[,],<,>
 set wildmode=longest,list:longest,full
