@@ -398,3 +398,13 @@ nmap <F8>   <Plug>QfCnext
 nmap <C-F6> <Plug>QfLtoggle
 nmap <C-F7> <Plug>QfLprevious
 nmap <C-F8> <Plug>QfLnext
+
+" Plugin: pandoc
+function! PandocXdgOpen(file)
+    return 'xdg-open ' . shellescape(expand(a:file,':p'))
+endfunction
+let g:pandoc#command#custom_open = 'PandocXdgOpen'
+let g:pandoc#keyboard#sections#header_style = 's'
+let g:pandoc#keyboard#wrap_cursor = 1
+let g:pandoc#command#latex_engine = 'pdflatex'
+let g:pandoc#formatting#mode = 'haA'
