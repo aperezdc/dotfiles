@@ -65,7 +65,15 @@ setup_icecc () {
 		die "Cannot use --asan and --icecc at the same time"
 	fi
 
-	export CCACHE_PREFIX=/usr/lib/icecream/bin/icecc
+	local icecc_path=$(type -P icecc)
+	if [[ -z ${icecc_path} && -x /usr/lib/icecream/bin/icecc ]] ; then
+		icecc_path=/usr/lib/icecream/bin/icecc
+	elif [[ -z ${icecc_path} ]] ; then
+		echo 'IceCC not found. Is it installed?' 1>&2
+		exit 1
+	fi
+
+	export CCACHE_PREFIX=${icecc_path}
 	if [[ -n ${ICECC_VERSION} ]] ; then
 		info "icecc" "Using preset toolchain"
 	else
@@ -76,7 +84,7 @@ setup_icecc () {
 			opts+=( "$(which gcc)" "$(which g++)" )
 		fi
 		info "icecc" "Creating toolchain tarball: ${opts[*]}"
-		export ICECC_VERSION="$(pwd)/$(/usr/lib/icecream/bin/icecc "${opts[@]}" 2>&1 | awk '/^creating/{print $2}')"
+		export ICECC_VERSION="$(pwd)/$("${icecc_path}" "${opts[@]}" 2>&1 | awk '/^creating/{print $2}')"
 	fi
 	info "icecc" "${ICECC_VERSION}"
 
