@@ -272,7 +272,7 @@ fi
 # http://sourceforge.net/p/tmux/mailman/message/32751663/ by Nicholas Marriott.
 if [[ -n ${TMUX} && -n ${commands[tmux]} ]];then
 	case ${REAL_TERM} in
-		*256color) ;&
+		*256color | xterm-termite) ;&
 		TERM=fbterm)
 			if infocmp tmux-256color &> /dev/null ; then
 				TERM=tmux-256color
