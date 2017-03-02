@@ -10,27 +10,31 @@ stty -ixon -ixoff
 # The following lines were added by compinstall
 zstyle :compinstall filename '/home/aperez/.zshrc'
 
-if [[ -d ~/.zsh/zgen ]] ; then
-	source ~/.zsh/zgen/zgen.zsh
-	if ! zgen saved ; then
-		zgen load aperezdc/virtualz
-		zgen load aperezdc/rockz
-		zgen load kyanagi/faster-vcs-info
-		zgen load jreese/zsh-titles
-		zgen load RobSis/zsh-completion-generator
-		zgen load RobSis/zsh-reentry-hook
-		zgen load zsh-users/zsh-syntax-highlighting
-		zgen load zsh-users/zsh-completions src
-		zgen load Tarrasch/zsh-autoenv
-		zgen save
+: ${ZPLUG_HOME:=${HOME}/.zplug}
+
+if [[ -d ${ZPLUG_HOME} && -r ${ZPLUG_HOME}/repos/zplug/zplug/init.zsh ]] ; then
+	source "${ZPLUG_HOME}/repos/zplug/zplug/init.zsh"
+	if ! zplug check --verbose ; then
+		printf 'Install? [y/N] '
+		if read -q ; then
+			echo
+			zplug install
+		fi
+		zplug load --verbose
+	else
+		zplug load
 	fi
 else
-	echo "zgen not available, set it up with 'zgen-install' (needs Git and Internet access)"
-	zgen-install () {
-		[[ -d ~/.zsh ]] || mkdir ~/.zsh
-		git clone git://github.com/tarjoilija/zgen ~/.zsh/zgen
-		exec zsh -l
+	echo "zplug not available, set it up with 'zplug-install' (needs Git and Internet access)"
+	zplug-install () {
+		local zrepo="${ZPLUG_HOME:-${HOME}/.zplug}/repos/zplug/zplug"
+		if [[ ! -d ${zrepo}/.git ]] ; then
+			mkdir -p "${zrepo%/*}"
+			git clone https://github.com/zplug/zplug "${zrepo}"
+		fi
+		exec zsh -i
 	}
+	return 0
 fi
 
 if [[ ! -d ~/.tmux/plugins/tpm ]] ; then
@@ -224,13 +228,13 @@ zstyle ':vcs_info:*:prompt:*' nvcsformats   ""
 # Source: http://www.zsh.org/mla/workers/2011/msg00502.html
 
 # map alt-, to complete files
-zle -C complete-files complete-word _generic
-zstyle ':completion:complete-files:*' completer _files
-bindkey '^[,' complete-files
+# zle -C complete-files complete-word _generic
+# zstyle ':completion:complete-files:*' completer _files
+# bindkey '^[,' complete-files
 
 # Tab completion
-bindkey '^i' complete-word              # tab to do menu
-bindkey "\e[Z" reverse-menu-complete    # shift-tab to reverse menu
+# bindkey '^i' complete-word              # tab to do menu
+# bindkey "\e[Z" reverse-menu-complete    # shift-tab to reverse menu
 
 # Up/down arrow.
 # I want shared history for ^R, but I don't want another shell's activity to
@@ -450,6 +454,9 @@ if [[ -x /usr/bin/ccache ]] ; then
 		export CCACHE_DIR=/home/devel/.ccache
 	fi
 fi
+
+# Settings for zsh-completion-generator
+GENCOMPL_PY=python2
 
 # VirtualZ settings
 if [[ -d /devel/.virtualenvs ]] ; then
