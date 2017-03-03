@@ -429,6 +429,10 @@ for i in less most more ; do
 	i=$(whence -p "${i}")
 	if [[ -x ${i} ]] ; then
 		export PAGER=${i}
+		# Setup lesspipe colorizer.
+		if [[ ${i##*/} = less && ${LESSOPEN} = *lesspipe* && -x $(whence -p pygmentize) ]] ; then
+			export LESSCOLORIZER=pygmentize
+		fi
 		break
 	fi
 done
