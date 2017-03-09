@@ -110,7 +110,7 @@ URxvt.color7  : #aaaaaa
 URxvt.color15 : #ffffff
 
 rofi.modi:                           window,run,ssh
-rofi.font:                           PragmataPro 13
+rofi.font:                           Iosevka 15
 ! rofi.color-normal:                   #fdf6e3,#002b36,#eee8d5,#586e75,#eee8d5
 rofi.color-normal:                   #222222,#888888,#2A2B2B,#285577,#ffffff
 rofi.color-urgent:                   #fdf6e3,#dc322f,#eee8d5,#dc322f,#fdf6e3
