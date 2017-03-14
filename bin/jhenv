@@ -1,0 +1,131 @@
+#! /bin/bash
+# vim: set ts=4 sw=4 noet
+#
+# jhenv
+# Copyright (C) 2017 Adrian Perez <aperez@igalia.com>
+#
+# Distributed under terms of the MIT license.
+#
+set -e
+
+die () {
+	if [[ $# -eq 0 ]] ; then
+		cat
+	else
+		echo "$*"
+	fi
+	exit 1
+} 1>&2
+
+
+[[ $# -ge 1 ]] || die <<-EOF
+	$0: Prefix directory not specified
+	Usage: $0 <PATH>
+	EOF
+
+declare -r prefix=$(realpath "$1")
+shift
+
+# Usage: add <position> <var> <default> <items...>
+#
+declare -A export_vars
+
+add () {
+	local position=$1
+	local variable=$2
+
+	local value=${export_vars[${variable}]}
+
+	# If empty, try to pick the value from the environment, or if that is
+	# empty use the default value passed to the function.
+	if [[ -z ${value} ]] ; then
+		eval eval "local env_value=\\'\${${variable}}\\'"
+		if [[ -n ${env_value} ]] ; then
+			value=${env_value}
+		elif [[ $3 != - ]] ; then
+			value=$3
+		fi
+	fi
+	shift 3
+
+	local -a items
+	local -A seen
+
+	# Add first elements either from the existing value, or the old one.
+	local item saved_IFS=${IFS}
+	IFS=':'
+	for item in ${value} ; do
+		if [[ -z ${seen[${item}]} ]] ; then
+			seen["${item}"]=1
+			items+=( "${item}" )
+		fi
+	done
+	IFS=${saved_IFS}
+
+	# Add now additional elements given as positional arguments.
+	for item in "$@" ; do
+		item=$(realpath -m "${prefix}/${item}")
+		if [[ -z ${seen[${item}]} ]] ; then
+			seen["${item}"]=1
+			case ${position} in
+				-p | --prepend)
+					items=( "${item}" "${items[@]}" )
+					;;
+				-a | --append)
+					items+=( "${item}" )
+					;;
+			esac
+		fi
+	done
+
+	# Reassemble back the value.
+	value=''
+	for item in "${items[@]}" ; do
+		value="${value}:${item}"
+	done
+	export_vars[${variable}]=${value:1}  # Remove the leading colon.
+}
+
+add -p PATH /bin:/sbin:/usr/bin:/usr/sbin bin sbin
+
+add -p MANPATH  - share/man
+add -p INFOPATH - share/info
+
+add -p C_INCLUDE_PATH     - include
+add -p OBJC_INCLUDE_PATH  - include
+add -p CPLUS_INCLUDE_PATH - include
+
+add -p LD_LIBRARY_PATH - lib
+
+add -p PERL5LIB - lib/perl5
+
+add -p ACLOCAL_PATH /usr/share/aclocal \
+	share/aclocal
+
+add -p PKG_CONFIG_PATH /usr/lib/pkgconfig:/usr/share/pkgconfig \
+	lib/pkgconfig share/pkgconfig
+
+add -p GI_TYPELIB_PATH /usr/lib/girepository-1.0 \
+	lib/girepository-1.0
+
+add -p XDG_DATA_DIRS   /usr/share share
+add -p XDG_CONFIG_DIRS /etc/xdg   etc/xdg
+
+#add -p XCURSOR_PATH - share/icons
+
+add -p GST_PLUGIN_PATH     - lib/gstreamer-0.10
+add -p GST_PLUGIN_PATH_1_0 - lib/gstreamer-1.0
+
+export_vars[GST_REGISTRY]="${prefix}/.gstreamer-0.10.registry"
+export_vars[GST_REGISTRY_1_0]="${prefix}/.gstreamer-1.0.registry"
+export_vars[JHENV]=${prefix}
+
+for v in "${!export_vars[@]}" ; do
+	eval "export ${v}='${export_vars[${v}]}'"
+done
+
+if [[ $# -eq 0 ]] ; then
+	exec bash
+else
+	exec "$@"
+fi
