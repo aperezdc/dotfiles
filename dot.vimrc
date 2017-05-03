@@ -40,6 +40,7 @@ call s:plug('aperezdc/hipack-vim')
 
 call s:plug('ledger/vim-ledger')
 call s:plug('cespare/vim-toml')
+call s:plug('zah/nim.vim')
 
 call s:plug('junegunn/fzf', {'merged': 0})
 call s:plug('junegunn/fzf.vim', {'merged': 0})
