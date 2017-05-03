@@ -92,6 +92,7 @@ call s:plug('Shougo/dein.vim')
 call s:plug('vim-pandoc/vim-pandoc')
 call s:plug('vim-pandoc/vim-pandoc-syntax')
 call s:plug('thirtythreeforty/lessspace.vim')
+call s:plug('docunext/closetag.vim')
 
 if len(s:local_plugs)
     call dein#local('~/devel', {'frozen': 1}, s:local_plugs)
