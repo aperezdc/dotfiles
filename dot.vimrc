@@ -246,6 +246,11 @@ nnoremap <silent> <S-Tab> :b#<cr>
 " Make . work with visually selected lines
 vnoremap . :norm.<cr>
 
+" Make <C-u> and <C-w> generate new undolist entries.
+" Tip from: http://vim.wikia.com/wiki/Recover_from_accidental_Ctrl-U
+inoremap <C-u> <C-g>u<C-u>
+inoremap <C-w> <C-g>u<C-w>
+
 " Alt+{arrow} for window movements
 nnoremap <silent> <M-Left>  <C-w><C-h>
 nnoremap <silent> <M-Down>  <C-w><C-j>
