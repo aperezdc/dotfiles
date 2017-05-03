@@ -1,21 +1,24 @@
 set nocompatible
 
 if !isdirectory(expand('~/.vim/bundle/dein.vim'))
-	!mkdir -p ~/.vim/bundle && git clone https://github.com/Shougo/dein.vim ~/.vim/bundle/dein.vim
+    !mkdir -p ~/.vim/bundle && git clone https://github.com/Shougo/dein.vim ~/.vim/bundle/dein.vim
 endif
 
 set runtimepath+=~/.vim/bundle/dein.vim
 
 let s:local_plugs = []
 
+let s:nvim_completion = 'deoplete'
+" let s:nvim_completion = 'ncm'
+
 function! s:plug(name, ...)
     let dirname = fnamemodify(a:name, ':t')
     let path = expand('~/devel/' . dirname)
     let opts = len(a:000) > 0 ? a:1 : {}
     if isdirectory(path)
-        call add(s:local_plugs, dirname)
+	call add(s:local_plugs, dirname)
     else
-        call dein#add(a:name, opts)
+	call dein#add(a:name, opts)
     endif
 endfunction
 
@@ -42,19 +45,25 @@ call s:plug('junegunn/fzf', {'merged': 0})
 call s:plug('junegunn/fzf.vim', {'merged': 0})
 
 if has('nvim')
-    call s:plug('Shougo/deoplete.nvim')
-    call s:plug('Shougo/neco-vim')
-    call s:plug('Shougo/neco-syntax')
-    call s:plug('Shougo/neoinclude.vim')
-    call s:plug('zchee/deoplete-jedi')
-    call s:plug('zchee/deoplete-clang')
-    call s:plug('zchee/deoplete-zsh')
-    call s:plug('carlitux/deoplete-ternjs')
+    " call s:plug('Shougo/denite.nvim')
+    " call s:plug('Shougo/neomru.vim')
+    if s:nvim_completion == 'deoplete'
+	call s:plug('Shougo/deoplete.nvim')
+	call s:plug('Shougo/neco-vim')
+	call s:plug('Shougo/neco-syntax')
+	call s:plug('Shougo/neoinclude.vim')
+	call s:plug('zchee/deoplete-jedi')
+	call s:plug('zchee/deoplete-clang')
+	call s:plug('zchee/deoplete-zsh')
+	" call s:plug('carlitux/deoplete-ternjs')
+    elseif s:nvim_completion == 'ncm'
+	call s:plug('roxma/nvim-completion-manager')
+    endif
 else
     if v:version < 800
-        call s:plug('aperezdc/vim-lift')
+	call s:plug('aperezdc/vim-lift')
     else
-        call s:plug('maralla/completor.vim', {'build': 'make js'})
+	call s:plug('maralla/completor.vim', {'build': 'make js'})
     endif
 endif
 
@@ -90,9 +99,9 @@ unlet s:local_plugs
 delfunction s:plug
 
 call dein#add('/usr/share/myrddin/vim', {
-            \ 'name': 'myrddin.vim',
-            \ 'if': isdirectory('/usr/share/myrddin/vim'),
-            \ 'frozen': 1 })
+	    \ 'name': 'myrddin.vim',
+	    \ 'if': isdirectory('/usr/share/myrddin/vim'),
+	    \ 'frozen': 1 })
 
 call dein#end()
 if dein#check_install()
@@ -156,10 +165,10 @@ endif
 
 function! s:StripTrailingWhitespace()
     if !&binary && &filetype != 'diff'
-        let l = line('.')
-        let c = col('.')
-        %s/\s\+$//e
-        call cursor(l, c)
+	let l = line('.')
+	let c = col('.')
+	%s/\s\+$//e
+	call cursor(l, c)
     endif
 endfunction
 
@@ -207,9 +216,9 @@ map __ ZZ
 
 " Jump to the last edited position in the file being loaded (if available)
 autocmd vimrc BufReadPost *
-			\ if line("'\"") > 0 && line("'\"") <= line("$") |
-			\		execute "normal g'\"" |
-			\ endif
+	    \ if line("'\"") > 0 && line("'\"") <= line("$") |
+	    \		execute "normal g'\"" |
+	    \ endif
 
 " Readjust split-windows when Vim is resized
 autocmd vimrc VimResized * :wincmd =
@@ -310,15 +319,15 @@ elseif dein#tap('denite.nvim')
 
     call denite#custom#alias('source', 'file_rec/git', 'file_rec')
     call denite#custom#var('file_rec/git', 'command',
-                \ ['git', 'ls-files', '-co', '--exclude-standard'])
+		\ ['git', 'ls-files', '-co', '--exclude-standard'])
 
     if executable('rg')
-        call denite#custom#var('file_rec', 'command', ['rg', '--files'])
-        call denite#custom#var('grep', 'command', ['rg'])
-        call denite#custom#var('grep', 'recursive_opts', [])
-        call denite#custom#var('grep', 'final_opts', [])
-        call denite#custom#var('grep', 'separator', ['--'])
-        call denite#custom#var('greo', 'default_opts', ['--vimgrep', '--no-heading'])
+	call denite#custom#var('file_rec', 'command', ['rg', '--files'])
+	call denite#custom#var('grep', 'command', ['rg'])
+	call denite#custom#var('grep', 'recursive_opts', [])
+	call denite#custom#var('grep', 'final_opts', [])
+	call denite#custom#var('grep', 'separator', ['--'])
+	call denite#custom#var('greo', 'default_opts', ['--vimgrep', '--no-heading'])
     endif
 
     nnoremap <silent> <Leader>b :<C-u>Denite buffer<cr>
@@ -341,34 +350,56 @@ if dein#tap('vim-lift')
     inoremap <expr> <C-d>  pumvisible() ? "\<PageDown>\<C-p>\<C-n>" : "\<C-d>"
     inoremap <expr> <C-u>  pumvisible() ? "\<PageUp>\<C-p>\<C-n>" : "\<C-u>"
 else
-    function! s:completor_tab(direction, or_keys)
-        if pumvisible()
-            if a:direction < 0
-                return "\<C-p>"
-            else
-                return "\<C-n>"
-            endif
-        else
-            return a:or_keys
-        endif
+    function! s:check_backspace() abort
+	let l:column = col('.') - 1
+	return !l:column || getline('.')[l:column - 1] =~ '\s'
     endfunction
-    inoremap <expr> <Tab>   <SID>completor_tab(1, "\<Tab>")
-    inoremap <expr> <S-Tab> <SID>completor_tab(-1, "\<S-Tab>")
 
     if dein#tap('completor.vim')
-        let g:completor_python_binary = '/usr/bin/python3'
-        let g:completor_racer_binary = '/usr/bin/racer'
-        let g:completor_clang_binary = '/usr/bin/clang'
-        let g:completor_node_binary = '/usr/bin/node'
-        let g:completor_disable_ultisnips = 1
-        let g:completor_min_chars = 3
+	let g:completor_python_binary = '/usr/bin/python3'
+	let g:completor_racer_binary = '/usr/bin/racer'
+	let g:completor_clang_binary = '/usr/bin/clang'
+	let g:completor_node_binary = '/usr/bin/node'
+	let g:completor_disable_ultisnips = 1
+	let g:completor_min_chars = 3
+
+	function! s:completor_tab(direction, or_keys)
+	    if pumvisible()
+		if a:direction < 0
+		    return "\<C-p>"
+		else
+		    return "\<C-n>"
+		endif
+	    else
+		return a:or_keys
+	    endif
+	endfunction
+
+	inoremap <expr> <Tab>   <SID>completor_tab(1, "\<Tab>")
+	inoremap <expr> <S-Tab> <SID>completor_tab(-1, "\<S-Tab>")
     elseif dein#tap('deoplete.nvim')
-        let g:deoplete#enable_at_startup = 1
-        call deoplete#custom#set('buffer', 'min_pattern_length', 3)
-        if dein#tap('deoplete-clang')
-            let g:deoplete#sources#clang#libclang_path = '/usr/lib/libclang.so'
-            let g:deoplete#sources#clang#clang_header = '/usr/lib/clang'
-        endif
+	let g:deoplete#enable_at_startup = 1
+	let g:deoplete#disable_auto_complete = 1
+	call deoplete#custom#set('buffer', 'min_pattern_length', 3)
+
+	inoremap <silent><expr> <Tab>
+		    \ pumvisible() ? "\<C-n>" :
+		    \ <SID>check_backspace() ? "\<Tab>" :
+		    \ deoplete#mappings#manual_complete()
+	inoremap <expr> <C-h>
+		    \ deoplete#smart_close_popup() . "\<C-h>"
+	inoremap <expr> <BS>
+		    \ deoplete#smart_close_popup() . "\<C-h>"
+	inoremap <expr> <C-g> deoplete#undo_completion()
+
+	if dein#tap('deoplete-clang')
+	    let g:deoplete#sources#clang#libclang_path = '/usr/lib/libclang.so'
+	    let g:deoplete#sources#clang#clang_header = '/usr/lib/clang'
+	endif
+    elseif dein#tap('nvim-completion-manager')
+	inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+	inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+	inoremap <expr> <CR> pumvisible() ? "\<C-y><CR>" : "<CR>"
     endif
 endif
 
