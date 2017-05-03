@@ -246,15 +246,11 @@ nnoremap <silent> <S-Tab> :b#<cr>
 " Make . work with visually selected lines
 vnoremap . :norm.<cr>
 
-" {Ctrl,Alt}-{arrow} for window movements
+" Alt+{arrow} for window movements
 nnoremap <silent> <M-Left>  <C-w><C-h>
 nnoremap <silent> <M-Down>  <C-w><C-j>
 nnoremap <silent> <M-Up>    <C-w><C-k>
 nnoremap <silent> <M-Right> <C-w><C-l>
-nnoremap <silent> <C-h>     <C-w><C-h>
-nnoremap <silent> <C-j>     <C-w><C-j>
-nnoremap <silent> <C-k>     <C-w><C-k>
-nnoremap <silent> <C-l>     <C-w><C-l>
 
 " Manually re-format a paragraph of text
 nnoremap <silent> Q gwip
@@ -267,6 +263,19 @@ if executable('doas')
     cmap w!! w !doas tee % > /dev/null
 elseif executable('sudo')
     cmap w!! w !sudo tee % > /dev/null
+endif
+
+" In NeoVim, make it easier to use :terminal
+if has('nvim')
+    " Entering/Leaving terminal buffers changes from/to insert mode automatically.
+    autocmd vimrc BufEnter term://* startinsert
+    autocmd vimrc BufLeave term://* stopinsert
+
+    " Allow using Alt+{arrow} to navigate *also* out from terminal buffers.
+    tnoremap <silent> <M-Left>  <C-\><C-n><C-w><C-h>
+    tnoremap <silent> <M-Down>  <C-\><C-n><C-w><C-j>
+    tnoremap <silent> <M-Up>    <C-\><C-n><C-w><C-k>
+    tnoremap <silent> <M-Right> <C-\><C-n><C-w><C-l>
 endif
 
 " Works with the default Vim Markdown support files
