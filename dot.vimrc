@@ -27,6 +27,7 @@ call s:plug('tpope/vim-characterize')
 call s:plug('tpope/vim-eunuch')
 call s:plug('tpope/vim-sleuth')
 call s:plug('tpope/vim-surround')
+call s:plug('sgur/vim-editorconfig')
 call s:plug('justinmk/vim-dirvish')
 
 call s:plug('aperezdc/vim-elrond', {'merged': 0})
@@ -422,3 +423,8 @@ if executable('rustup')
     let $RUST_SRC_PATH = fnamemodify(system('rustup which cargo'), ':h:h')
                 \ . '/lib/rustlib/src/rust/src/'
 endif
+
+" Plugin: EditorConfig
+let g:editorconfig_blacklist = {
+	    \   'filetype': [ 'git.*', 'fugitive' ]
+	    \ }
