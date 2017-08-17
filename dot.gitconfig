@@ -23,15 +23,6 @@
 	# apple-pick taken from http://joeshaw.org/2010/06/22/667
 	apple-pick = !sh -c 'git rev-list --reverse "$@" | xargs -n1 git cherry-pick' -
 
-	# ribbon/catchup taken from
-	# http://gitready.com/advanced/2011/10/21/ribbon-and-catchup-reading-new-commits.html
-	ribbon = tag --force _ribbon origin/master
-	catchup = log --patch --reverse --topo-order _ribbon..origin/master
-	# ...and some extras by me
-	catchups = log --stat --reverse --topo-order _ribbon..origin/master
-	catchupl = log --abbrev-commit --pretty=oneline --reverse --topo-order _ribbon..origin/master
-	catchupg = log --abbrev-commit --pretty=oneline --all --decorate --graph _ribbon..origin/master
-
 	# snapshot/assume/unassume/assumed taken from
 	# http://blog.apiaxle.com/post/handy-git-tips-to-stop-you-getting-fired/
 	snapshot = !git stash save "snapshot: $(date)" && git stash apply "stash@{0}"
