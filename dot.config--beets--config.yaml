@@ -30,7 +30,7 @@ chroma:
   auto: no
 
 play:
-  command: 'mpv -vo null ${args}'
+  command: gst-play-1.0
   raw: yes
 
 replaygain:
@@ -38,7 +38,7 @@ replaygain:
 
 zero:
   update_database: true
-  fields: month day comments images
+  fields: comments images
   comments:
     - EAC
     - LAME
