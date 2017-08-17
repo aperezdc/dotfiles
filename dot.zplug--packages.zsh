@@ -9,6 +9,3 @@ zplug zsh-users/zsh-syntax-highlighting, defer:2
 zplug zsh-users/zsh-completions
 zplug Tarrasch/zsh-autoenv
 zplug k4rthik/git-cal, as:command
-# zplug mafredri/zsh-async  # Needed by Pure
-# zplug sindresorhus/pure
-# zplug intelfx/pure
