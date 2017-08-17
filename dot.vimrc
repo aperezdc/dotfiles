@@ -217,6 +217,10 @@ map <C-t> <C-]>
 map <C-p> :pop<cr>
 map __ ZZ
 
+" Do not close the window/split when deleting a buffer.
+" See https://stackoverflow.com/questions/1444322/how-can-i-close-a-buffer-without-closing-the-window#8585343
+map <leader>q :bp<bar>sp<bar>bn<bar>bd<CR>
+
 " Jump to the last edited position in the file being loaded (if available)
 autocmd vimrc BufReadPost *
 	    \ if line("'\"") > 0 && line("'\"") <= line("$") |
