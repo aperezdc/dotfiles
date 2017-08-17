@@ -32,6 +32,7 @@ call s:plug('tpope/vim-sleuth')
 call s:plug('tpope/vim-surround')
 call s:plug('sgur/vim-editorconfig')
 call s:plug('justinmk/vim-dirvish')
+call s:plug('mbbill/undotree')
 
 call s:plug('aperezdc/vim-elrond', {'merged': 0})
 call s:plug('aperezdc/vim-lining')
