@@ -1,0 +1,348 @@
+#! /bin/bash
+set -euf -o pipefail
+
+scriptname=${0##*/}
+declare -r scriptname
+
+for opt in "$@" ; do
+	if [[ ${opt} = --help || ${opt} = -h ]] ; then
+		cat <<-EOF
+		Usage: ${scriptname} [compiler]
+		EOF
+		exit 0
+	fi
+done
+
+workdir=$(mktemp -d icecc-mkenv.XXXXXXXXXX)
+declare -r workdir
+
+cleanup () {
+	rm -rf "${workdir}"
+}
+
+trap cleanup EXIT
+
+#
+# Helper functions.
+#
+
+die ()
+{
+	echo "${scriptname}: $*"
+	exit 1
+} 1>&2
+
+# findtool <varname> <tool...>
+findtool ()
+{
+	local name tool path
+	name=$1
+	shift
+	for tool in "$@" ; do
+		path=$(type -P "${tool}")
+		if [[ -x ${path} ]] ; then
+			printf -v "${name}" '%s' "${path}"
+			return
+		fi
+	done
+	return 1
+}
+
+
+findtool GZIP pigz gzip || die 'Cannot find tool: gzip'
+findtool TAR  bsdtar tar star || die 'Cannot find tool: tar'
+findtool READELF readelf || die 'Cannot find tool: readelf'
+findtool READLINK readlink || die 'Cannot find tool: readlink'
+findtool LDCONFIG ldconfig true
+
+if findtool MAKESUM sha256sum ; then
+	caching_enabled=true
+	checksum () {
+		local sum rest
+		read -r sum rest < <("${MAKESUM}" -)
+		echo "${sum}"
+	}
+else
+	caching_enabled=false
+	checksum () {
+		true
+	}
+fi
+declare -r caching_enabled
+
+cache_dir="${XDG_CACHE_DIR:-${HOME}/.cache}/icecc-mkenv"
+declare -r cache_dir
+
+if ${caching_enabled} ; then
+	mkdir -p "${cache_dir}"
+fi
+
+
+cache_is_fresh=true
+
+# cache_neq <key> <expected>
+cache_check ()
+{
+	if ${caching_enabled} ; then
+		local path="${cache_dir}/${1//\//__}"
+		if [[ -r ${path} ]] ; then
+			if [[ $(< "${path}") = "$2" ]] ; then
+				return
+			fi
+		fi
+		echo "$2" > "${path}"
+	fi
+	cache_is_fresh=false
+}
+
+
+#
+# Find out which compiler is to be packaged. In order of preference:
+#
+#    1. First parameter to the script.
+#    2. Contents of the $CC / $CXX variables.
+#    3. Fall-back to cc / c++.
+#
+if [[ $# -eq 1 ]] ; then
+	compiler=$1
+elif [[ ${CC+set} = set ]] ; then
+	compiler=${CC}
+elif [[ ${CXX+set} = set ]] ; then
+	compiler=${CXX}
+else
+	compiler=cc
+fi
+compiler=$(type -P "${compiler}")
+[[ -n ${compiler:-} ]] || die 'Cannot find absolute path to compiler'
+[[ -x ${compiler} ]] || die "Compiler '${compiler}' is not executable"
+declare -r compiler
+
+
+#
+# Utility functions to obtain dependencies of ELF objects.
+#
+
+# elfdepfind <elf-object> <rpath...>
+elfdepfind ()
+{
+	local path deppath depname=$1
+	shift
+
+	for deppath in lib usr/lib "$@" ; do
+		path="/${deppath}/${depname}"
+		if [[ -r ${path} ]] ; then
+			echo "${deppath} ${path}"
+			return
+		fi
+	done
+	die "Cannot find: ${depname}"
+}
+
+
+# elfdeps <elf-object>
+elfdeps ()
+{
+	local path
+	local -a needed rpath line
+
+	while read -r -a line ; do
+		if [[ ${#line[@]} -lt 2 ]] ; then
+			continue
+		fi
+
+		# Extract last item. File name/paths are usually enclosed between
+		# square brackets and those need to be removed.
+		path=${line[$(( ${#line[@]} - 1 ))]}
+		if [[ ${path} = *']' ]] ; then
+			path=${path:1:-1}
+		fi
+
+		if [[ ${line[1]} = \(RPATH\) ]] ; then
+			if [[ ${path} = \$ORIGIN/* ]] ; then
+				path="${1%/*}/${path:8}"
+			fi
+			rpath+=( "${path}" )
+		elif [[ ${line[1]} = \(NEEDED\) ]] ; then
+			needed+=( "${path}" )
+		fi
+	done < <( "${READELF}" -W -d "$1" )
+
+	for path in "${needed[@]}" ; do
+		elfdepfind "${path}" "${rpath[@]}"
+	done
+}
+
+
+# doins <abspath> [destdir]
+#   If <abspath> is a symbolic link, the pointed file is copied, and a
+#   new relative symbolic link created in [destdir] pointing to the copy.
+doins ()
+{
+	local destdir=${2:-bin}
+
+	if [[ ! -d ${workdir}/${destdir} ]] ; then
+		mkdir -p "${workdir}/${destdir}"  # TODO: Cache already-created dirs.
+	fi
+	if [[ -L $1 ]] ; then
+		local linkdest
+		linkdest=$("${READLINK}" -f "$1")
+		cp --reflink=auto -af "${linkdest}" "${workdir}/${destdir}"
+		ln -sf "${linkdest##*/}" "${workdir}/${destdir}/${1##*/}"
+	else
+		cp --reflink=auto -af "$1" "${workdir}/${destdir}"
+	fi
+}
+
+
+declare -A LIBPATH
+
+# dodeps <elf-object...>
+dodeps ()
+{
+	if [[ $# -eq 0 ]] ; then
+		return
+	fi
+
+	local deppath='' abspath='' elfobj=$1
+	local -a pending=( )
+	shift
+
+	while read -r deppath abspath ; do
+		if [[ -n ${LIBPATH[${abspath}]:-} ]] ; then
+			# Dependency already copied.
+			continue
+		fi
+		LIBPATH[${abspath}]=${deppath}
+		pending+=( "${abspath}" )
+		doins "${abspath}" "${deppath}"
+	done < <( elfdeps "${elfobj}" )
+	dodeps "$@" "${pending[@]}"
+}
+
+dobindeps ()
+{
+	doins "$1" "${2:-bin}"
+	dodeps "$1"
+}
+
+
+#
+# File system builders.
+#
+
+filesystem_common_pre ()
+{
+	mkdir -p  "${workdir}"/{bin,lib,etc}
+	ln -s .   "${workdir}/usr"    # /usr   -> /
+	ln -s lib "${workdir}/lib64"  # /lib64 -> /lib
+	ln -s bin "${workdir}/sbin"   # /sbin  -> /bin
+
+	dobindeps "$(type -P true)"
+	dobindeps "${compiler}"
+	dobindeps "${compiler%/*}/as"
+
+	if [[ -r /etc/ld.so.conf ]] ; then
+		doins /etc/ld.so.conf etc
+	fi
+}
+
+filesystem_common_post ()
+{
+	"${LDCONFIG}" -r "${workdir}"
+}
+
+filesystem_clang ()
+{
+	local path
+
+	# Add a "clang++" symlink.
+	path=$(type -P "${compiler%/*}/clang++")
+	if [[ -r ${path} ]] ; then
+		dobindeps "${path}"
+	fi
+
+	# Copy also the compiler-supplied headers. We don't have a way to ask
+	# Clang where those are located, so assume that the compiler binary is
+	# inside <prefix>/bin, and that <prefix>/lib/clang/<version> has the
+	# headers.
+	mkdir -p "${workdir}/lib/clang/${compiler_version}"
+	cp --reflink=auto -af \
+		"${compiler%/*}/../lib/clang/${compiler_version}/include" \
+		"${workdir}/lib/clang/${compiler_version}"
+
+	#
+	# Clang 4.x insists in reading /proc/cpuinfo, but it's used only when linking.
+	# Providing an empty file silences the warnings.
+	#
+	mkdir -p "${workdir}/proc"
+	touch "${workdir}/proc/cpuinfo"
+}
+
+filesystem_gcc ()
+{
+	local path item
+
+	for item in cc1 liblto_plugin.so ; do
+		path=$("${compiler}" "-print-prog-name=${item}")
+		if [[ ${path} = "${item}" ]] ; then
+			# Skip unexistant binaries.
+			continue
+		fi
+		dobindeps "${path}" "${path%/${item}}"
+	done
+
+	# Add the C++ compiler, if present.
+	path=$(type -P "${compiler%/*}/g++")
+	if [[ -x ${path} ]] ; then
+		dobindeps "${path}"
+		# Find "cc1plus"
+		path=$("${compiler}" -print-prog-name=cc1plus)
+		if [[ ${path} = cc1plus ]] ; then
+			die "Cannot find GCC's cc1plus"
+		fi
+		dobindeps "${path}" "${path%/cc1plus}"
+	fi
+}
+
+#
+# Extract the compiler kind and version.
+#
+compiler_info ()
+{
+	local info
+	info=$("${compiler}" -v 2>&1)
+	local -a v
+	read -ra v < <(grep '^[a-zA-Z0-9_.]\+\s\+version\s\+[0-9.]\+' <<< "${info}")
+	cache_check "${v[0]}/info" "${info}"
+	echo "${v[0]} ${v[2]}"
+}
+
+read -r compiler_kind compiler_version < <( compiler_info "${compiler}" )
+
+cache_check "${compiler_kind}/version" "${compiler_version}"
+cache_check "${compiler_kind}/binsum" "$(checksum < "${compiler}")"
+
+output_file="${cache_dir}/${compiler_kind}-${compiler_version}.tar.gz"
+
+if [[ -z $(type -t "filesystem_${compiler_kind}") ]] ; then
+	echo "${0##*/}: Unsupported compiler kind '${compiler_kind}'"
+	exit 1
+fi
+
+filesystem_common_pre
+"filesystem_${compiler_kind}"
+filesystem_common_post
+
+declare -a all_files
+while read -r line ; do
+	all_files+=( "${line}" )
+done < <( find "${workdir}" -type f -printf './%P\n' | sort )
+
+cache_check "${compiler_kind}/filelistsum" "$(checksum <<< "${all_files[*]}")"
+cache_check "${compiler_kind}/filessum" "$(cd "${workdir}" && cat "${all_files[@]}" | checksum)"
+
+if ! ${cache_is_fresh} || [[ ! -r ${output_file} ]] ; then
+	"${TAR}" -C "${workdir}" -cf - . | "${GZIP}" -9c > "${output_file}"
+fi
+
+echo "${output_file}"
