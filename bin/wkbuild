@@ -77,14 +77,8 @@ setup_icecc () {
 	if [[ -n ${ICECC_VERSION} ]] ; then
 		info "icecc" "Using preset toolchain"
 	else
-		local -a opts=( --build-native ${compiler} )
-		if [[ ${compiler} = clang ]] ; then
-			opts+=( "$(which clang)" "$(which clang++)" /usr/bin/clang /usr/bin/clang++ )
-		elif [[ ${compiler} = gcc ]] ; then
-			opts+=( "$(which gcc)" "$(which g++)" )
-		fi
-		info "icecc" "Creating toolchain tarball: ${opts[*]}"
-		export ICECC_VERSION="$(pwd)/$("${icecc_path}" "${opts[@]}" 2>&1 | awk '/^creating/{print $2}')"
+		info "icecc" "Using icecc-mkenv (${compiler})"
+		export ICECC_VERSION=$(icecc-mkenv "/usr/bin/${compiler}")
 	fi
 	info "icecc" "${ICECC_VERSION}"
 
