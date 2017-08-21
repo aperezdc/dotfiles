@@ -261,15 +261,6 @@ filesystem_clang ()
 		dobindeps "${path}"
 	fi
 
-	# Copy also the compiler-supplied headers. We don't have a way to ask
-	# Clang where those are located, so assume that the compiler binary is
-	# inside <prefix>/bin, and that <prefix>/lib/clang/<version> has the
-	# headers.
-	mkdir -p "${workdir}/lib/clang/${compiler_version}"
-	cp --reflink=auto -af \
-		"${compiler%/*}/../lib/clang/${compiler_version}/include" \
-		"${workdir}/lib/clang/${compiler_version}"
-
 	#
 	# Clang 4.x insists in reading /proc/cpuinfo, but it's used only when linking.
 	# Providing an empty file silences the warnings.
