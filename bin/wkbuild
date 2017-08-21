@@ -89,7 +89,6 @@ setup_icecc () {
 	fi
 
 	parallel_jobs=$(( parallel_jobs * 5 ))
-	compiler='gcc'
 }
 
 
