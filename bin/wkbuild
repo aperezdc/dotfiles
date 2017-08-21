@@ -135,6 +135,8 @@ setup_compiler_clang () {
 		LDFLAGS="${LDFLAGS} ${link_libcxx_opts[*]}"
 		CFLAGS="${CFLAGS} ${clang_libcxx_opts[*]}"
 	fi
+
+	export ICECC_CLANG_REMOTE_CPP=1
 }
 
 
