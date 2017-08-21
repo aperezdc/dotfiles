@@ -110,9 +110,12 @@ setup_asan () {
 		|| die "${ASAN_SYMBOLIZER_PATH}: missing or it is not executable"
 	export ASAN_SYMBOLIZER_PATH
 
-	CXX="${clang_dir}/clang++ ${clang_opts[*]} ${clang_asan_opts[*]}"
-	LD="${clang_dir}/clang++ ${clang_asan_opts[*]}"
-	CC="${clang_dir}/clang ${clang_opts[*]} ${clang_asan_opts[*]}"
+	CXX="${clang_dir}/clang++"
+	LD="${clang_dir}/clang++"
+	CC="${clang_dir}/clang"
+	CXXFLAGS="${clang_opts[*]} ${clang_asan_opts[*]}"
+	LDFLAGS="${clang_asan_opts[*]}"
+	CFLAGS="${clang_opts[*]} ${clang_asan_opts[*]}"
 
 	compiler='clang'
 	use_libcxx=true
@@ -120,14 +123,17 @@ setup_asan () {
 
 
 setup_compiler_clang () {
-	[[ -n ${CXX} ]] || CXX="clang++ ${clang_opts[*]}"
-	[[ -n ${LD} ]] || LD="clang++ ${clang_opts[*]}"
-	[[ -n ${CC} ]] || CC="clang ${clang_opts[*]}"
+	[[ -n ${CXX} ]] || CXX="clang++"
+	[[ -n ${LD} ]] || LD="clang++"
+	[[ -n ${CC} ]] || CC="clang"
+	CXXFLAGS="${clang_opts[*]}"
+	LDFLAGS="${clang_opts[*]}"
+	CFLAGS="${clang_opts[*]}"
 
 	if ${use_libcxx} ; then
-		CXX="${CXX} ${clang_libcxx_opts[@]}"
-		CC="${CC} ${clang_libcxx_opts[@]}"
-		LD="${LD} ${link_libcxx_opts[@]}"
+		CXXFLAGS="${CXXFLAGS} ${clang_libcxx_opts[*]}"
+		LDFLAGS="${LDFLAGS} ${link_libcxx_opts[*]}"
+		CFLAGS="${CFLAGS} ${clang_libcxx_opts[*]}"
 	fi
 }
 
@@ -232,15 +238,15 @@ setup_compiler_${compiler}
 
 makeargs=( "${makeargs[@]}" "-j${parallel_jobs}" )
 
-export PKG_CONFIG_PATH LD CC CXX CXXFLAGS LDFLAGS
+export PKG_CONFIG_PATH LD CC CXX CFLAGS CXXFLAGS LDFLAGS
 
 info "build"     "${buildtype}"
 info "jobs"      "${parallel_jobs}"
 info "makeargs"  "${makeargs[*]}"
 info "cmakeargs" "${cmakeargs[*]}"
 info "env:LD"    "${LD} ${LDFLAGS}"
-info "env:CC"    "${CC}"
-info "env:CXX"   "${CXX}"
+info "env:CC"    "${CC} ${CFLAGS}"
+info "env:CXX"   "${CXX} ${CXXFLAGS}"
 echo
 
 set -x
