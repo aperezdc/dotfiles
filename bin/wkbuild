@@ -77,8 +77,20 @@ setup_icecc () {
 	if [[ -n ${ICECC_VERSION} ]] ; then
 		info "icecc" "Using preset toolchain"
 	else
-		info "icecc" "Using icecc-mkenv (${compiler})"
-		export ICECC_VERSION=$(icecc-mkenv "/usr/bin/${compiler}")
+		ICECC_VERSION=''
+		local tool tool_path
+		for tool in popsicle icecc-mkenv ; do
+			tool_path=$(type -P "${tool}")
+			if [[ -x ${tool_path} ]] ; then
+				info "icecc" "Using ${tool_path} (${compiler})"
+				export ICECC_VERSION=$("${tool_path}" "/usr/bin/${compiler}")
+				break
+			fi
+		done
+		if [[ -z ${ICECC_VERSION} ]] ; then
+			echo 'Cannot create IceCC toolchain tarball' 1>&2
+			exit 1
+		fi
 	fi
 	info "icecc" "${ICECC_VERSION}"
 
