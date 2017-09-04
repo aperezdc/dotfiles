@@ -1,4 +1,5 @@
 #! /bin/bash
+# vim:set noet ts=4 sw=4:
 #
 # wkbuild
 # Copyright (C) 2014-2017 Adrian Perez <aperez@igalia.com>
@@ -7,10 +8,17 @@
 #
 set -e
 
+# Installation prefix. When specified, CMake and Ninja are invoked
+# directly instead of relying on the "build-webkit" script.
+prefix=''
+
+# Full path to a Python 2.x executable. Auto-detected by default.
+python_exe=''
+
 # Toolchain to use: 'clang' or 'gcc'
 compiler='clang'
 
-# Build type: 'make' or 'ninja'
+# Build type: 'release' or 'debug'
 buildtype='release'
 
 # Whether to use Icecream (IceCC) to do a distributed build.
@@ -31,6 +39,15 @@ parallel_jobs=$(( $(getconf _NPROCESSORS_ONLN) + 1 ))
 # Arguments passed down to Ninja in --cmakeargs= and --makeargs=
 declare -a cmakeargs=()
 declare -a makeargs=()
+
+# CMake options used when doing a prefixed (i.e no build-webkit) compilation.
+declare -r cmake_prefixbuild_opts=(
+	-G Ninja
+	'-DENABLE_GLES2=ON'
+	'-DENABLE_GTK_DOC=OFF'
+	'-DENABLE_MINIBROWSER=ON'
+	'-DENABLE_PLUGIN_PROCESS_GTK2=OFF'
+)
 
 declare -r clang_opts=(
 	'-ferror-limit=1'
@@ -175,6 +192,9 @@ Available options:
   --icecc           Use IceCC to do a distributed builf (forces --gcc).
   --asan            Build with Clang's Address Sanitizer (forces --clang).
   --gtk, --wpe      Choose which port to build (default: gtk).
+  --prefix=PATH     Installation prefix, causes CMake to be used directly
+                    instead of using the "build-webkit" script.
+  --python=PATH     Full path to a Python 2.x executabble (default: detect).
 
 Unrecognized options are passed down to the build system.
 
@@ -201,6 +221,12 @@ do
 			;;
 		--cmake=*)
 			cmakeargs+=( "${flag#*=}" )
+			;;
+		--prefix=*)
+			prefix=${flag#*=}
+			;;
+		--python=*)
+			python_exe=${flag#*=}
 			;;
 		--debug | --dbg)
 			buildtype='debug'
@@ -252,6 +278,32 @@ setup_compiler_${compiler}
 
 makeargs=( "${makeargs[@]}" "-j${parallel_jobs}" )
 
+if [[ -z ${python_exe} ]] ; then
+	for name in python2.7 python2 python ; do
+		python_exe=$(type -P "${name}")
+		if [[ -c ${python_exe} ]] ; then
+			break
+		fi
+	done
+else
+	python_exe=$(type -P "${python_exe}")
+fi
+if [[ ! -x ${python_exe} ]] ; then
+	die 'Could not find a suitable Python 2.x interpreter'
+fi
+# TODO: Check that the Python version is actually 2.x
+
+if [[ -n ${prefix} ]] ; then
+	cmakeargs=( "-DPORT=${build_port^^}"
+		"-DCMAKE_BUILD_TYPE=${buildtype^}"
+		"-DPYTHON_EXECUTABLE=${python_exe}"
+		"-DCMAKE_INSTALL_PREFIX=${prefix}"
+		"-DLIB_INSTALL_DIR=${prefix}/lib"
+		"${cmake_prefixbuild_opts[@]}"
+		"${cmakeargs[@]}"
+	)
+fi
+
 export PKG_CONFIG_PATH LD CC CXX CFLAGS CXXFLAGS LDFLAGS
 
 info "build"     "${buildtype}"
@@ -263,6 +315,12 @@ info "env:CC"    "${CC} ${CFLAGS}"
 info "env:CXX"   "${CXX} ${CXXFLAGS}"
 echo
 
-set -x
-exec build-webkit "${build_options[@]}" "$@" "--${buildtype}" \
-	--cmakeargs="${cmakeargs[*]}" --makeargs="${makeargs[*]}"
+if [[ -n ${prefix} ]] ; then
+	set -x
+	cmake "${cmakeargs[@]}" ..
+	ninja "${makeargs[@]}"
+else
+	set -x
+	exec build-webkit "${build_options[@]}" "$@" "--${buildtype}" \
+		--cmakeargs="${cmakeargs[*]}" --makeargs="${makeargs[*]}"
+fi
