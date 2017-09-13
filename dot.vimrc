@@ -1,116 +1,104 @@
 set nocompatible
 
-if !isdirectory(expand('~/.vim/bundle/dein.vim'))
-    !mkdir -p ~/.vim/bundle && git clone https://github.com/Shougo/dein.vim ~/.vim/bundle/dein.vim
+if !isdirectory(expand('~/.vim/bundle/vim-plug'))
+	!mkdir -p ~/.vim/bundle && git clone https://github.com/junegunn/vim-plug ~/.vim/bundle/vim-plug
 endif
+source ~/.vim/bundle/vim-plug/plug.vim
 
-set runtimepath+=~/.vim/bundle/dein.vim
+let s:lsp_completion = 1
 
-let s:local_plugs = []
+function! s:plug_local(repo, path, ...)
+	if a:0 > 1
+		echohl ErrorMsg
+		echom '[plug-local] Invalid number of arguments (2..3)'
+		echohl None
+		return
+	endif
 
-let s:nvim_completion = 'deoplete'
-" let s:nvim_completion = 'ncm'
+	let plugname = fnamemodify(a:repo, ':t')
+	let dirname = fnamemodify(a:path, ':t')
+	if dirname !=# plugname
+		echohl ErrorMsg
+		echom '[plug-local] Plugin names do not match: '.plugname.' / '.dirname
+		echohl None
+		return
+	endif
 
-function! s:plug(name, ...)
-    let dirname = fnamemodify(a:name, ':t')
-    let path = expand('~/devel/' . dirname)
-    let opts = len(a:000) > 0 ? a:1 : {}
-    if isdirectory(path)
-	call add(s:local_plugs, dirname)
-    else
-	call dein#add(a:name, opts)
-    endif
+	let opts = len(a:000) > 0 ? a:1 : {}
+	let path = fnamemodify(a:path, ':p')
+	if isdirectory(path)
+		" Ensure that local plugins are always marked as frozen.
+		let opts.frozen = 1
+		call plug#(path, opts)
+	else
+		call plug#(a:repo, opts)
+	endif
+endfunction
+command! -nargs=+ -bar PlugLocal call s:plug_local(<args>)
+
+function! s:tap(name)
+	return has_key(g:plugs, a:name)
 endfunction
 
-call dein#begin('~/.vim/bundle', [expand('<sfile>')])
-call s:plug('tpope/vim-sensible', {'if': '!has("nvim")'})
-call s:plug('tpope/vim-fugitive')
-call s:plug('tpope/vim-commentary')
-call s:plug('tpope/vim-characterize')
-call s:plug('tpope/vim-eunuch')
-call s:plug('tpope/vim-sleuth')
-call s:plug('tpope/vim-surround')
-call s:plug('sgur/vim-editorconfig')
-call s:plug('justinmk/vim-dirvish')
-call s:plug('mbbill/undotree')
 
-call s:plug('aperezdc/vim-elrond', {'merged': 0})
-call s:plug('aperezdc/vim-lining')
-call s:plug('aperezdc/vim-template')
-call s:plug('aperezdc/hipack-vim')
+augroup vimrc
+    autocmd!
+augroup END
 
-call s:plug('ledger/vim-ledger')
-call s:plug('cespare/vim-toml')
-call s:plug('zah/nim.vim')
+call plug#begin('~/.vim/bundle')
+if !has('nvim')
+	Plug 'tpope/vim-sensible'
+endif
 
-call s:plug('junegunn/fzf', {'merged': 0})
-call s:plug('junegunn/fzf.vim', {'merged': 0})
+Plug 'junegunn/vim-plug'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-commentary'
+Plug 'sgur/vim-editorconfig'
+Plug 'aperezdc/vim-elrond'
+PlugLocal 'aperezdc/vim-lining', '~/devel/vim-lining'
+PlugLocal 'aperezdc/vim-template', '~/devel/vim-template'
+Plug 'junegunn/fzf'
+Plug 'junegunn/fzf.vim'
+Plug 'romainl/vim-qf'
+Plug 'romainl/vim-qlist'
+Plug 'yssl/QFEnter'
+Plug 'pbrisbin/vim-mkdir'
+Plug 'vim-scripts/a.vim'
+Plug 'ConradIrwin/vim-bracketed-paste'
+Plug 'jamessan/vim-gnupg'
+Plug 'mhinz/vim-grepper'
+Plug 'vim-scripts/indentpython'
+Plug 'docunext/closetag.vim'
+PlugLocal 'aperezdc/hipack-vim', '~/devel/hipack-vim'
+Plug 'wting/rust.vim'
 
-if has('nvim')
-    " call s:plug('Shougo/denite.nvim')
-    " call s:plug('Shougo/neomru.vim')
-    if s:nvim_completion == 'deoplete'
-	call s:plug('Shougo/deoplete.nvim')
-	call s:plug('Shougo/neco-vim')
-	call s:plug('Shougo/neco-syntax')
-	call s:plug('Shougo/neoinclude.vim')
-	call s:plug('zchee/deoplete-jedi')
-	call s:plug('zchee/deoplete-clang')
-	call s:plug('zchee/deoplete-zsh')
-	" call s:plug('carlitux/deoplete-ternjs')
-    elseif s:nvim_completion == 'ncm'
-	call s:plug('roxma/nvim-completion-manager')
-    endif
+if !has('nvim') && v:version < 800
+	PlugLocal 'aperezdc/vim-lift', '~/devel/vim-lift'
+	let s:completion = 'lift'
+" elseif s:lsp_completion
+" 	let s:completion = 'lsp'
 else
-    if v:version < 800
-	call s:plug('aperezdc/vim-lift')
-    else
-	call s:plug('maralla/completor.vim', {'build': 'make js'})
-    endif
+	Plug 'ajh17/vimcompletesme'
+	let s:completion = 'vcm'
 endif
 
-if !dein#tap('completor.vim')
-    call s:plug('racer-rust/vim-racer')
+Plug 'Shougo/neco-vim'
+Plug 'Shougo/neco-syntax'
+Plug 'prabirshrestha/asyncomplete.vim'
+Plug 'prabirshrestha/asyncomplete-buffer.vim'
+Plug 'prabirshrestha/asyncomplete-necovim.vim'
+Plug 'prabirshrestha/asyncomplete-necosyntax.vim'
+Plug 'yami-beta/asyncomplete-omni.vim'
+
+if s:lsp_completion
+	Plug 'prabirshrestha/async.vim'
+	Plug 'prabirshrestha/vim-lsp'
+	Plug 'prabirshrestha/asyncomplete-lsp.vim'
 endif
 
-call s:plug('romainl/vim-qf')
-call s:plug('romainl/vim-qlist')
-call s:plug('yssl/QFEnter')
-call s:plug('mhinz/vim-grepper')
-call s:plug('tpope/vim-repeat')
-call s:plug('pbrisbin/vim-mkdir')
-call s:plug('wellle/targets.vim')
-call s:plug('vim-scripts/indentpython')
-call s:plug('vim-scripts/a.vim')
-call s:plug('ConradIrwin/vim-bracketed-paste')
-call s:plug('jamessan/vim-gnupg')
-call s:plug('wting/rust.vim')
-" call s:plug('haya14busa/incsearch.vim')
-" call s:plug('haya14busa/incsearch-fuzzy.vim')
-call s:plug('junegunn/vim-easy-align')
-call s:plug('Shougo/dein.vim')
+call plug#end()
 
-call s:plug('vim-pandoc/vim-pandoc')
-call s:plug('vim-pandoc/vim-pandoc-syntax')
-call s:plug('thirtythreeforty/lessspace.vim')
-call s:plug('docunext/closetag.vim')
-
-if len(s:local_plugs)
-    call dein#local('~/devel', {'frozen': 1}, s:local_plugs)
-endif
-unlet s:local_plugs
-delfunction s:plug
-
-call dein#add('/usr/share/myrddin/vim', {
-	    \ 'name': 'myrddin.vim',
-	    \ 'if': isdirectory('/usr/share/myrddin/vim'),
-	    \ 'frozen': 1 })
-
-call dein#end()
-if dein#check_install()
-    call dein#install()
-endif
-
+" Options
 set nobomb
 set exrc
 set secure
@@ -131,9 +119,9 @@ set scrolloff=3
 set sidescroll=5
 set nowrap
 set whichwrap+=[,],<,>
-set wildmode=longest,list:longest,full
 set wildignore+=*.o,*.a,a.out
-set sessionoptions-=options
+set sessionoptions+=options
+"set completeopt+=longest
 
 " Persistent undo!
 if !isdirectory(expand('~/.cache/vim/undo'))
@@ -153,10 +141,10 @@ augroup vimrc
     autocmd!
 augroup END
 
-if dein#tap('vim-elrond')
-    colorscheme elrond
+if s:tap('vim-elrond')
+	colorscheme elrond
 else
-    colorscheme elflord
+	colorscheme elflord
 endif
 
 if executable('rg')
@@ -203,6 +191,7 @@ else
 endif
 
 command! -nargs=0 -bang Q q<bang>
+command! -nargs=0 -bang W w<bang>
 command! -nargs=0 -bang Wq wq<bang>
 
 vnoremap J :m '>+1<CR>gv=gv
@@ -216,6 +205,7 @@ nnoremap L :bnext<CR>
 map <C-t> <C-]>
 map <C-p> :pop<cr>
 map __ ZZ
+map <Space> /
 
 " Do not close the window/split when deleting a buffer.
 " See https://stackoverflow.com/questions/1444322/how-can-i-close-a-buffer-without-closing-the-window#8585343
@@ -244,21 +234,10 @@ autocmd vimrc FileType dirvish keeppatterns g@\v/\.[^\/]+/?$@d
 
 autocmd vimrc FileType help wincmd L
 autocmd vimrc FileType git wincmd L | wincmd x
-
-" Try to show cursorline only in windows which have focus.
-autocmd vimrc WinEnter,FocusGained * set cursorline
-autocmd vimrc WinLeave,FocusLost * set nocursorline
-
 " Open location/quickfix window whenever a command is executed and the
 " list gets populated with at least one valid location.
 autocmd vimrc QuickFixCmdPost [^l]* cwindow
 autocmd vimrc QuickFixCmdPost    l* lwindow
-
-" Select whatever has just been pasted or read with :read!
-nnoremap gV `[V`]
-
-" Switch between the current and the last visited buffer.
-nnoremap <silent> <S-Tab> :b#<cr>
 
 " Make . work with visually selected lines
 vnoremap . :norm.<cr>
@@ -276,9 +255,6 @@ nnoremap <silent> <M-Right> <C-w><C-l>
 
 " Manually re-format a paragraph of text
 nnoremap <silent> Q gwip
-
-" For coherency with C/D
-cmap Y y$
 
 " Forgot root?
 if executable('doas')
@@ -300,54 +276,48 @@ if has('nvim')
     tnoremap <silent> <M-Right> <C-\><C-n><C-w><C-l>
 endif
 
-" Works with the default Vim Markdown support files
-let g:markdown_fenced_languages = ['html', 'c', 'lua', 'bash=sh']
-
 let g:email = 'aperez@igalia.com'
 let g:user  = 'Adrian Perez'
 
-" Plugin: racer
-if executable('racer')
-	let g:racer_cmd = 'racer'
-endif
-
 " Plugin: fzf
-if dein#tap('fzf.vim')
-    let g:fzf_buffers_jump = 0
-    nnoremap <silent> <Leader>f :<C-u>Files<cr>
-    nnoremap <silent> <Leader>F :<C-u>GitFiles<cr>
-    nnoremap <silent> <Leader>m :<C-u>History<cr>
-    nnoremap <silent> <Leader>b :<C-u>Buffers<cr>
-    nnoremap <silent> <Leader><F1> :<C-u>Helptags<cr>
-    nnoremap <silent> <F12> :<C-u>Buffers<cr>
-elseif dein#tap('denite.nvim')
-    call denite#custom#source('_', 'matchers', ['matcher_fuzzy'])
-    call denite#custom#source('file_mru', 'converters', ['converter_relative_word'])
+if s:tap('fzf.vim')
+	nnoremap <silent> <Leader>f :<C-u>Files<cr>
+	nnoremap <silent> <Leader>F :<C-u>GitFiles<cr>
+	nnoremap <silent> <Leader>m :<C-u>History<cr>
+	nnoremap <silent> <Leader>b :<C-u>Buffers<cr>
+	nnoremap <silent> <Leader><F1> :<C-u>Helptags<cr>
+	nnoremap <silent> <F12> :<C-u>Buffers<cr>
 
-    call denite#custom#alias('source', 'file_rec/git', 'file_rec')
-    call denite#custom#var('file_rec/git', 'command',
-		\ ['git', 'ls-files', '-co', '--exclude-standard'])
-
-    if executable('rg')
-	call denite#custom#var('file_rec', 'command', ['rg', '--files'])
-	call denite#custom#var('grep', 'command', ['rg'])
-	call denite#custom#var('grep', 'recursive_opts', [])
-	call denite#custom#var('grep', 'final_opts', [])
-	call denite#custom#var('grep', 'separator', ['--'])
-	call denite#custom#var('greo', 'default_opts', ['--vimgrep', '--no-heading'])
-    endif
-
-    nnoremap <silent> <Leader>b :<C-u>Denite buffer<cr>
-    nnoremap <silent> <Leader>m :<C-u>Denite file_mru<cr>
-    nnoremap <silent> <Leader>f :<C-u>Denite file_rec<cr>
-    nnoremap <silent> <Leader>F :<C-u>Denite file_rec/git<cr>
+	nmap <C-A-p> <leader>f
+	nmap <C-A-m> <leader>m
+	nmap <C-A-b> <leader>b
 endif
 
-nmap <C-A-p> <leader>f
-nmap <C-A-m> <leader>m
-nmap <C-A-b> <leader>b
+" Plugin: vimcompletesme
+" if s:tap('vimcompletesme')
+" 	set completeopt+=longest
+" 	let g:vcm_direction = 'p'
+" endif
 
-if dein#tap('vim-lift')
+" Plugin: qf
+if s:tap('vim-qf')
+	nmap <F5>   <Plug>QfSwitch
+	nmap <F6>   <Plug>QfCtoggle
+	nmap <F7>   <Plug>QfCprevious
+	nmap <F8>   <Plug>QfCnext
+	nmap <C-F6> <Plug>QfLtoggle
+	nmap <C-F7> <Plug>QfLprevious
+	nmap <C-F8> <Plug>QfLnext
+endif
+
+" Plugin: EditorConfig
+if s:tap('vim-editorconfig')
+	let g:editorconfig_blacklist = {
+				\   'filetype': [ 'git.*', 'fugitive' ]
+				\ }
+endif
+
+if s:tap('vim-lift')
     " Plugin: Lift
     inoremap <expr> <Tab>  lift#trigger_completion()
     inoremap <expr> <Esc>  pumvisible() ? "\<C-e>" : "\<Esc>"
@@ -356,113 +326,92 @@ if dein#tap('vim-lift')
     inoremap <expr> <Up>   pumvisible() ? "\<C-p>" : "\<Up>"
     inoremap <expr> <C-d>  pumvisible() ? "\<PageDown>\<C-p>\<C-n>" : "\<C-d>"
     inoremap <expr> <C-u>  pumvisible() ? "\<PageUp>\<C-p>\<C-n>" : "\<C-u>"
-else
-    function! s:check_backspace() abort
-	let l:column = col('.') - 1
-	return !l:column || getline('.')[l:column - 1] =~ '\s'
-    endfunction
-
-    if dein#tap('completor.vim')
-	let g:completor_python_binary = '/usr/bin/python3'
-	let g:completor_racer_binary = '/usr/bin/racer'
-	let g:completor_clang_binary = '/usr/bin/clang'
-	let g:completor_node_binary = '/usr/bin/node'
-	let g:completor_disable_ultisnips = 1
-	let g:completor_min_chars = 3
-
-	function! s:completor_tab(direction, or_keys)
-	    if pumvisible()
-		if a:direction < 0
-		    return "\<C-p>"
-		else
-		    return "\<C-n>"
-		endif
-	    else
-		return a:or_keys
-	    endif
-	endfunction
-
-	inoremap <expr> <Tab>   <SID>completor_tab(1, "\<Tab>")
-	inoremap <expr> <S-Tab> <SID>completor_tab(-1, "\<S-Tab>")
-    elseif dein#tap('deoplete.nvim')
-	let g:deoplete#enable_at_startup = 1
-	let g:deoplete#disable_auto_complete = 1
-	call deoplete#custom#set('buffer', 'min_pattern_length', 3)
-
-	inoremap <silent><expr> <Tab>
-		    \ pumvisible() ? "\<C-n>" :
-		    \ <SID>check_backspace() ? "\<Tab>" :
-		    \ deoplete#mappings#manual_complete()
-	inoremap <expr> <C-h>
-		    \ deoplete#smart_close_popup() . "\<C-h>"
-	inoremap <expr> <BS>
-		    \ deoplete#smart_close_popup() . "\<C-h>"
-	inoremap <expr> <C-g> deoplete#undo_completion()
-
-	if dein#tap('deoplete-clang')
-	    let g:deoplete#sources#clang#libclang_path = '/usr/lib/libclang.so'
-	    let g:deoplete#sources#clang#clang_header = '/usr/lib/clang'
-	endif
-    elseif dein#tap('nvim-completion-manager')
-	inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-	inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-	inoremap <expr> <CR> pumvisible() ? "\<C-y><CR>" : "<CR>"
-    endif
 endif
 
-" Plugin: insearch + insearch-fuzzy
-if dein#tap('haya14busa/incsearch.vim')
-    map <Space>  <Plug>(incsearch-forward)
-    map /        <Plug>(incsearch-forward)
-    map ?        <Plug>(incsearch-backward)
-    map g/       <Plug>(incsearch-stay)
-    if dein#tap('haya14busa/incsearch.vim')
-        map z<Space> <Plug>(incsearch-fuzzyspell-/)
-        map z/       <Plug>(incsearch-fuzzyspell-/)
-        map z?       <Plug>(incsearch-fuzzyspell-?)
-        map zg/      <Plug>(incsearch-fuzzyspell-stay)
-    endif
-else
-    map <Space> /
+" Plugin: asyncomplete
+if s:tap('asyncomplete.vim')
+	if s:tap('asyncomplete-buffer.vim')
+		autocmd vimrc User asyncomplete_setup
+					\ call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
+					\ 'name': 'buffer',
+					\ 'priority': 10,
+					\ 'whitelist': ['*'],
+					\ 'blacklist': [],
+					\ 'completor': function('asyncomplete#sources#buffer#completor'),
+					\ }))
+	endif
+	if s:tap('asyncomplete-necovim.vim')
+		autocmd vimrc User asyncomplete_setup
+					\ call asyncomplete#register_source(asyncomplete#sources#necovim#get_source_options({
+					\ 'name': 'necovim',
+					\ 'priority': 30,
+					\ 'whitelist': ['vim'],
+					\ 'completor': function('asyncomplete#sources#necovim#completor'),
+					\ }))
+	endif
+	if s:tap('asyncomplete-omni.vim')
+		autocmd vimrc User asyncomplete_setup
+					\ call asyncomplete#register_source(asyncomplete#sources#omni#get_source_options({
+					\ 'name': 'omni',
+					\ 'priority': 20,
+					\ 'whitelist': ['*'],
+					\ 'completor': function('asyncomplete#sources#omni#completor')
+					\ }))
+	endif
+	if s:tap('asyncomplete-necosyntax.vim')
+		autocmd vimrc User asyncomplete_setup
+					\ call asyncomplete#register_source(asyncomplete#sources#necosyntax#get_source_options({
+					\ 'name': 'necosyntax',
+					\ 'whitelist': ['*'],
+					\ 'completor': function('asyncomplete#sources#necosyntax#completor'),
+					\ }))
+	endif
 endif
 
 " Plugin: Grepper
-let g:grepper = {
-            \   'tools': ['rg', 'git', 'grep'],
-            \   'simple_prompt': 1
-            \ }
-nmap gs  <Plug>(GrepperOperator)
-xmap gs  <Plug>(GrepperOperator)
-nnoremap <leader>* :Grepper -tool rg -cword -noprompt<cr>
-nnoremap <leader>g :Grepper -tool rg<cr>
-nnoremap <leader>G :Grepper -tool git<cr>
-
-" Plugin: qf
-nmap <F5>   <Plug>QfSwitch
-nmap <F6>   <Plug>QfCtoggle
-nmap <F7>   <Plug>QfCprevious
-nmap <F8>   <Plug>QfCnext
-nmap <C-F6> <Plug>QfLtoggle
-nmap <C-F7> <Plug>QfLprevious
-nmap <C-F8> <Plug>QfLnext
-
-" Plugin: pandoc
-function! PandocXdgOpen(file)
-    return 'xdg-open ' . shellescape(expand(a:file,':p'))
-endfunction
-let g:pandoc#command#custom_open = 'PandocXdgOpen'
-let g:pandoc#keyboard#sections#header_style = 's'
-let g:pandoc#keyboard#wrap_cursor = 1
-let g:pandoc#command#latex_engine = 'pdflatex'
-let g:pandoc#formatting#mode = 'haA'
-
-" Find out where rustup has placed the Rust sources.
-if executable('rustup')
-    let $RUST_SRC_PATH = fnamemodify(system('rustup which cargo'), ':h:h')
-                \ . '/lib/rustlib/src/rust/src/'
+if s:tap('vim-grepper')
+	let g:grepper = {
+				\   'tools': ['rg', 'git', 'grep'],
+				\   'simple_prompt': 1
+				\ }
+	nmap gs  <Plug>(GrepperOperator)
+	xmap gs  <Plug>(GrepperOperator)
+	nnoremap <leader>* :Grepper -tool rg -cword -noprompt<cr>
+	nnoremap <leader>g :Grepper -tool rg<cr>
+	nnoremap <leader>G :Grepper -tool git<cr>
 endif
 
-" Plugin: EditorConfig
-let g:editorconfig_blacklist = {
-	    \   'filetype': [ 'git.*', 'fugitive' ]
-	    \ }
+
+" Plugin: vim-lsp
+if s:tap('vim-lsp')
+	let g:lsp_log_file = '/tmp/aperez-vim-lsp.log'
+	let g:lsp_async_completion = 1
+	set omnifunc=lsp#complete
+
+	if executable('pyls')
+		call lsp#register_server({
+					\ 'name': 'pyls',
+					\ 'cmd': { server_info->['pyls'] },
+					\ 'root_uri': { server_info->lsp#utils#find_nearest_parent_file_directory(lsp#utils#get_buffer_path(), 'setup.py') },
+					\ 'whitelist': ['python'],
+					\ })
+	endif
+	if executable('rls') && executable('rustup')
+		let $RUST_SRC_PATH = fnamemodify(system('rustup run nightly rustup which cargo'), ':h:h')
+					\ . '/lib/rustlib/src/rust/src'
+		call lsp#register_server({
+					\ 'name': 'rls',
+					\ 'cmd': { server_info->['rustup', 'run', 'nightly', 'rls'] },
+					\ 'root_uri': { server_info->lsp#utils#find_nearest_parent_file_directory(lsp#utils#get_buffer_path(), 'Cargo.toml') },
+					\ 'whitelist': ['rust'],
+					\ })
+	endif
+	if executable('clangd')
+		call lsp#register_server({
+					\ 'name': 'clangd',
+					\ 'cmd': { server_info->['clangd'] },
+					\ 'root_uri': { server_info->lsp#utils#find_nearest_parent_directory(lsp#utils#get_buffer_path(), '.git') },
+					\ 'whitelist': ['c', 'cpp'],
+					\ })
+	endif
+endif
