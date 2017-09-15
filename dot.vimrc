@@ -178,6 +178,19 @@ if &term =~# '^screen' || &term =~# '^tmux'
     set t_Co=16
 endif
 
+" For some reason Vim does not recognize these sequences, so we need to
+" map them manually. Ugh.
+if !has('nvim')
+	map  <silent> [1;3D <M-Left>
+	map  <silent> [1;3C <M-Right>
+	map  <silent> [1;3A <M-Up>
+	map  <silent> [1;3B <M-Down>
+	lmap <silent> [1;3D <M-Left>
+	lmap <silent> [1;3C <M-Right>
+	lmap <silent> [1;3A <M-Up>
+	lmap <silent> [1;3B <M-Down>
+endif
+
 if $TERM =~ "tmux-256color" || $TERM =~ "xterm-256color" || $TERM =~ "screen-256color" || $TERM =~ "xterm-termite" || $TERM =~ "gnome-256color" || $COLORTERM =~ "gnome-terminal"
     set t_Co=256
     set t_AB=[48;5;%dm
