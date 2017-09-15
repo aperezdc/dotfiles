@@ -425,4 +425,14 @@ if s:tap('vim-lsp')
 					\ 'whitelist': ['c', 'cpp'],
 					\ })
 	endif
+
+	" https://github.com/Alloyed/lua-lsp
+	if executable('lua-lsp')
+		call lsp#register_server({
+					\ 'name': 'lualsp',
+					\ 'cmd': { server_info->['lua-lsp'] },
+					\ 'root_uri': { server_info->lsp#utils#find_nearest_parent_directory(lsp#utils#get_buffer_path(), '.git') },
+					\ 'whitelist': ['lua'],
+					\ })
+	endif
 endif
