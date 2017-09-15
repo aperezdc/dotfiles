@@ -72,6 +72,7 @@ Plug 'vim-scripts/indentpython'
 Plug 'docunext/closetag.vim'
 PlugLocal 'aperezdc/hipack-vim', '~/devel/hipack-vim'
 Plug 'wting/rust.vim'
+Plug 'vim-pandoc/vim-pandoc' | Plug 'vim-pandoc/vim-pandoc-syntax'
 
 if !has('nvim') && v:version < 800
 	PlugLocal 'aperezdc/vim-lift', '~/devel/vim-lift'
@@ -435,4 +436,17 @@ if s:tap('vim-lsp')
 					\ 'whitelist': ['lua'],
 					\ })
 	endif
+endif
+
+" Plugin: pandoc
+if s:tap('vim-pandoc')
+	function! PandocXdgOpen(file)
+		return 'xdg-open ' . shellescape(expand(a:file, ':p'))
+	endfunction
+
+	let g:pandoc#command#custom_open = 'PandocXdgOpen'
+	let g:pandoc#command#latex_engine = 'pdflatex'
+	let g:pandoc#keyboard#sections#header_style = 's'
+	let g:pandoc#keyboard#wrap_cursor = 1
+	let g:pandoc#folding#level = 1
 endif
