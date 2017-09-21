@@ -1,11 +1,10 @@
 set nocompatible
+let s:completion = 'vcm'
 
 if !isdirectory(expand('~/.vim/bundle/vim-plug'))
 	!mkdir -p ~/.vim/bundle && git clone https://github.com/junegunn/vim-plug ~/.vim/bundle/vim-plug
 endif
 source ~/.vim/bundle/vim-plug/plug.vim
-
-let s:lsp_completion = 1
 
 function! s:plug_local(repo, path, ...)
 	if a:0 > 1
@@ -72,30 +71,35 @@ Plug 'vim-scripts/indentpython'
 Plug 'docunext/closetag.vim'
 PlugLocal 'aperezdc/hipack-vim', '~/devel/hipack-vim'
 Plug 'wting/rust.vim'
+Plug 'vmchale/ion-vim'
+Plug 'cespare/vim-toml'
+Plug 'ledger/vim-ledger'
 Plug 'vim-pandoc/vim-pandoc' | Plug 'vim-pandoc/vim-pandoc-syntax'
+Plug 'Shougo/echodoc.vim'
 
-if !has('nvim') && v:version < 800
-	PlugLocal 'aperezdc/vim-lift', '~/devel/vim-lift'
+if !has('nvim') && v:version < 800 && s:completion !=# 'lift' && s:completion !=# 'mu'
 	let s:completion = 'lift'
-" elseif s:lsp_completion
-" 	let s:completion = 'lsp'
-else
-	Plug 'ajh17/vimcompletesme'
-	let s:completion = 'vcm'
 endif
 
-Plug 'Shougo/neco-vim'
-Plug 'Shougo/neco-syntax'
-Plug 'prabirshrestha/asyncomplete.vim'
-Plug 'prabirshrestha/asyncomplete-buffer.vim'
-Plug 'prabirshrestha/asyncomplete-necovim.vim'
-Plug 'prabirshrestha/asyncomplete-necosyntax.vim'
-Plug 'yami-beta/asyncomplete-omni.vim'
-
-if s:lsp_completion
+if s:completion ==# 'lsp'
+	Plug 'prabirshrestha/asyncomplete.vim'
+	Plug 'prabirshrestha/asyncomplete-buffer.vim'
+	Plug 'yami-beta/asyncomplete-omni.vim'
+	Plug 'Shougo/neco-syntax' | Plug 'prabirshrestha/asyncomplete-necosyntax.vim'
+	Plug 'Shougo/neco-vim' | Plug 'prabirshrestha/asyncomplete-necovim.vim'
 	Plug 'prabirshrestha/async.vim'
 	Plug 'prabirshrestha/vim-lsp'
 	Plug 'prabirshrestha/asyncomplete-lsp.vim'
+elseif s:completion ==# 'vcm'
+    Plug 'ajh17/vimcompletesme'
+elseif s:completion ==# 'lift'
+	PlugLocal 'aperezdc/vim-lift', '~/devel/vim-lift'
+elseif s:completion ==# 'mu'
+	Plug 'lifepillar/vim-mucomplete'
+endif
+
+if s:completion !=# 'lsp' && has('nvim')
+	Plug 'autozimu/LanguageClient-neovim'
 endif
 
 call plug#end()
@@ -105,10 +109,11 @@ set nobomb
 set exrc
 set secure
 set hidden
+set incsearch
 set nohlsearch
 set ignorecase
 set smartcase
-set infercase
+set noinfercase
 set linebreak
 set tabstop=4
 set shiftwidth=4
@@ -123,7 +128,10 @@ set nowrap
 set whichwrap+=[,],<,>
 set wildignore+=*.o,*.a,a.out
 set sessionoptions+=options
-"set completeopt+=longest
+set completeopt+=menu,menuone,noselect,longest
+set complete-=t
+set shortmess+=c
+set belloff+=ctrlg
 
 " Persistent undo!
 if !isdirectory(expand('~/.cache/vim/undo'))
@@ -202,6 +210,34 @@ else
     endif
 endif
 
+" Configure Vim I-beam/underline cursor for insert/replace mode.
+" From http://vim.wikia.com/wiki/Change_cursor_shape_in_different_modes
+if !has('nvim')
+	if empty($TMUX)
+		let &t_SI = "\<Esc>[6 q"
+		let &t_SR = "\<Esc>[4 q"
+		let &t_EI = "\<Esc>[2 q"
+	else
+		let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>[6 q\<Esc>\\"
+		let &t_SR = "\<Esc>Ptmux;\<Esc>\<Esc>[4 q\<Esc>\\"
+		let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>[2 q\<Esc>\\"
+	endif
+endif
+
+if has('multi_byte') && &encoding ==# 'utf-8'
+	autocmd vimrc InsertEnter * set listchars-=trail:⣿
+	autocmd vimrc InsertLeave * set listchars+=trail:⣿
+else
+	autocmd vimrc InsertEnter * set listchars-=trail:·
+	autocmd vimrc InsertLeave * set listchars+=trail:·
+endif
+
+" Dynamically enable/disable cursorline for the active window only.
+" if &t_Co >= 256
+" 	autocmd vimrc InsertLeave,WinEnter * set cursorline
+" 	autocmd vimrc InsertEnter,WinLeave * set nocursorline
+" endif
+
 command! -nargs=0 -bang Q q<bang>
 command! -nargs=0 -bang W w<bang>
 command! -nargs=0 -bang Wq wq<bang>
@@ -222,6 +258,16 @@ map <Space> /
 " Do not close the window/split when deleting a buffer.
 " See https://stackoverflow.com/questions/1444322/how-can-i-close-a-buffer-without-closing-the-window#8585343
 map <leader>q :bp<bar>sp<bar>bn<bar>bd<CR>
+
+" Always make n/N search forward/backwar, regardless of the last search type.
+" From https://github.com/mhinz/vim-galore
+nnoremap <expr> n 'Nn'[v:searchforward]
+nnoremap <expr> N 'nN'[v:searchforward]
+
+" Make <C-n> and <C-p> respect already-typed content in command mode.
+" From https://github.com/mhinz/vim-galore
+cnoremap <c-n> <down>
+cnoremap <c-p> <up>
 
 " Jump to the last edited position in the file being loaded (if available)
 autocmd vimrc BufReadPost *
@@ -305,12 +351,6 @@ if s:tap('fzf.vim')
 	nmap <C-A-b> <leader>b
 endif
 
-" Plugin: vimcompletesme
-" if s:tap('vimcompletesme')
-" 	set completeopt+=longest
-" 	let g:vcm_direction = 'p'
-" endif
-
 " Plugin: qf
 if s:tap('vim-qf')
 	nmap <F5>   <Plug>QfSwitch
@@ -329,8 +369,8 @@ if s:tap('vim-editorconfig')
 				\ }
 endif
 
+" Plugin: Lift
 if s:tap('vim-lift')
-    " Plugin: Lift
     inoremap <expr> <Tab>  lift#trigger_completion()
     inoremap <expr> <Esc>  pumvisible() ? "\<C-e>" : "\<Esc>"
     inoremap <expr> <CR>   pumvisible() ? "\<C-y>" : "\<CR>"
@@ -340,8 +380,46 @@ if s:tap('vim-lift')
     inoremap <expr> <C-u>  pumvisible() ? "\<PageUp>\<C-p>\<C-n>" : "\<C-u>"
 endif
 
+" Plugin: mucomplete
+if s:tap('vim-mucomplete')
+	set completeopt+=menuone,noinsert
+
+	let g:mucomplete#buffer_relative_paths = 1
+	let g:mucomplete#enable_auto_at_startup = 1
+
+	inoremap <expr> <C-e> mucomplete#popup_exit("\<C-e>")
+	inoremap <expr> <C-y> mucomplete#popup_exit("\<C-y>")
+	inoremap <expr>  <CR> mucomplete#popup_exit("\<CR>")
+
+	" Disable include completion and chain it from mucomplete
+	set complete-=i
+
+	let g:mucomplete#chains = {
+				\   'default': ['user', 'omni', 'keyn', 'c-n', 'path'],
+				\   'vim': ['path', 'cmd', 'keyn'],
+				\ }
+	let g:mucomplete#chains.c = g:mucomplete#chains.default
+	call add(g:mucomplete#chains.c, 'incl')
+	call add(g:mucomplete#chains.c, 'defs')
+	let g:mucomplete#chains.cpp = g:mucomplete#chains.c
+endif
+
 " Plugin: asyncomplete
 if s:tap('asyncomplete.vim')
+	let g:asyncomplete_auto_popup = 1
+
+	function s:check_backspace() abort
+		let ccc = col('.')
+		return !ccc || getline('.')[ccc-1] =~ '\s'
+	endfunction
+
+	inoremap <silent><expr> <Tab>
+				\ pumvisible() ? "\<C-n>" :
+				\ <sid>check_backspace() ? "\<Tab>" :
+				\ asyncomplete#force_refresh()
+	inoremap <expr> <S-Tab>
+				\ pumvisible() ? "\<C-p>" : "\<C-h>"
+
 	if s:tap('asyncomplete-buffer.vim')
 		autocmd vimrc User asyncomplete_setup
 					\ call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
@@ -396,47 +474,113 @@ endif
 
 " Plugin: vim-lsp
 if s:tap('vim-lsp')
-	let g:lsp_log_file = '/tmp/aperez-vim-lsp.log'
+	" let g:lsp_log_file = '/tmp/aperez-vim-lsp.log'
+	let g:lsp_log_file = ''
 	let g:lsp_async_completion = 1
-	set omnifunc=lsp#complete
 
 	if executable('pyls')
-		call lsp#register_server({
+					" \ 'root_uri': { server_info->lsp#utils#find_nearest_parent_file_directory(lsp#utils#get_buffer_path(), 'setup.py') },
+		autocmd vimrc User lsp_setup call lsp#register_server({
 					\ 'name': 'pyls',
 					\ 'cmd': { server_info->['pyls'] },
-					\ 'root_uri': { server_info->lsp#utils#find_nearest_parent_file_directory(lsp#utils#get_buffer_path(), 'setup.py') },
 					\ 'whitelist': ['python'],
 					\ })
+		autocmd vimrc FileType python setlocal omnifunc=lsp#complete
 	endif
+
 	if executable('rls') && executable('rustup')
+					" \ 'root_uri': { server_info->lsp#utils#find_nearest_parent_file_directory(lsp#utils#get_buffer_path(), 'Cargo.toml') },
 		let $RUST_SRC_PATH = fnamemodify(system('rustup run nightly rustup which cargo'), ':h:h')
 					\ . '/lib/rustlib/src/rust/src'
-		call lsp#register_server({
+		autocmd vimrc User lsp_setup call lsp#register_server({
 					\ 'name': 'rls',
 					\ 'cmd': { server_info->['rustup', 'run', 'nightly', 'rls'] },
-					\ 'root_uri': { server_info->lsp#utils#find_nearest_parent_file_directory(lsp#utils#get_buffer_path(), 'Cargo.toml') },
 					\ 'whitelist': ['rust'],
 					\ })
+		autocmd vimrc FileType rust setlocal omnifunc=lsp#complete
 	endif
+
 	if executable('clangd')
-		call lsp#register_server({
+					" \ 'root_uri': { server_info->lsp#utils#find_nearest_parent_directory(lsp#utils#get_buffer_path(), '.git') },
+		autocmd vimrc User lsp_setup call lsp#register_server({
 					\ 'name': 'clangd',
 					\ 'cmd': { server_info->['clangd'] },
-					\ 'root_uri': { server_info->lsp#utils#find_nearest_parent_directory(lsp#utils#get_buffer_path(), '.git') },
 					\ 'whitelist': ['c', 'cpp'],
 					\ })
+		autocmd vimrc FileType c,cpp setlocal omnifunc=lsp#complete
 	endif
 
 	" https://github.com/Alloyed/lua-lsp
 	if executable('lua-lsp')
-		call lsp#register_server({
+		autocmd vimrc User lsp_setup call lsp#register_server({
 					\ 'name': 'lualsp',
 					\ 'cmd': { server_info->['lua-lsp'] },
 					\ 'root_uri': { server_info->lsp#utils#find_nearest_parent_directory(lsp#utils#get_buffer_path(), '.git') },
 					\ 'whitelist': ['lua'],
 					\ })
+		autocmd vimrc FileType lua setlocal omnifunc=lsp#complete
 	endif
 endif
+
+
+if s:tap('nvim-langserver-shim')
+	let g:langserver_executables = {}
+	if executable('clangd')
+		let g:langserver_executables.c = {
+					\ 'name': 'clangd',
+					\ 'cmd': ['clangd'],
+					\ }
+		let g:langserver_executables.cpp = g:langserver_executables.c
+	endif
+	if executable('lua-lsp')
+		let g:langserver_executables.lua = {
+					\ 'name': 'lua-lsp',
+					\ 'cmd': ['lua-lsp'],
+					\ }
+	endif
+	if executable('rls') && executable('rustup')
+		let g:langserver_executables.rust = {
+					\ 'name': 'rls',
+					\ 'cmd': ['rustup', 'run', 'nightly', 'rls'],
+					\ }
+	endif
+endif
+
+
+" Plugin: LanguageClient-neovim
+if s:tap('LanguageClient-neovim')
+	let g:LanguageClient_autoStart = 1
+	let g:LanguageClient_serverCommands = {}
+	if executable('rls') && executable('rustup')
+		let g:LanguageClient_serverCommands.rust =
+					\ ['rustup', 'run', 'nightly', 'rls']
+		autocmd vimrc FileType rust setlocal
+					\ omnifunc=LanguageClient#complete
+					\ signcolumn=yes
+	endif
+	if executable('clangd')
+		let g:LanguageClient_serverCommands.c = ['clangd']
+		let g:LanguageClient_serverCommands.cpp = ['clangd']
+		autocmd vimrc FileType c,cpp setlocal
+					\ omnifunc=LanguageClient#complete
+					\ signcolumn=yes
+	endif
+	if executable('lua-lsp')
+		let g:LanguageClient_serverCommands.lua = ['lua-lsp']
+		autocmd vimrc FileType lua setlocal
+					\ omnifunc=LanguageClient#complete
+					\ signcolumn=yes
+	endif
+endif
+
+if s:tap('echodoc.vim')
+	let g:echodoc#enable_at_startup = 1
+	if s:tap('vim-lining')
+		let g:lining#showmode = 0
+	endif
+	set noshowmode
+endif
+
 
 " Plugin: pandoc
 if s:tap('vim-pandoc')
