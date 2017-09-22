@@ -74,6 +74,7 @@ Plug 'yssl/QFEnter'
 Plug 'pbrisbin/vim-mkdir'
 Plug 'vim-scripts/a.vim'
 Plug 'jamessan/vim-gnupg'
+Plug 'mhinz/vim-sayonara', { 'on': 'Sayonara' }
 Plug 'mhinz/vim-grepper'
 Plug 'vim-scripts/indentpython'
 Plug 'docunext/closetag.vim'
@@ -264,8 +265,16 @@ map __ ZZ
 map <Space> /
 
 " Do not close the window/split when deleting a buffer.
-" See https://stackoverflow.com/questions/1444322/how-can-i-close-a-buffer-without-closing-the-window#8585343
-map <leader>q :bp<bar>sp<bar>bn<bar>bd<CR>
+if s:tap('vim-sayonara')
+	map <silent> <leader>q :Sayonara!<CR>
+	map <silent> <leader>Q :Sayonara<CR>
+	nnoremap gS :Sayonara!<CR>
+	nnoremap gs :Sayonara<CR>
+	cnoremap :q :Sayonara
+else
+	" See https://stackoverflow.com/questions/1444322/how-can-i-close-a-buffer-without-closing-the-window#8585343
+	map <leader>q :bp<bar>sp<bar>bn<bar>bd<CR>
+endif
 
 " Always make n/N search forward/backwar, regardless of the last search type.
 " From https://github.com/mhinz/vim-galore
