@@ -47,6 +47,7 @@ augroup END
 call plug#begin('~/.vim/bundle')
 if !has('nvim')
 	Plug 'tpope/vim-sensible'
+	Plug 'ConradIrwin/vim-bracketed-paste'
 endif
 
 Plug 'junegunn/vim-plug'
@@ -64,7 +65,6 @@ Plug 'justinmk/vim-dirvish'
 Plug 'yssl/QFEnter'
 Plug 'pbrisbin/vim-mkdir'
 Plug 'vim-scripts/a.vim'
-Plug 'ConradIrwin/vim-bracketed-paste'
 Plug 'jamessan/vim-gnupg'
 Plug 'mhinz/vim-grepper'
 Plug 'vim-scripts/indentpython'
