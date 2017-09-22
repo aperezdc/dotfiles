@@ -1,6 +1,14 @@
 set nocompatible
 let s:completion = 'vcm'
 
+" Disable some built-in plugins that I never use.
+let g:loaded_2html_plugin = 1
+let g:loaded_getscriptPlugin = 1
+let g:loaded_logipat = 1
+let g:loaded_netrwPlugin = 1
+let g:loaded_vimballPlugin = 1
+
+
 if !isdirectory(expand('~/.vim/bundle/vim-plug'))
 	!mkdir -p ~/.vim/bundle && git clone https://github.com/junegunn/vim-plug ~/.vim/bundle/vim-plug
 endif
