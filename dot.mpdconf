@@ -1,0 +1,116 @@
+# An example configuration file for MPD.
+# Read the user manual for documentation: http://www.musicpd.org/doc/user/
+
+music_directory     "~/Music"
+playlist_directory  "~/.mpd/playlists"
+db_file             "~/.mpd/database"
+pid_file            "~/.mpd/pid"
+state_file          "~/.mpd/state"
+sticker_file        "~/.mpd/sticker.sql"
+
+# The special value "syslog" makes MPD use the local syslog daemon. This
+# setting defaults to logging to syslog, otherwise logging is disabled.
+#
+#log_file			"~/.mpd/log"
+
+bind_to_address "localhost"
+port            "6600"
+#bind_to_address "~/.mpd/socket"
+
+# This setting controls the type of information which is logged. Available 
+# setting arguments are "default", "secure" or "verbose". The "verbose" setting
+# argument is recommended for troubleshooting, though can quickly stretch
+# available resources on limited hardware storage.
+#
+#log_level			"default"
+
+gapless_mp3_playback "yes"
+save_absolute_paths_in_playlists "no"
+
+#metadata_to_use	"artist,album,title,track,name,genre,date,composer,performer,disc"
+auto_update "yes"
+#follow_outside_symlinks "yes"
+#follow_inside_symlinks "yes"
+
+#zeroconf_enabled "no"
+#zeroconf_name    "Music Player"
+
+
+input {
+        plugin "curl"
+#       proxy "proxy.isp.com:8080"
+#       proxy_user "user"
+#       proxy_password "password"
+}
+
+#audio_output {
+#	type		"alsa"
+#	name		"My ALSA Device"
+##	device		"hw:0,0"	# optional
+##	mixer_type      "hardware"	# optional
+##	mixer_device	"default"	# optional
+##	mixer_control	"PCM"		# optional
+##	mixer_index	"0"		# optional
+#}
+#
+# An example of a recorder output:
+
+audio_output {
+	type		"pulse"
+	name		"Pulse Output"
+#	server		"remote_server"		# optional
+#	sink		"remote_server_sink"	# optional
+}
+
+#audio_output {
+#	type		"null"
+#	name		"My Null Output"
+#	mixer_type      "none"			# optional
+#}
+#
+#samplerate_converter		"Fastest Sinc Interpolator"
+
+
+# Normalization automatic volume adjustments ##################################
+#
+# This setting specifies the type of ReplayGain to use. This setting can have
+# the argument "off", "album", "track" or "auto". "auto" is a special mode that
+# chooses between "track" and "album" depending on the current state of
+# random playback. If random playback is enabled then "track" mode is used.
+# See <http://www.replaygain.org> for more details about ReplayGain.
+# This setting is off by default.
+#
+replaygain "album"
+#replaygain_preamp "0"
+replaygain_missing_preamp "-2"
+#replaygain_limit "yes"
+#volume_normalization "no"
+
+filesystem_charset "UTF-8"
+id3v1_encoding     "ISO-8859-1"
+
+
+# SIDPlay decoder #############################################################
+#
+# songlength_database:
+#  Location of your songlengths file, as distributed with the HVSC.
+#  The sidplay plugin checks this for matching MD5 fingerprints.
+#  See http://www.c64.org/HVSC/DOCUMENTS/Songlengths.faq
+#
+# default_songlength:
+#  This is the default playing time in seconds for songs not in the
+#  songlength database, or in case you're not using a database.
+#  A value of 0 means play indefinitely.
+#
+# filter:
+#  Turns the SID filter emulation on or off.
+#
+#decoder {
+#	plugin			"sidplay"
+#	songlength_database	"/media/C64Music/DOCUMENTS/Songlengths.txt"
+#	default_songlength	"120"
+#	filter "true"
+#}
+#
+###############################################################################
+
