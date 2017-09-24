@@ -1,0 +1,8 @@
+#! /bin/bash
+set -eu -o pipefail
+export BEMENU_BACKEND=wayland
+export XKB_DEFAULT_OPTIONS=ctrl:nocaps
+export XKB_DEFAULT_LAYOUT=es
+export WLC_REPEAT_DELAY=500
+export WLC_REPEAT_RATE=200
+exec sway
