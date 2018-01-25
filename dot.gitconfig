@@ -14,6 +14,7 @@
 	todo = grep -E '(FIXME|TODO) '
 	diffs = diff --patch-with-stat
 	format-patch = -M -C
+	br-format-patch = format-patch -M -n -s
 
 	# "Fancy" versions, which use diff-so-fancy, so we force --color
 	flogp = log --abbrev-commit --patch-with-stat --decorate --color
