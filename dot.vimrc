@@ -400,7 +400,10 @@ endif
 
 " Plugin: mucomplete
 if s:tap('vim-mucomplete')
-	set completeopt+=menuone,noinsert,noselect
+	set completeopt+=menuone,noselect
+	if v:version > 704 || (v:version == 704 && has('patch1753'))
+		set completeopt+=noinsert
+	endif
 
 	let g:mucomplete#buffer_relative_paths = 1
 	let g:mucomplete#enable_auto_at_startup = 1
