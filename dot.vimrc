@@ -402,11 +402,14 @@ endif
 if s:tap('vim-mucomplete')
 	set completeopt+=menuone
 	if v:version > 704 || (v:version == 704 && has('patch1753'))
+		let g:mucomplete#enable_auto_at_startup = 1
 		set completeopt+=noinsert,noselect
+	else
+		" Automatic completion needs support for noinsert/noselect.
+		let g:mucomplete#enable_auto_at_startup = 0
 	endif
 
 	let g:mucomplete#buffer_relative_paths = 1
-	let g:mucomplete#enable_auto_at_startup = 1
 
 
 	" Disable include completion and chain it from mucomplete
