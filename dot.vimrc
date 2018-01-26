@@ -226,7 +226,7 @@ endif
 
 " Configure Vim I-beam/underline cursor for insert/replace mode.
 " From http://vim.wikia.com/wiki/Change_cursor_shape_in_different_modes
-if !has('nvim')
+if !has('nvim') && exists('&t_SR')
 	if empty($TMUX)
 		let &t_SI = "\<Esc>[6 q"
 		let &t_SR = "\<Esc>[4 q"
