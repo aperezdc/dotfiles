@@ -1,5 +1,5 @@
 set nocompatible
-let s:completion = 'vcm'
+let s:completion = 'mu'
 
 " Disable some built-in plugins that I never use.
 let g:loaded_2html_plugin = 1
@@ -83,8 +83,6 @@ Plug 'wting/rust.vim'
 Plug 'vmchale/ion-vim'
 Plug 'cespare/vim-toml'
 Plug 'ledger/vim-ledger'
-Plug 'vim-pandoc/vim-pandoc' | Plug 'vim-pandoc/vim-pandoc-syntax'
-Plug 'Shougo/echodoc.vim'
 
 if !has('nvim') && v:version < 800 && s:completion !=# 'lift' && s:completion !=# 'mu'
 	let s:completion = 'lift'
@@ -404,20 +402,18 @@ endif
 
 " Plugin: mucomplete
 if s:tap('vim-mucomplete')
-	set completeopt+=menuone,noinsert
+	set completeopt+=menuone,noinsert,noselect
 
 	let g:mucomplete#buffer_relative_paths = 1
 	let g:mucomplete#enable_auto_at_startup = 1
 
-	inoremap <expr> <C-e> mucomplete#popup_exit("\<C-e>")
-	inoremap <expr> <C-y> mucomplete#popup_exit("\<C-y>")
-	inoremap <expr>  <CR> mucomplete#popup_exit("\<CR>")
 
 	" Disable include completion and chain it from mucomplete
 	set complete-=i
+	set shortmess+=c
 
 	let g:mucomplete#chains = {
-				\   'default': ['user', 'omni', 'keyn', 'c-n', 'path'],
+				\   'default': ['omni', 'user', 'keyp', 'c-n', 'path'],
 				\   'vim': ['path', 'cmd', 'keyn'],
 				\ }
 	let g:mucomplete#chains.c = g:mucomplete#chains.default
