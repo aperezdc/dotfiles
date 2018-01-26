@@ -131,14 +131,14 @@ set titlelen=0
 set titlestring=[%t]%m
 set scrolloff=3
 set sidescroll=5
+set lazyredraw
 set nowrap
 set whichwrap+=[,],<,>
 set wildignore+=*.o,*.a,a.out
+set wildmode=full
 set sessionoptions+=options
-set completeopt+=menu,menuone,noselect,longest
 set complete-=t
 set shortmess+=c
-set belloff+=ctrlg
 set synmaxcol=250
 set timeout           " for mappings
 set timeoutlen=1000   " default value
@@ -271,8 +271,6 @@ map <Space> /
 if s:tap('vim-sayonara')
 	map <silent> <leader>q :Sayonara!<CR>
 	map <silent> <leader>Q :Sayonara<CR>
-	nnoremap gS :Sayonara!<CR>
-	nnoremap gs :Sayonara<CR>
 	cnoremap :q :Sayonara
 else
 	" See https://stackoverflow.com/questions/1444322/how-can-i-close-a-buffer-without-closing-the-window#8585343
