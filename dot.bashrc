@@ -2,7 +2,7 @@
 
 for dirpath in ${HOME}/.local/bin ${HOME}/.dotfiles/bin ; do
 	if [[ -d ${dirpath} ]] ; then
-		PATH="$PATH:${dirpath}"
+		PATH="${dirpath}:${PATH}"
 	fi
 done
 
