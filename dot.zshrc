@@ -278,13 +278,11 @@ if [[ -n ${TMUX} && -n ${commands[tmux]} ]];then
 	case ${REAL_TERM} in
 		*256color | xterm-termite) ;&
 		TERM=fbterm)
-			if infocmp tmux-256color &> /dev/null ; then
-				TERM=tmux-256color
-			else
-				TERM=screen-256color
-			fi ;;
+			TERM=screen-256color
+			;;
 		*)
 			TERM=screen
+			;;
 	esac
 fi
 
@@ -327,7 +325,7 @@ esac
 if [[ -r /etc/profile.d/vte.sh ]] ; then
 	TERM=${REAL_TERM} source /etc/profile.d/vte.sh
 fi
-if [[ ${TERM} = screen* || ${TERM} = tmux-256color ]] ; then
+if [[ ${TERM} = screen* ]] ; then
 	tput smkx  # SRSLY?
 fi
 
