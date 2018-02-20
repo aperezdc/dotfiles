@@ -1,17 +1,37 @@
 # vim:ft=cfg
 
 [SpamFilter]
-[ClassifyingFilter]
 [KillThreadsFilter]
 [ListMailsFilter]
 
 [Filter.1]
+message = Mark killed threads as read
 query = tag:killed and tag:unread
 tags = -unread
 
+[Filter.2]
+message = Mark Bugzilla/Trac messages as tickets
+query = from:bugzilla-daemon@webkit.org
+     or from:bugzilla@busybox.net
+	 or from:igalia-management-staff@igalia.com
+	 or from:igalia-systems@igalia.com
+tags = +ticket
+
+[Filter.3]
+messages = Mark Myrddin mailing list messages
+query = to:myrddin-dev@eigenstate.org
+tags = +myrddin
+
+#[Filter.4]
+#message = Mark patches
+#query = subject:/^\[Buildroot\] \[PATCH/ or subject:/\[PATCH/
+#query = subject:/^\[Buildroot\] \[PATCH/
+#tags = +patch
+
 [SentMailsFilter]
-[ArchiveSentMailsFilter]
 sent_tag = sent
+
+[ArchiveSentMailsFilter]
 
 [InboxFilter]
 tags = +unread;+inbox
