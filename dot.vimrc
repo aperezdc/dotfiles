@@ -253,6 +253,7 @@ endif
 command! -nargs=0 -bang Q q<bang>
 command! -nargs=0 -bang W w<bang>
 command! -nargs=0 -bang Wq wq<bang>
+command! -nargs=0 B b#
 
 vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
