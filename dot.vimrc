@@ -6,9 +6,11 @@ let s:completion_extras = 0
 
 set nocompatible
 
-if !has('nvim') && v:version < 800 && s:completion !=# 'mu'
-	let s:completion = 'mine'
-	let s:completion_extras = 0
+if !has('nvim')
+	let s:completion_extras = 0  " NeoVim is needed for LanguageClient
+	if v:version < 800
+		let s:completion = ''    " µcomplete needs Vim8 or NeoVim
+	endif
 endif
 
 
@@ -97,17 +99,17 @@ Plug 'ledger/vim-ledger'
 
 if s:completion ==# 'mu'
 	Plug 'lifepillar/vim-mucomplete'
-else
-	" Fall-back.
-	let s:completion = 'mine'
 endif
-
-if s:completion_extras && has('nvim')
+if s:completion_extras
 	Plug 'autozimu/LanguageClient-neovim', { 'do': ':UpdateRemotePlugins' }
 	Plug 'Shougo/echodoc.vim'
 endif
 
 call plug#end()
+
+unlet s:completion
+unlet s:completion_extras
+
 
 " Options
 set nobomb
@@ -420,6 +422,10 @@ if s:tap('vim-mucomplete')
 	call add(g:mucomplete#chains.c, 'incl')
 	call add(g:mucomplete#chains.c, 'defs')
 	let g:mucomplete#chains.cpp = g:mucomplete#chains.c
+else
+	" Simple fall-back to have <Tab> mapped to something sensible.
+	inoremap <expr> <Tab> pumvisible() ? "\<C-p>" : <sid>check_backspace() ? "\<Tab>" : "\<C-x>\<C-p>\<C-p>"
+	set completeopt+=longest,menuone
 endif
 
 
@@ -484,9 +490,4 @@ if s:tap('vim-pandoc')
 	let g:pandoc#keyboard#sections#header_style = 's'
 	let g:pandoc#keyboard#wrap_cursor = 1
 	let g:pandoc#folding#level = 1
-endif
-
-if s:completion ==# 'mine'
-	inoremap <expr> <Tab> pumvisible() ? "\<C-p>" : <sid>check_backspace() ? "\<Tab>" : "\<C-x>\<C-p>\<C-p>"
-	set completeopt+=longest,menuone
 endif
