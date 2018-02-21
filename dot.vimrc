@@ -75,9 +75,9 @@ Plug 'pbrisbin/vim-mkdir'
 Plug 'vim-scripts/a.vim'
 Plug 'jamessan/vim-gnupg'
 Plug 'mhinz/vim-sayonara', { 'on': 'Sayonara' }
-Plug 'mhinz/vim-grepper'
-Plug 'vim-scripts/indentpython'
-Plug 'docunext/closetag.vim'
+Plug 'mhinz/vim-grepper', { 'on': ['Grepper', '<plug>(GrepperOperator)'] }
+Plug 'vim-scripts/indentpython', { 'for': 'python' }
+Plug 'docunext/closetag.vim', { 'for': ['html', 'xml'] }
 PlugLocal 'aperezdc/hipack-vim', '~/devel/hipack-vim'
 Plug 'wting/rust.vim'
 Plug 'vmchale/ion-vim'
