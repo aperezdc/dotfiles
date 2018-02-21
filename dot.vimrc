@@ -1,5 +1,16 @@
-set nocompatible
 let s:completion = 'mu'
+let s:completion_extras = 0
+
+
+"------- No user-serviceable parts below -----------------------------------
+
+set nocompatible
+
+if !has('nvim') && v:version < 800 && s:completion !=# 'mu'
+	let s:completion = 'mine'
+	let s:completion_extras = 0
+endif
+
 
 " Disable some built-in plugins that I never use.
 let g:loaded_2html_plugin = 1
@@ -84,29 +95,16 @@ Plug 'vmchale/ion-vim'
 Plug 'cespare/vim-toml'
 Plug 'ledger/vim-ledger'
 
-if !has('nvim') && v:version < 800 && s:completion !=# 'lift' && s:completion !=# 'mu'
-	let s:completion = 'lift'
-endif
-
-if s:completion ==# 'lsp'
-	Plug 'prabirshrestha/asyncomplete.vim'
-	Plug 'prabirshrestha/asyncomplete-buffer.vim'
-	Plug 'yami-beta/asyncomplete-omni.vim'
-	Plug 'Shougo/neco-syntax' | Plug 'prabirshrestha/asyncomplete-necosyntax.vim'
-	Plug 'Shougo/neco-vim' | Plug 'prabirshrestha/asyncomplete-necovim.vim'
-	Plug 'prabirshrestha/async.vim'
-	Plug 'prabirshrestha/vim-lsp'
-	Plug 'prabirshrestha/asyncomplete-lsp.vim'
-elseif s:completion ==# 'vcm'
-    Plug 'ajh17/vimcompletesme'
-elseif s:completion ==# 'lift'
-	PlugLocal 'aperezdc/vim-lift', '~/devel/vim-lift'
-elseif s:completion ==# 'mu'
+if s:completion ==# 'mu'
 	Plug 'lifepillar/vim-mucomplete'
+else
+	" Fall-back.
+	let s:completion = 'mine'
 endif
 
-if s:completion !=# 'lsp' && has('nvim')
-	Plug 'autozimu/LanguageClient-neovim'
+if s:completion_extras && has('nvim')
+	Plug 'autozimu/LanguageClient-neovim', { 'do': ':UpdateRemotePlugins' }
+	Plug 'Shougo/echodoc.vim'
 endif
 
 call plug#end()
@@ -388,22 +386,18 @@ if s:tap('vim-editorconfig')
 				\ }
 endif
 
-" Plugin: Lift
-if s:tap('vim-lift')
-    inoremap <expr> <Tab>  lift#trigger_completion()
-    inoremap <expr> <Esc>  pumvisible() ? "\<C-e>" : "\<Esc>"
-    inoremap <expr> <CR>   pumvisible() ? "\<C-y>" : "\<CR>"
-    inoremap <expr> <Down> pumvisible() ? "\<C-n>" : "\<Down>"
-    inoremap <expr> <Up>   pumvisible() ? "\<C-p>" : "\<Up>"
-    inoremap <expr> <C-d>  pumvisible() ? "\<PageDown>\<C-p>\<C-n>" : "\<C-d>"
-    inoremap <expr> <C-u>  pumvisible() ? "\<PageUp>\<C-p>\<C-n>" : "\<C-u>"
-endif
+
+function! s:check_backspace() abort
+	let l:column = col('.') - 1
+	return !l:column || getline('.')[l:column - 1] =~ '\s'
+endfunction
+
 
 " Plugin: mucomplete
 if s:tap('vim-mucomplete')
 	set completeopt+=menuone
 	if v:version > 704 || (v:version == 704 && has('patch1753'))
-		let g:mucomplete#enable_auto_at_startup = 1
+		let g:mucomplete#enable_auto_at_startup = 0
 		set completeopt+=noinsert,noselect
 	else
 		" Automatic completion needs support for noinsert/noselect.
@@ -416,6 +410,7 @@ if s:tap('vim-mucomplete')
 	" Disable include completion and chain it from mucomplete
 	set complete-=i
 	set shortmess+=c
+	set completeopt+=longest,menuone
 
 	let g:mucomplete#chains = {
 				\   'default': ['omni', 'user', 'keyp', 'c-n', 'path'],
@@ -427,59 +422,6 @@ if s:tap('vim-mucomplete')
 	let g:mucomplete#chains.cpp = g:mucomplete#chains.c
 endif
 
-" Plugin: asyncomplete
-if s:tap('asyncomplete.vim')
-	let g:asyncomplete_auto_popup = 1
-
-	function s:check_backspace() abort
-		let ccc = col('.')
-		return !ccc || getline('.')[ccc-1] =~ '\s'
-	endfunction
-
-	inoremap <silent><expr> <Tab>
-				\ pumvisible() ? "\<C-n>" :
-				\ <sid>check_backspace() ? "\<Tab>" :
-				\ asyncomplete#force_refresh()
-	inoremap <expr> <S-Tab>
-				\ pumvisible() ? "\<C-p>" : "\<C-h>"
-
-	if s:tap('asyncomplete-buffer.vim')
-		autocmd vimrc User asyncomplete_setup
-					\ call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
-					\ 'name': 'buffer',
-					\ 'priority': 10,
-					\ 'whitelist': ['*'],
-					\ 'blacklist': [],
-					\ 'completor': function('asyncomplete#sources#buffer#completor'),
-					\ }))
-	endif
-	if s:tap('asyncomplete-necovim.vim')
-		autocmd vimrc User asyncomplete_setup
-					\ call asyncomplete#register_source(asyncomplete#sources#necovim#get_source_options({
-					\ 'name': 'necovim',
-					\ 'priority': 30,
-					\ 'whitelist': ['vim'],
-					\ 'completor': function('asyncomplete#sources#necovim#completor'),
-					\ }))
-	endif
-	if s:tap('asyncomplete-omni.vim')
-		autocmd vimrc User asyncomplete_setup
-					\ call asyncomplete#register_source(asyncomplete#sources#omni#get_source_options({
-					\ 'name': 'omni',
-					\ 'priority': 20,
-					\ 'whitelist': ['*'],
-					\ 'completor': function('asyncomplete#sources#omni#completor')
-					\ }))
-	endif
-	if s:tap('asyncomplete-necosyntax.vim')
-		autocmd vimrc User asyncomplete_setup
-					\ call asyncomplete#register_source(asyncomplete#sources#necosyntax#get_source_options({
-					\ 'name': 'necosyntax',
-					\ 'whitelist': ['*'],
-					\ 'completor': function('asyncomplete#sources#necosyntax#completor'),
-					\ }))
-	endif
-endif
 
 " Plugin: Grepper
 if s:tap('vim-grepper')
@@ -494,80 +436,6 @@ if s:tap('vim-grepper')
 	nnoremap <leader>G :Grepper -tool git<cr>
 endif
 
-
-" Plugin: vim-lsp
-if s:tap('vim-lsp')
-	" let g:lsp_log_file = '/tmp/aperez-vim-lsp.log'
-	let g:lsp_log_file = ''
-	let g:lsp_async_completion = 1
-
-	if executable('pyls')
-					" \ 'root_uri': { server_info->lsp#utils#find_nearest_parent_file_directory(lsp#utils#get_buffer_path(), 'setup.py') },
-		autocmd vimrc User lsp_setup call lsp#register_server({
-					\ 'name': 'pyls',
-					\ 'cmd': { server_info->['pyls'] },
-					\ 'whitelist': ['python'],
-					\ })
-		autocmd vimrc FileType python setlocal omnifunc=lsp#complete
-	endif
-
-	if executable('rls') && executable('rustup')
-					" \ 'root_uri': { server_info->lsp#utils#find_nearest_parent_file_directory(lsp#utils#get_buffer_path(), 'Cargo.toml') },
-		let $RUST_SRC_PATH = fnamemodify(system('rustup run nightly rustup which cargo'), ':h:h')
-					\ . '/lib/rustlib/src/rust/src'
-		autocmd vimrc User lsp_setup call lsp#register_server({
-					\ 'name': 'rls',
-					\ 'cmd': { server_info->['rustup', 'run', 'nightly', 'rls'] },
-					\ 'whitelist': ['rust'],
-					\ })
-		autocmd vimrc FileType rust setlocal omnifunc=lsp#complete
-	endif
-
-	if executable('clangd')
-					" \ 'root_uri': { server_info->lsp#utils#find_nearest_parent_directory(lsp#utils#get_buffer_path(), '.git') },
-		autocmd vimrc User lsp_setup call lsp#register_server({
-					\ 'name': 'clangd',
-					\ 'cmd': { server_info->['clangd'] },
-					\ 'whitelist': ['c', 'cpp'],
-					\ })
-		autocmd vimrc FileType c,cpp setlocal omnifunc=lsp#complete
-	endif
-
-	" https://github.com/Alloyed/lua-lsp
-	if executable('lua-lsp')
-		autocmd vimrc User lsp_setup call lsp#register_server({
-					\ 'name': 'lualsp',
-					\ 'cmd': { server_info->['lua-lsp'] },
-					\ 'root_uri': { server_info->lsp#utils#find_nearest_parent_directory(lsp#utils#get_buffer_path(), '.git') },
-					\ 'whitelist': ['lua'],
-					\ })
-		autocmd vimrc FileType lua setlocal omnifunc=lsp#complete
-	endif
-endif
-
-
-if s:tap('nvim-langserver-shim')
-	let g:langserver_executables = {}
-	if executable('clangd')
-		let g:langserver_executables.c = {
-					\ 'name': 'clangd',
-					\ 'cmd': ['clangd'],
-					\ }
-		let g:langserver_executables.cpp = g:langserver_executables.c
-	endif
-	if executable('lua-lsp')
-		let g:langserver_executables.lua = {
-					\ 'name': 'lua-lsp',
-					\ 'cmd': ['lua-lsp'],
-					\ }
-	endif
-	if executable('rls') && executable('rustup')
-		let g:langserver_executables.rust = {
-					\ 'name': 'rls',
-					\ 'cmd': ['rustup', 'run', 'nightly', 'rls'],
-					\ }
-	endif
-endif
 
 
 " Plugin: LanguageClient-neovim
@@ -616,4 +484,9 @@ if s:tap('vim-pandoc')
 	let g:pandoc#keyboard#sections#header_style = 's'
 	let g:pandoc#keyboard#wrap_cursor = 1
 	let g:pandoc#folding#level = 1
+endif
+
+if s:completion ==# 'mine'
+	inoremap <expr> <Tab> pumvisible() ? "\<C-p>" : <sid>check_backspace() ? "\<Tab>" : "\<C-x>\<C-p>\<C-p>"
+	set completeopt+=longest,menuone
 endif
