@@ -323,15 +323,15 @@ fi
 
 if ${use_icecc} ; then setup_icecc ; fi
 if ${use_asan}  ; then setup_asan  ; fi
-
 setup_compiler_${compiler}
+if ${use_arch}  ; then setup_arch  ; fi
 
 makeargs=( "${makeargs[@]}" "-j${parallel_jobs}" )
 
 if [[ -z ${python_exe} ]] ; then
 	for name in python2.7 python2 python ; do
 		python_exe=$(type -P "${name}")
-		if [[ -c ${python_exe} ]] ; then
+		if [[ -x ${python_exe} ]] ; then
 			break
 		fi
 	done
