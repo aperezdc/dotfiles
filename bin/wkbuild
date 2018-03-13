@@ -47,7 +47,7 @@ declare -a makeargs=()
 declare -r cmake_prefixbuild_opts=(
 	-G Ninja
 	'-DENABLE_GLES2=ON'
-	'-DENABLE_GTK_DOC=OFF'
+	'-DENABLE_GTKDOC=OFF'
 	'-DENABLE_MINIBROWSER=ON'
 	'-DENABLE_PLUGIN_PROCESS_GTK2=OFF'
 )
