@@ -1,0 +1,5 @@
+#! /bin/zsh
+
+unfunction check-package
+unfunction get-developers
+unfunction send-patch

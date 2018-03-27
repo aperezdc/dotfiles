@@ -1,0 +1,34 @@
+#! /bin/zsh
+
+autostash BUILDROOT_SRCDIR=${0:A:h}
+
+get-developers () {
+	"${BUILDROOT_SRCDIR}/utils/get-developers" "$@"
+}
+
+send-patch () {
+	if [[ $# -eq 0 ]] ; then
+		echo 'send-patch: No patch files specified' >&2
+		return 1
+	fi
+	local cmd=$(get-developers "$@")
+	echo "${cmd}"
+
+	local p
+	for p in "$@" ; do
+		echo "  - ${p}"
+	done
+	echo
+	local answer
+	printf 'Continue? [y/n] '
+	if read -q ; then
+		echo ' (sending...)'
+		eval "${cmd} $*"
+	else
+		echo ' (cancelled)'
+	fi
+}
+
+check-package () {
+	python2 "${BUILDROOT_SRCDIR}/utils/check-package" "$@"
+}
