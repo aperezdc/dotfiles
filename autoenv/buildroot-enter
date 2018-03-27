@@ -1,6 +1,11 @@
 #! /bin/zsh
 
-autostash BUILDROOT_SRCDIR=${0:A:h}
+if [[ -z ${BUILDROOT_SRCDIR:-} ]] ; then
+	echo 'BUILDROOT_SRCDIR is undefined' >&2
+	return
+fi
+
+autostash PATH="${PATH}:${BUILDROOT_SRCDIR}/utils"
 
 get-developers () {
 	"${BUILDROOT_SRCDIR}/utils/get-developers" "$@"
