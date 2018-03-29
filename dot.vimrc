@@ -96,6 +96,7 @@ Plug 'wting/rust.vim'
 Plug 'vmchale/ion-vim'
 Plug 'cespare/vim-toml'
 Plug 'ledger/vim-ledger'
+Plug 'igankevich/mesonic'
 
 if s:completion ==# 'mu'
 	Plug 'lifepillar/vim-mucomplete'
@@ -299,6 +300,8 @@ autocmd vimrc VimResized * :wincmd =
 
 " Per-filetype settings
 autocmd vimrc FileType mkdc,markdown setlocal expandtab tabstop=2 shiftwidth=2 conceallevel=2
+autocmd vimrc FileType meson setlocal expandtab commentstring=\#\ %s
+autocmd vimrc FileType cmake setlocal commentstring=\#\ %s
 autocmd vimrc FileType yaml setlocal tabstop=2 shiftwidth=2 expandtab
 autocmd vimrc FileType objc setlocal expandtab cinoptions+=(0
 autocmd vimrc FileType cpp setlocal expandtab cinoptions+=(0
@@ -373,13 +376,14 @@ endif
 
 " Plugin: qf
 if s:tap('vim-qf')
-	nmap <F5>   <Plug>QfSwitch
-	nmap <F6>   <Plug>QfCtoggle
-	nmap <F7>   <Plug>QfCprevious
-	nmap <F8>   <Plug>QfCnext
-	nmap <C-F6> <Plug>QfLtoggle
-	nmap <C-F7> <Plug>QfLprevious
-	nmap <C-F8> <Plug>QfLnext
+	nmap <F5>   <Plug>(qf_qf_toggle)
+	nmap <F6>   <Plug>(qf_qf_toggle_stay)
+	nmap <F7>   <Plug>(qf_qf_previous)
+	nmap <F8>   <Plug>(qf_qf_next)
+	nmap <C-F5> <Plug>(qf_loc_toggle)
+	nmap <C-F6> <Plug>(qf_loc_toggle_stay)
+	nmap <C-F7> <Plug>(qf_loc_previous)
+	nmap <C-F8> <Plug>(qf_loc_next)
 endif
 
 " Plugin: EditorConfig
@@ -398,22 +402,20 @@ endfunction
 
 " Plugin: mucomplete
 if s:tap('vim-mucomplete')
-	set completeopt+=menuone
+	set completeopt+=menuone,longest
 	if v:version > 704 || (v:version == 704 && has('patch1753'))
-		let g:mucomplete#enable_auto_at_startup = 0
-		set completeopt+=noinsert,noselect
-	else
-		" Automatic completion needs support for noinsert/noselect.
-		let g:mucomplete#enable_auto_at_startup = 0
+		set completeopt+=noselect
+		set completeopt-=noinsert
 	endif
 
+	let g:mucomplete#always_use_completeopt = 1
+	let g:mucomplete#enable_auto_at_startup = 0
 	let g:mucomplete#buffer_relative_paths = 1
-
+	let g:mucomplete#smart_enter = 0
 
 	" Disable include completion and chain it from mucomplete
 	set complete-=i
 	set shortmess+=c
-	set completeopt+=longest,menuone
 
 	let g:mucomplete#chains = {
 				\   'default': ['omni', 'user', 'keyp', 'c-n', 'path'],
