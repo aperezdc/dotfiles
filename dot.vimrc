@@ -78,8 +78,7 @@ Plug 'sgur/vim-editorconfig'
 Plug 'aperezdc/vim-elrond'
 PlugLocal 'aperezdc/vim-lining', '~/devel/vim-lining'
 PlugLocal 'aperezdc/vim-template', '~/devel/vim-template'
-Plug 'junegunn/fzf'
-Plug 'junegunn/fzf.vim'
+Plug 'cloudhead/neovim-fuzzy'
 Plug 'romainl/vim-qf'
 Plug 'romainl/vim-qlist'
 Plug 'justinmk/vim-dirvish'
@@ -97,6 +96,8 @@ Plug 'vmchale/ion-vim'
 Plug 'cespare/vim-toml'
 Plug 'ledger/vim-ledger'
 Plug 'igankevich/mesonic'
+Plug 'jneen/ragel.vim'
+Plug 'dccmx/vim-lemon-syntax'
 
 if s:completion ==# 'mu'
 	Plug 'lifepillar/vim-mucomplete'
@@ -107,6 +108,10 @@ if s:completion_extras
 endif
 
 call plug#end()
+
+" if isdirectory('/usr/share/vim/vimfiles')
+" 	set runtimepath+=/usr/share/vim/vimfiles
+" endif
 
 unlet s:completion
 unlet s:completion_extras
@@ -197,6 +202,10 @@ if &term =~# '^screen' || &term =~# '^tmux'
     set t_fs=\
     set t_Co=16
 endif
+
+" if has('nvim') && has('termguicolors')
+" 	set termguicolors
+" endif
 
 " For some reason Vim does not recognize these sequences, so we need to
 " map them manually. Ugh.
@@ -372,6 +381,12 @@ if s:tap('fzf.vim')
 	nmap <C-A-p> <leader>f
 	nmap <C-A-m> <leader>m
 	nmap <C-A-b> <leader>b
+endif
+
+" Plugin: neovim-fuzzy
+if s:tap('neovim-fuzzy')
+	nnoremap <silent> <Leader>f :<C-u>FuzzyOpen<cr>
+	nmap <C-A-p> <leader>f
 endif
 
 " Plugin: qf
