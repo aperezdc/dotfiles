@@ -7,6 +7,9 @@ fi
 
 stty -ixon -ixoff
 
+# https://www.johnhawthorn.com/2012/09/vi-escape-delays/
+KEYTIMEOUT=1
+
 # The following lines were added by compinstall
 zstyle :compinstall filename '/home/aperez/.zshrc'
 
@@ -100,6 +103,17 @@ autoload -U zmv
 # Initialize colors.
 autoload -U colors
 colors
+
+# Command line editing in $EDITOR
+autoload edit-command-line && zle -N edit-command-line
+bindkey '\ee' edit-command-line
+
+# zsh-fzy
+if zplug check aperezdc/zsh-fzy ; then
+	bindkey '\ec' fzy-cd-widget
+	bindkey '^T'  fzy-file-widget
+	bindkey '^R'  fzy-history-widget
+fi
 
 # Bind Ctrl-Left and Ctrl-Right key sequences, and AvPag/RePag for history
 bindkey "^[[1;5C" forward-word
@@ -483,6 +497,25 @@ if [[ ${ZSH_HIGHLIGHT_VERSION:+set} = set ]] ; then
 	ZSH_HIGHLIGHT_STYLES[builtin]='fg=yellow,bold'
 	ZSH_HIGHLIGHT_STYLES[alias]='fg=yellow,bold'
 	ZSH_HIGHLIGHT_STYLES[path]='fg=underline'
+fi
+if [[ ${FAST_HIGHLIGHT:+set} = set ]] ; then
+	FAST_HIGHLIGHT_STYLES[dollar-double-quoted-argument]='fg=magenta,bold'
+	FAST_HIGHLIGHT_STYLES[double-quoted-argument]='fg=magenta,bold'
+	FAST_HIGHLIGHT_STYLES[single-quoted-argument]='fg=magenta,bold'
+	FAST_HIGHLIGHT_STYLES[single-hyphen-option]='fg=cyan'
+	FAST_HIGHLIGHT_STYLES[double-hyphen-option]='fg=cyan'
+	FAST_HIGHLIGHT_STYLES[back-quoted-argument]='fg=magenta'
+	FAST_HIGHLIGHT_STYLES[commandseparator]='fg=red,bold'
+	FAST_HIGHLIGHT_STYLES[hashed-command]='fg=yellow,bold'
+	FAST_HIGHLIGHT_STYLES[reserved-word]='fg=bold'
+	FAST_HIGHLIGHT_STYLES[unknown-token]='bg=brown'
+	FAST_HIGHLIGHT_STYLES[precommand]='fg=yellow,bold,underline'
+	FAST_HIGHLIGHT_STYLES[function]='fg=yellow,bold'
+	FAST_HIGHLIGHT_STYLES[globbing]='fg=cyan,bold'
+	FAST_HIGHLIGHT_STYLES[command]='fg=yellow,bold'
+	FAST_HIGHLIGHT_STYLES[builtin]='fg=yellow,bold'
+	FAST_HIGHLIGHT_STYLES[alias]='fg=yellow,bold'
+	FAST_HIGHLIGHT_STYLES[path]='fg=underline'
 fi
 
 # Source the fzf helpers last, to make sure its keybindings prevail
