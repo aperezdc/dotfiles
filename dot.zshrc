@@ -108,6 +108,11 @@ colors
 autoload edit-command-line && zle -N edit-command-line
 bindkey '\ee' edit-command-line
 
+# Use Alt-M to copy words other from the last from the previous line
+autoload -Uz copy-earlier-word
+zle -N copy-earlier-word
+bindkey '\em' copy-earlier-word
+
 # zsh-fzy
 if zplug check aperezdc/zsh-fzy ; then
 	bindkey '\ec' fzy-cd-widget
@@ -126,6 +131,13 @@ zmodload -i zsh/complist
 bindkey -M menuselect "\e[5~" backward-word
 bindkey -M menuselect "\e[6~" forward-word
 bindkey -M menuselect "\e"    send-break
+bindkey -M menuselect '^F'    accept-and-infer-next-history
+bindkey -M menuselect '/'     accept-and-infer-next-history
+bindkey -M menuselect '^?'    undo
+bindkey -M menuselect ' '     accept-and-hold
+bindkey -M menuselect '*'     history-incremental-search-forward
+bindkey -M menuselect '^C'    send-break
+
 
 # Bind Delete/Begin/End for Zsh setups that do not include those by default
 # (screen, tmux, rxvt...)
@@ -147,7 +159,7 @@ setopt prompt_subst pushd_silent auto_param_slash auto_list \
 	print_eight_bit always_to_end glob no_warn_create_global \
 	hash_list_all hash_cmds hash_dirs hash_executables_only \
 	auto_continue check_jobs complete_in_word rc_quotes \
-	complete_aliases menu_complete
+	complete_aliases
 unsetopt auto_remove_slash list_ambiguous pushd_to_home
 
 # Correct things, but not too aggressively for certain commands
@@ -158,13 +170,6 @@ alias man='nocorrect man'
 alias sudo='nocorrect sudo'
 alias exec='nocorrect exec'
 alias mkdir='nocorrect mkdir'
-
-autoload predict-on
-zle -N predict-on
-zle -N predict-off
-bindkey '^Z'   predict-on
-bindkey '^X^Z' predict-off
-zstyle ':predict' verbose true
 
 # Make completion faster: use cache and do not do partial matches
 [[ -d ~/.zsh/cache ]] && mkdir -p ~/.zsh/cache
