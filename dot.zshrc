@@ -114,10 +114,16 @@ zle -N copy-earlier-word
 bindkey '\em' copy-earlier-word
 
 # zsh-fzy
-if zplug check aperezdc/zsh-fzy ; then
+if zplug check '~/devel/zsh-fzy' || zplug check 'aperezdc/zsh-fzy' ; then
+	zstyle ':fzy:*' lines 18
 	bindkey '\ec' fzy-cd-widget
 	bindkey '^T'  fzy-file-widget
 	bindkey '^R'  fzy-history-widget
+fi
+
+# zsh-notes
+if zplug check '~/devel/zsh-notes' || zplug check 'aperezdc/zsh-notes' ; then
+	bindkey '\en' notes-edit
 fi
 
 # Bind Ctrl-Left and Ctrl-Right key sequences, and AvPag/RePag for history
