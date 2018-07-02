@@ -8,6 +8,7 @@ zplug RobSis/zsh-reentry-hook
 zplug caarlos0/zsh-open-pr
 zplug zdharma/fast-syntax-highlighting
 zplug zsh-users/zsh-completions
+zplug zsh-users/zsh-autosuggestions
 zplug Tarrasch/zsh-autoenv
 zplug k4rthik/git-cal, as:command
 
