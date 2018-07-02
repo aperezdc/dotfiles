@@ -113,6 +113,12 @@ autoload -Uz copy-earlier-word
 zle -N copy-earlier-word
 bindkey '\em' copy-earlier-word
 
+# Make transpose-word smarter, by understanding shell escapes
+autoload -Uz transpose-words-match
+zstyle ':zle:transpose-words' word-style shell
+zle -N transpose-words transpose-words-match
+
+
 # zsh-fzy
 if zplug check '~/devel/zsh-fzy' || zplug check 'aperezdc/zsh-fzy' ; then
 	zstyle ':fzy:*' lines 18
