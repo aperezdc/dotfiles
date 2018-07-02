@@ -129,7 +129,7 @@ fi
 
 # zsh-notes
 if zplug check '~/devel/zsh-notes' || zplug check 'aperezdc/zsh-notes' ; then
-	bindkey '\en' notes-edit
+	bindkey '^N' notes-edit-widget
 fi
 
 # Bind Ctrl-Left and Ctrl-Right key sequences, and AvPag/RePag for history
