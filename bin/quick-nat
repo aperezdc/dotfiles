@@ -1,0 +1,51 @@
+#! /bin/bash
+set -e
+
+default-route-dev () {
+	local -a line
+	while read -r -a line ; do
+		if [[ ${#line[@]} -ge 5 && ${line[0]} = default && ${line[1]} = via ]]
+		then
+			echo "${line[4]}"
+			break
+		fi
+	done < <( ip route )
+}
+
+available-devices () {
+	local -a line
+	local default=$(default-route-dev)
+	while read -r -a line ; do
+		if [[ ${#line[@]} -ge 2 && ${line[0]} != ${default} && ${line[1]} != UNKNOWN ]] ; then
+			echo "${line[0]}"
+		fi
+	done < <( ip -br link )
+}
+
+msg () { printf '[36m%s[0;0m[35m%s[0;0m\n' "${1}" "${2:-}" ; } 1>&2
+die () { printf '[1;31m%s[0;0m\n' "$*" ; } 1>&2
+
+
+declare -a candidates=( $(available-devices) )
+[[ ${#candidates[@]} -gt 0 ]] || die 'No candidate devices'
+
+declare -r defaultroute=$(default-route-dev)
+[[ -n ${defaultroute} ]] || die 'No default route'
+
+msg 'Default route: ' "${defaultroute}"
+msg 'Available devices: ' "${candidates[*]}"
+
+if [[ $# -eq 1 ]] ; then
+	candidates[0]=$1
+fi
+[[ ${#candidates[@]} -eq 1 ]] || die 'Multiple devices available'
+
+msg 'Chosen device: ' "${candidates[0]}"
+
+msg 'Script:'
+cat <<EOF
+echo 1 > /proc/sys/net/ipv4/ip_forward
+iptables -t nat -A POSTROUTING -o ${defaultroute} -j MASQUERADE
+iptables -A FORWARD -i ${defaultroute} -o ${candidates[0]} -m state --state RELATED,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -i ${candidates[0]} -o ${defaultroute} -j ACCEPT
+EOF
