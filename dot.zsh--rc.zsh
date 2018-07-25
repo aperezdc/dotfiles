@@ -312,10 +312,18 @@ if [[ -n ${TMUX} && -n ${commands[tmux]} ]];then
 	case ${REAL_TERM} in
 		*256color | xterm-termite) ;&
 		TERM=fbterm)
-			TERM=screen-256color
+			if infocmp tmux-256color &> /dev/null ; then
+				TERM=tmux-256color
+			else
+				TERM=screen-256color
+			fi
 			;;
 		*)
-			TERM=screen
+			if infocmp tmux &> /dev/null ; then
+				TERM=tmux
+			else
+				TERM=screen
+			fi
 			;;
 	esac
 fi
