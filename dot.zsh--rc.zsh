@@ -34,7 +34,6 @@ zz-top Tarrasch/zsh-autoenv
 zz-top aperezdc/zsh-notes --local ~/devel/zsh-notes
 zz-top aperezdc/virtualz --local ~/devel/virtualz
 zz-top aperezdc/rockz --local ~/devel/rockz
-# zz-top k4rthik/git-cal --command
 
 
 if [[ ! -d ~/.tmux/plugins/tpm ]] ; then
@@ -153,8 +152,6 @@ bindkey -M menuselect '^?'    undo
 bindkey -M menuselect ' '     accept-and-hold
 bindkey -M menuselect '*'     history-incremental-search-forward
 bindkey -M menuselect '^C'    send-break
-
-bindkey '^C' send-break
 
 
 # Bind Delete/Begin/End for Zsh setups that do not include those by default
