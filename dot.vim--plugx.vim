@@ -67,16 +67,15 @@ endfunction
 if filereadable(expand('~/.vim/plug.vim'))
 	source ~/.vim/plug.vim
 	command! -nargs=+ -bar Plugin call s:plugx(<args>)
+	command -nargs=0 PluginBegin call plug#begin('~/.vim/bundle')
+	command -nargs=0 PluginEnd call plug#end()
 else
 	function s:noop(...)
 	endfunction
 
-	function plug#begin(path)
-		command -nargs=+ -bar Plugin call s:noop(<args>)
-	endfunction
-
-	function plug#end()
-	endfunction
+	command -nargs=0 PluginEnd call s:noop()
+	command -nargs=0 PluginBegin call s:noop()
+	command -nargs=+ -bar Plugin call s:noop(<args>)
 
 	function s:plugfetch()
 		!curl -fLo ~/.vim/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim

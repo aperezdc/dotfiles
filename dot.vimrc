@@ -12,7 +12,7 @@ augroup END
 
 source ~/.vim/plugx.vim
 
-call plug#begin('~/.vim/bundle')
+PluginBegin
 if !has('nvim')
 	Plugin 'tpope/vim-sensible'
 	Plugin 'ConradIrwin/vim-bracketed-paste'
@@ -50,7 +50,7 @@ Plugin 'tpope/vim-fugitive'
 Plugin 'vim-scripts/a.vim'
 Plugin 'wellle/visual-split.vim'
 Plugin 'yssl/QFEnter'
-call plug#end()
+PluginEnd
 
 
 set complete=.,w,b,u,i,d,t
