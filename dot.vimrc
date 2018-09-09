@@ -1,151 +1,85 @@
-let s:completion = 'mu'
-let s:completion_extras = 0
-
-
-"------- No user-serviceable parts below -----------------------------------
-
 set nocompatible
 
-if !has('nvim')
-	let s:completion_extras = 0  " NeoVim is needed for LanguageClient
-	if v:version < 800
-		let s:completion = ''    " µcomplete needs Vim8 or NeoVim
-	endif
-endif
-
-
-" Disable some built-in plugins that I never use.
+" Disable some built-in plug-ins which I never use.
 let g:loaded_2html_plugin = 1
 let g:loaded_getscriptPlugin = 1
 let g:loaded_logipat = 1
-let g:loaded_netrwPlugin = 1
 let g:loaded_vimballPlugin = 1
 
-
-if !isdirectory(expand('~/.vim/bundle/vim-plug'))
-	!mkdir -p ~/.vim/bundle && git clone https://github.com/junegunn/vim-plug ~/.vim/bundle/vim-plug
-endif
-source ~/.vim/bundle/vim-plug/plug.vim
-
-function! s:plug_local(repo, path, ...)
-	if a:0 > 1
-		echohl ErrorMsg
-		echom '[plug-local] Invalid number of arguments (2..3)'
-		echohl None
-		return
-	endif
-
-	let plugname = fnamemodify(a:repo, ':t')
-	let dirname = fnamemodify(a:path, ':t')
-	if dirname !=# plugname
-		echohl ErrorMsg
-		echom '[plug-local] Plugin names do not match: '.plugname.' / '.dirname
-		echohl None
-		return
-	endif
-
-	let opts = len(a:000) > 0 ? a:1 : {}
-	let path = fnamemodify(a:path, ':p')
-	if isdirectory(path)
-		" Ensure that local plugins are always marked as frozen.
-		let opts.frozen = 1
-		call plug#(path, opts)
-	else
-		call plug#(a:repo, opts)
-	endif
-endfunction
-command! -nargs=+ -bar PlugLocal call s:plug_local(<args>)
-
-function! s:tap(name)
-	return has_key(g:plugs, a:name)
-endfunction
-
-
 augroup vimrc
-    autocmd!
+	autocmd!
 augroup END
+
+source ~/.vim/plugx.vim
 
 call plug#begin('~/.vim/bundle')
 if !has('nvim')
-	Plug 'tpope/vim-sensible'
-	Plug 'ConradIrwin/vim-bracketed-paste'
+	Plugin 'tpope/vim-sensible'
+	Plugin 'ConradIrwin/vim-bracketed-paste'
 endif
-
-Plug 'junegunn/vim-plug'
-Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-commentary'
-Plug 'sgur/vim-editorconfig'
-Plug 'aperezdc/vim-elrond'
-PlugLocal 'aperezdc/vim-lining', '~/devel/vim-lining'
-PlugLocal 'aperezdc/vim-template', '~/devel/vim-template'
-Plug 'cloudhead/neovim-fuzzy'
-Plug 'romainl/vim-qf'
-Plug 'romainl/vim-qlist'
-Plug 'justinmk/vim-dirvish'
-Plug 'yssl/QFEnter'
-Plug 'pbrisbin/vim-mkdir'
-Plug 'vim-scripts/a.vim'
-Plug 'jamessan/vim-gnupg'
-Plug 'mhinz/vim-sayonara', { 'on': 'Sayonara' }
-Plug 'mhinz/vim-grepper', { 'on': ['Grepper', '<plug>(GrepperOperator)'] }
-Plug 'vim-scripts/indentpython', { 'for': 'python' }
-Plug 'docunext/closetag.vim', { 'for': ['html', 'xml'] }
-PlugLocal 'aperezdc/hipack-vim', '~/devel/hipack-vim'
-Plug 'wting/rust.vim'
-Plug 'vmchale/ion-vim'
-Plug 'cespare/vim-toml'
-Plug 'ledger/vim-ledger'
-Plug 'igankevich/mesonic'
-Plug 'jneen/ragel.vim'
-Plug 'dccmx/vim-lemon-syntax'
-
-if s:completion ==# 'mu'
-	Plug 'lifepillar/vim-mucomplete'
+Plugin 'aperezdc/vim-elrond', '~/devel/vim-elrond'
+Plugin 'aperezdc/vim-lining', '~/devel/vim-lining'
+Plugin 'aperezdc/vim-template', '~/devel/vim-template'
+" Plugin 'aperezdc/vim-lift', '~/devel/vim-lift'
+Plugin 'ajh17/VimCompletesMe'
+Plugin 'bounceme/remote-viewer'
+Plugin 'docunext/closetag.vim', { 'for': ['html', 'xml'] }
+Plugin 'IngoHeimbach/neco-vim'
+Plugin 'fcpg/vim-shore'
+if executable('fzf')
+	Plugin 'junegunn/fzf'
+else
+	Plugin 'junegunn/fzf', { 'do': './install --all' }
 endif
-if s:completion_extras
-	Plug 'autozimu/LanguageClient-neovim', { 'do': ':UpdateRemotePlugins' }
-	Plug 'Shougo/echodoc.vim'
-endif
-
+" Plugin 'natebosch/vim-lsc'
+Plugin 'autozimu/LanguageClient-neovim', { 'branch': 'next', 'do': 'make release' }
+Plugin 'junegunn/fzf.vim'
+Plugin 'justinmk/vim-dirvish'
+Plugin 'ledger/vim-ledger'
+" Plugin 'lifepillar/vim-ucf'
+Plugin 'pbrisbin/vim-mkdir'
+Plugin 'romainl/vim-qf'
+Plugin 'romainl/vim-qlist'
+Plugin 'sgur/vim-editorconfig'
+Plugin 'sheerun/vim-polyglot'
+Plugin 'tmux-plugins/vim-tmux'
+Plugin 'tpope/vim-commentary'
+Plugin 'tpope/vim-eunuch'
+Plugin 'tpope/vim-fugitive'
+" Plugin 'unblevable/quick-scope'
+Plugin 'vim-scripts/a.vim'
+Plugin 'wellle/visual-split.vim'
+Plugin 'yssl/QFEnter'
 call plug#end()
 
-" if isdirectory('/usr/share/vim/vimfiles')
-" 	set runtimepath+=/usr/share/vim/vimfiles
-" endif
 
-unlet s:completion
-unlet s:completion_extras
-
-
-" Options
+set complete=.,w,b,u,i,d,t
+set completeopt-=preview
+set completeopt-=menuone
+set completeopt+=longest
+set shiftwidth=4
+set tabstop=4
 set nobomb
 set exrc
-set secure
 set hidden
 set incsearch
-set nohlsearch
-set ignorecase
 set smartcase
+set ignorecase
 set noinfercase
+set nohlsearch
 set linebreak
-set tabstop=4
-set shiftwidth=4
 set textwidth=78
 set colorcolumn=81
 set encoding=utf-8
-set titlelen=0
-set titlestring=[%t]%m
 set scrolloff=3
-set sidescroll=5
-set lazyredraw
+set sidescrolloff=5
 set nowrap
-set whichwrap+=[,],<,>
-set wildignore+=*.o,*.a,a.out
-set wildmode=full
-set sessionoptions+=options
-set complete-=t
+set whichwrap+=[,],<,>                                                                                                                                                                
+set wildignore+=*.o,*.a,a.out                                                    
 set shortmess+=c
-set synmaxcol=250
+" set showmode
+" set statusline=%<\ %f\ %m%r%y%w%=\ L:\ \%l\/\%L\ C:\ \%c\ 
+set ruler
 set timeout           " for mappings
 set timeoutlen=1000   " default value
 set ttimeout          " for key codes
@@ -153,42 +87,26 @@ set ttimeoutlen=10    " unnoticeable small value
 
 " Persistent undo!
 if !isdirectory(expand('~/.cache/vim/undo'))
-    call system('mkdir -p ' . shellescape(expand('~/.cache/vim/undo')))
+	call system('mkdir -p ' . shellescape(expand('~/.cache/vim/undo')))
 endif
 set undodir=~/.cache/vim/undo
 set undofile
 
-if len($DISPLAY)
-    set clipboard+=unnamed
-endif
-
 filetype indent plugin on
 syntax on
 
-augroup vimrc
-    autocmd!
-augroup END
+if executable('rg')
+	set grepprg=rg\ --vimgrep
+endif
 
-if s:tap('vim-elrond')
+inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+
+if Have('vim-elrond')
 	colorscheme elrond
 else
 	colorscheme elflord
 endif
 
-if executable('rg')
-    set grepprg=rg\ --vimgrep
-endif
-
-function! s:StripTrailingWhitespace()
-    if !&binary && &filetype != 'diff'
-	let l = line('.')
-	let c = col('.')
-	%s/\s\+$//e
-	call cursor(l, c)
-    endif
-endfunction
-
-command! -bar StripTrailingWhitespace silent call <SID>StripTrailingWhitespace()
 
 if &term =~# '^screen' || &term =~# '^tmux'
     map  <silent> [1;5D <C-Left>
@@ -201,23 +119,6 @@ if &term =~# '^screen' || &term =~# '^tmux'
     set t_ts=k
     set t_fs=\
     set t_Co=16
-endif
-
-" if has('nvim') && has('termguicolors')
-" 	set termguicolors
-" endif
-
-" For some reason Vim does not recognize these sequences, so we need to
-" map them manually. Ugh.
-if !has('nvim')
-	map  <silent> [1;3D <M-Left>
-	map  <silent> [1;3C <M-Right>
-	map  <silent> [1;3A <M-Up>
-	map  <silent> [1;3B <M-Down>
-	lmap <silent> [1;3D <M-Left>
-	lmap <silent> [1;3C <M-Right>
-	lmap <silent> [1;3A <M-Up>
-	lmap <silent> [1;3B <M-Down>
 endif
 
 if $TERM =~ "xterm-256color" || $TERM =~ "screen-256color" || $TERM =~ "xterm-termite" || $TERM =~ "gnome-256color" || $COLORTERM =~ "gnome-terminal"
@@ -246,24 +147,17 @@ if !has('nvim') && exists('&t_SR')
 	endif
 endif
 
-if has('multi_byte') && &encoding ==# 'utf-8'
-	autocmd vimrc InsertEnter * set listchars-=trail:⣿
-	autocmd vimrc InsertLeave * set listchars+=trail:⣿
-else
-	autocmd vimrc InsertEnter * set listchars-=trail:·
-	autocmd vimrc InsertLeave * set listchars+=trail:·
-endif
 
-" Dynamically enable/disable cursorline for the active window only.
-" if &t_Co >= 256
-" 	autocmd vimrc InsertLeave,WinEnter * set cursorline
-" 	autocmd vimrc InsertEnter,WinLeave * set nocursorline
-" endif
-
+" Cannot live without these.
 command! -nargs=0 -bang Q q<bang>
 command! -nargs=0 -bang W w<bang>
 command! -nargs=0 -bang Wq wq<bang>
 command! -nargs=0 B b#
+
+" Convenience mappings.
+map <C-t> <C-]>
+map <C-p> :pop<cr>
+map <Space> /
 
 vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
@@ -273,61 +167,11 @@ vnoremap > >gv
 nnoremap H :bprevious<CR>
 nnoremap L :bnext<CR>
 
-map <C-t> <C-]>
-map <C-p> :pop<cr>
-map __ ZZ
-map <Space> /
+" Manually re-format a paragraph of text
+nnoremap <silent> Q gwip
 
-" Do not close the window/split when deleting a buffer.
-if s:tap('vim-sayonara')
-	map <silent> <leader>q :Sayonara!<CR>
-	map <silent> <leader>Q :Sayonara<CR>
-	cnoremap :q :Sayonara
-else
-	" See https://stackoverflow.com/questions/1444322/how-can-i-close-a-buffer-without-closing-the-window#8585343
-	map <leader>q :bp<bar>sp<bar>bn<bar>bd<CR>
-endif
-
-" Always make n/N search forward/backwar, regardless of the last search type.
-" From https://github.com/mhinz/vim-galore
-nnoremap <expr> n 'Nn'[v:searchforward]
-nnoremap <expr> N 'nN'[v:searchforward]
-
-" Make <C-n> and <C-p> respect already-typed content in command mode.
-" From https://github.com/mhinz/vim-galore
-cnoremap <c-n> <down>
-cnoremap <c-p> <up>
-
-" Jump to the last edited position in the file being loaded (if available)
-autocmd vimrc BufReadPost *
-	    \ if line("'\"") > 0 && line("'\"") <= line("$") |
-	    \		execute "normal g'\"" |
-	    \ endif
-
-" Readjust split-windows when Vim is resized
-autocmd vimrc VimResized * :wincmd =
-
-" Per-filetype settings
-autocmd vimrc FileType mkdc,markdown setlocal expandtab tabstop=2 shiftwidth=2 conceallevel=2
-autocmd vimrc FileType meson setlocal expandtab commentstring=\#\ %s
-autocmd vimrc FileType cmake setlocal commentstring=\#\ %s
-autocmd vimrc FileType yaml setlocal tabstop=2 shiftwidth=2 expandtab
-autocmd vimrc FileType objc setlocal expandtab cinoptions+=(0
-autocmd vimrc FileType cpp setlocal expandtab cinoptions+=(0
-autocmd vimrc FileType lua setlocal expandtab tabstop=3 shiftwidth=3
-autocmd vimrc FileType c setlocal expandtab cinoptions+=(0
-autocmd vimrc FileType d setlocal expandtab cinoptions+=(0
-autocmd vimrc BufReadPost Config.in setlocal filetype=kconfig
-
-autocmd vimrc FileType dirvish call fugitive#detect(@%)
-autocmd vimrc FileType dirvish keeppatterns g@\v/\.[^\/]+/?$@d
-
-autocmd vimrc FileType help wincmd L
-autocmd vimrc FileType git wincmd L | wincmd x
-" Open location/quickfix window whenever a command is executed and the
-" list gets populated with at least one valid location.
-autocmd vimrc QuickFixCmdPost [^l]* cwindow
-autocmd vimrc QuickFixCmdPost    l* lwindow
+" See https://stackoverflow.com/questions/1444322/how-can-i-close-a-buffer-without-closing-the-window#8585343
+map <silent> <leader>q :bp<bar>sp<bar>bn<bar>bd<CR>
 
 " Make . work with visually selected lines
 vnoremap . :norm.<cr>
@@ -343,18 +187,24 @@ nnoremap <silent> <M-Down>  <C-w><C-j>
 nnoremap <silent> <M-Up>    <C-w><C-k>
 nnoremap <silent> <M-Right> <C-w><C-l>
 
-" Manually re-format a paragraph of text
-nnoremap <silent> Q gwip
+" Always make n/N search forward/backwar, regardless of the last search type.
+" From https://github.com/mhinz/vim-galore
+nnoremap <expr> n 'Nn'[v:searchforward]
+nnoremap <expr> N 'nN'[v:searchforward]
 
-" Forgot root?
-if executable('doas')
-    cmap w!! w !doas tee % > /dev/null
-elseif executable('sudo')
-    cmap w!! w !sudo tee % > /dev/null
-endif
+" Make <C-n> and <C-p> respect already-typed content in command mode.
+" From https://github.com/mhinz/vim-galore
+cnoremap <c-n> <down>
+cnoremap <c-p> <up>
 
-" In NeoVim, make it easier to use :terminal
-if has('nvim')
+" Jump to the last edited position in the file being loaded (if available) 
+autocmd vimrc BufReadPost *
+	\ if line("'\"") > 0 && line("'\"") <= line("$") |
+	\       execute "normal g'\"" |
+	\ endif
+
+" Make it easier to use :terminal
+if exists(':terminal')
     " Entering/Leaving terminal buffers changes from/to insert mode automatically.
     autocmd vimrc BufEnter term://* startinsert
     autocmd vimrc BufLeave term://* stopinsert
@@ -366,146 +216,147 @@ if has('nvim')
     tnoremap <silent> <M-Right> <C-\><C-n><C-w><C-l>
 endif
 
-let g:email = 'aperez@igalia.com'
-let g:user  = 'Adrian Perez'
+" Per-filetype settings
+autocmd vimrc BufReadPost Config.in setlocal filetype=kconfig
+autocmd vimrc FileType mkdc,markdown setlocal expandtab tabstop=2 shiftwidth=2 conceallevel=2
+autocmd vimrc FileType yaml setlocal tabstop=2 shiftwidth=2 expandtab
+autocmd vimrc FileType dirvish call fugitive#detect(@%)
 
-" Plugin: fzf
-if s:tap('fzf.vim')
+" Open location/quickfix window whenever a command is executed and the
+" list gets populated with at least one valid location.
+autocmd vimrc QuickFixCmdPost [^l]* cwindow
+autocmd vimrc QuickFixCmdPost    l* lwindow
+
+" Plugin: templates (probably others as well)
+let g:user = 'Adrian Perez de Castro'
+let g:email = 'aperez@igalia.com'
+
+" Plugin: editorconfig
+let g:editorconfig_blacklist = {
+	\ 	'filetype': ['git.*', 'fugitive']
+	\ }
+
+" Plugin: shore
+let g:shore_stayonfront = 1
+
+if Have('vim-picker')
+	" Plugin: picker
+	nmap <unique> <Leader>f    <Plug>PickerEdit
+	nmap <unique> <Leader>b    <Plug>PickerBuffer
+	nmap <unique> <Leader><F1> <Plug>PickerHelp
+elseif Have('fzf.vim')
+	" Plugin: fzf
 	nnoremap <silent> <Leader>f :<C-u>Files<cr>
 	nnoremap <silent> <Leader>F :<C-u>GitFiles<cr>
 	nnoremap <silent> <Leader>m :<C-u>History<cr>
 	nnoremap <silent> <Leader>b :<C-u>Buffers<cr>
 	nnoremap <silent> <Leader><F1> :<C-u>Helptags<cr>
-	nnoremap <silent> <F12> :<C-u>Buffers<cr>
-
-	nmap <C-A-p> <leader>f
-	nmap <C-A-m> <leader>m
-	nmap <C-A-b> <leader>b
 endif
 
-" Plugin: neovim-fuzzy
-if s:tap('neovim-fuzzy')
-	nnoremap <silent> <Leader>f :<C-u>FuzzyOpen<cr>
-	nmap <C-A-p> <leader>f
+nmap <C-A-p> <leader>f
+nmap <C-A-m> <leader>m
+nmap <C-A-b> <leader>b
+nmap <F12>   <leader>b
+
+if Have('VimCompletesMe')
+	if Have('vim-lift') || Have('vim-ucf')
+		let b:vcm_tab_complete = 'user'
+	else
+		function! s:update_vcm_settings()
+			if &omnifunc !=# ''
+				let b:vcm_tab_complete = 'omni'
+			elseif &completefunc !=# ''
+				let b:vcm_tab_complete = 'user'
+			elseif exists('b:vcm_tab_complete')
+				unlet b:vcm_tab_complete
+			endif
+		endfunction
+		autocmd vimrc FileType * call s:update_vcm_settings()
+	endif
 endif
 
-" Plugin: qf
-if s:tap('vim-qf')
-	nmap <F5>   <Plug>(qf_qf_toggle)
-	nmap <F6>   <Plug>(qf_qf_toggle_stay)
-	nmap <F7>   <Plug>(qf_qf_previous)
-	nmap <F8>   <Plug>(qf_qf_next)
-	nmap <C-F5> <Plug>(qf_loc_toggle)
-	nmap <C-F6> <Plug>(qf_loc_toggle_stay)
-	nmap <C-F7> <Plug>(qf_loc_previous)
-	nmap <C-F8> <Plug>(qf_loc_next)
-endif
-
-" Plugin: EditorConfig
-if s:tap('vim-editorconfig')
-	let g:editorconfig_blacklist = {
-				\   'filetype': [ 'git.*', 'fugitive' ]
-				\ }
-endif
-
-
-function! s:check_backspace() abort
-	let l:column = col('.') - 1
-	return !l:column || getline('.')[l:column - 1] =~ '\s'
+function! s:lsp(langs, ...)
+	let aidx = 0
+	while aidx < a:0
+		let program = a:000[l:aidx + 0]
+		let cmdlist = a:000[l:aidx + 1]
+		if executable(program)
+			if len(cmdlist) == 0
+				let cmdlist = [program]
+			endif
+			for lang in a:langs
+				call s:lsp_set_server(lang, cmdlist)
+			endfor
+			return
+		endif
+		let aidx += 2
+	endwhile
 endfunction
 
+function s:cmdlist_to_string(cmdlist)
+	let cmd = ''
+	let rest = 0
+	for item in a:cmdlist
+		if rest
+			let cmd .= ' '
+		else
+			let rest = 1
+		endif
+		let cmd .= shellescape(item)
+	endfor
+	return cmd
+endfunction
 
-" Plugin: mucomplete
-if s:tap('vim-mucomplete')
-	set completeopt+=menuone,longest
-	if v:version > 704 || (v:version == 704 && has('patch1753'))
-		set completeopt+=noselect
-		set completeopt-=noinsert
-	endif
+function! s:lsp_set_server(lang, cmd)
+endfunction
 
-	let g:mucomplete#always_use_completeopt = 1
-	let g:mucomplete#enable_auto_at_startup = 0
-	let g:mucomplete#buffer_relative_paths = 1
-	let g:mucomplete#smart_enter = 0
-
-	" Disable include completion and chain it from mucomplete
-	set complete-=i
-	set shortmess+=c
-
-	let g:mucomplete#chains = {
-				\   'default': ['omni', 'user', 'keyp', 'c-n', 'path'],
-				\   'vim': ['path', 'cmd', 'keyn'],
-				\ }
-	let g:mucomplete#chains.c = g:mucomplete#chains.default
-	call add(g:mucomplete#chains.c, 'incl')
-	call add(g:mucomplete#chains.c, 'defs')
-	let g:mucomplete#chains.cpp = g:mucomplete#chains.c
-else
-	" Simple fall-back to have <Tab> mapped to something sensible.
-	inoremap <expr> <Tab> pumvisible() ? "\<C-p>" : <sid>check_backspace() ? "\<Tab>" : "\<C-x>\<C-p>\<C-p>"
-	set completeopt+=longest,menuone
-endif
-
-
-" Plugin: Grepper
-if s:tap('vim-grepper')
-	let g:grepper = {
-				\   'tools': ['rg', 'git', 'grep'],
-				\   'simple_prompt': 1
-				\ }
-	nmap gs  <Plug>(GrepperOperator)
-	xmap gs  <Plug>(GrepperOperator)
-	nnoremap <leader>* :Grepper -tool rg -cword -noprompt<cr>
-	nnoremap <leader>g :Grepper -tool rg<cr>
-	nnoremap <leader>G :Grepper -tool git<cr>
-endif
-
-
-
-" Plugin: LanguageClient-neovim
-if s:tap('LanguageClient-neovim')
-	let g:LanguageClient_autoStart = 1
-	let g:LanguageClient_serverCommands = {}
-	if executable('rls') && executable('rustup')
-		let g:LanguageClient_serverCommands.rust =
-					\ ['rustup', 'run', 'nightly', 'rls']
-		autocmd vimrc FileType rust setlocal
-					\ omnifunc=LanguageClient#complete
-					\ signcolumn=yes
-	endif
-	if executable('clangd')
-		let g:LanguageClient_serverCommands.c = ['clangd']
-		let g:LanguageClient_serverCommands.cpp = ['clangd']
-		autocmd vimrc FileType c,cpp setlocal
-					\ omnifunc=LanguageClient#complete
-					\ signcolumn=yes
-	endif
-	if executable('lua-lsp')
-		let g:LanguageClient_serverCommands.lua = ['lua-lsp']
-		autocmd vimrc FileType lua setlocal
-					\ omnifunc=LanguageClient#complete
-					\ signcolumn=yes
-	endif
-endif
-
-if s:tap('echodoc.vim')
-	let g:echodoc#enable_at_startup = 1
-	if s:tap('vim-lining')
-		let g:lining#showmode = 0
-	endif
-	set noshowmode
-endif
-
-
-" Plugin: pandoc
-if s:tap('vim-pandoc')
-	function! PandocXdgOpen(file)
-		return 'xdg-open ' . shellescape(expand(a:file, ':p'))
+" Plugin: lsc
+if Have('vim-lsc')
+	let g:lsc_server_commands = {}
+	let g:lsc_auto_map = v:false
+	let g:lsc_enable_autocomplete = v:false
+	function! s:lsp_set_server(lang, cmd)
+		let g:lsc_server_commands[a:lang] = {
+					\   'name': a:lang,
+					\   'command': s:cmdlist_to_string(a:cmd),
+					\   'suppress_stderr': v:true,
+					\ }
+		execute 'autocmd vimrc FileType ' . a:lang .
+					\ ' setlocal omnifunc=lsc#complete#complete'
 	endfunction
 
-	let g:pandoc#command#custom_open = 'PandocXdgOpen'
-	let g:pandoc#command#latex_engine = 'pdflatex'
-	let g:pandoc#keyboard#sections#header_style = 's'
-	let g:pandoc#keyboard#wrap_cursor = 1
-	let g:pandoc#folding#level = 1
+	if Have('vim-lining')
+		let s:lsc_lining_item = {}
+		function s:lsc_lining_item.format(item, active)
+			let status = LSCServerStatus()
+			return (a:active && status !=# '') ? status : ''
+		endfunction
+		call lining#right(s:lsc_lining_item)
+	endif
 endif
+
+" Plugin: LanguageClient-neovim
+if Have('LanguageClient-neovim')
+	let g:LanguageClient_autoStart = v:true
+	let g:LanguageClient_serverCommands = {}
+	function! s:lsp_set_server(lang, cmd)
+		let g:LanguageClient_serverCommands[a:lang] = a:cmd
+		execute 'autocmd vimrc FileType ' . a:lang .
+					\ ' setlocal omnifunc=LanguageClient#complete'
+					\ ' formatexpr=LanguageClient#textDocument_rangeFormatting_sync'
+	endfunction
+
+	if Have('vim-lining')
+		let s:LanguageClient_lining_item = {}
+		function s:LanguageClient_lining_item.format(item, active)
+			return a:active ? (LanguageClient#serverStatus() ? 'busy' : 'idle') : ''
+		endfunction
+		" call lining#right(s:LanguageClient_lining_item)
+	endif
+endif
+
+call s:lsp(['c', 'cpp'], 'clangd', [])
+call s:lsp(['d'], 'serve-d', [])
+call s:lsp(['lua'], 'lua-lsp', [])
+call s:lsp(['python'], 'pyls', [])
+call s:lsp(['rust'], 'rls', [], 'rustup', ['rustup', 'run', 'rls'])
