@@ -32,7 +32,9 @@ else
 	Plugin 'junegunn/fzf', { 'do': './install --all' }
 endif
 " Plugin 'natebosch/vim-lsc'
-Plugin 'autozimu/LanguageClient-neovim', { 'branch': 'next', 'do': 'make release' }
+if has('nvim') && executable('rustup')
+	Plugin 'autozimu/LanguageClient-neovim', {'branch': 'next', 'do': 'make release' }
+endif
 Plugin 'junegunn/fzf.vim'
 Plugin 'justinmk/vim-dirvish'
 Plugin 'ledger/vim-ledger'
