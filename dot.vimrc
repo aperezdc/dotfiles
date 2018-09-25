@@ -1,3 +1,5 @@
+" vim:foldmethod=marker:
+
 set nocompatible
 
 " Disable some built-in plug-ins which I never use.
@@ -10,6 +12,11 @@ augroup vimrc
 	autocmd!
 augroup END
 
+iabbrev :shrug: ¯\_(ツ)_/¯
+iabbrev :tableflip: (╯°□°）╯彡┻━┻
+
+
+" Section: Plugins  {{{1
 source ~/.vim/plugx.vim
 
 PluginBegin
@@ -21,10 +28,18 @@ Plugin 'aperezdc/vim-elrond', '~/devel/vim-elrond'
 Plugin 'aperezdc/vim-lining', '~/devel/vim-lining'
 Plugin 'aperezdc/vim-template', '~/devel/vim-template'
 " Plugin 'aperezdc/vim-lift', '~/devel/vim-lift'
-Plugin 'ajh17/VimCompletesMe'
+if has('nvim')
+	Plugin 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+else
+	Plugin 'Shougo/deoplete.nvim'
+	Plugin 'roxma/nvim-yarp'
+	Plugin 'roxma/vim-hug-neovim-rpc'
+endif
+Plugin 'wellle/tmux-complete.vim'
+Plugin 'zchee/deoplete-zsh'
+Plugin 'Shougo/neco-vim'
 Plugin 'bounceme/remote-viewer'
 Plugin 'docunext/closetag.vim', { 'for': ['html', 'xml'] }
-Plugin 'IngoHeimbach/neco-vim'
 Plugin 'fcpg/vim-shore'
 if executable('fzf')
 	Plugin 'junegunn/fzf'
@@ -32,13 +47,13 @@ else
 	Plugin 'junegunn/fzf', { 'do': './install --all' }
 endif
 " Plugin 'natebosch/vim-lsc'
-if has('nvim') && executable('rustup')
+if has('nvim') && (executable('rustup') || executable('cargo'))
 	Plugin 'autozimu/LanguageClient-neovim', {'branch': 'next', 'do': 'make release' }
 endif
 Plugin 'junegunn/fzf.vim'
 Plugin 'justinmk/vim-dirvish'
 Plugin 'ledger/vim-ledger'
-" Plugin 'lifepillar/vim-ucf'
+Plugin 'mhinz/vim-grepper'
 Plugin 'pbrisbin/vim-mkdir'
 Plugin 'romainl/vim-qf'
 Plugin 'romainl/vim-qlist'
@@ -52,9 +67,9 @@ Plugin 'tpope/vim-fugitive'
 Plugin 'vim-scripts/a.vim'
 Plugin 'wellle/visual-split.vim'
 Plugin 'yssl/QFEnter'
-PluginEnd
+PluginEnd  " 1}}}
 
-
+" Section: Options  {{{1
 set complete=.,w,b,u,i,d,t
 set completeopt-=preview
 set completeopt-=menuone
@@ -100,6 +115,7 @@ syntax on
 if executable('rg')
 	set grepprg=rg\ --vimgrep
 endif
+" 1}}}
 
 inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 
@@ -110,6 +126,7 @@ else
 endif
 
 
+" Section: Terminal shenanigans  {{{1
 if &term =~# '^screen' || &term =~# '^tmux'
     map  <silent> [1;5D <C-Left>
     map  <silent> [1;5C <C-Right>
@@ -148,8 +165,9 @@ if !has('nvim') && exists('&t_SR')
 		let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>[2 q\<Esc>\\"
 	endif
 endif
+" 1}}}
 
-
+" Section: Mappings  {{{1
 " Cannot live without these.
 command! -nargs=0 -bang Q q<bang>
 command! -nargs=0 -bang W w<bang>
@@ -217,6 +235,7 @@ if exists(':terminal')
     tnoremap <silent> <M-Up>    <C-\><C-n><C-w><C-k>
     tnoremap <silent> <M-Right> <C-\><C-n><C-w><C-l>
 endif
+" 1}}}
 
 " Per-filetype settings
 autocmd vimrc BufReadPost Config.in setlocal filetype=kconfig
@@ -229,18 +248,22 @@ autocmd vimrc FileType dirvish call fugitive#detect(@%)
 autocmd vimrc QuickFixCmdPost [^l]* cwindow
 autocmd vimrc QuickFixCmdPost    l* lwindow
 
-" Plugin: templates (probably others as well)
+" Plugin: templates (probably others as well)  {{{1
 let g:user = 'Adrian Perez de Castro'
 let g:email = 'aperez@igalia.com'
+" 1}}}
 
-" Plugin: editorconfig
+" Plugin: editorconfig  {{{1
 let g:editorconfig_blacklist = {
 	\ 	'filetype': ['git.*', 'fugitive']
 	\ }
+" }}}1
 
-" Plugin: shore
+" Plugin: shore  {{{1
 let g:shore_stayonfront = 1
+" 1}}}
 
+" Section: Fuzzy finders galore  {{{1
 if Have('vim-picker')
 	" Plugin: picker
 	nmap <unique> <Leader>f    <Plug>PickerEdit
@@ -259,7 +282,9 @@ nmap <C-A-p> <leader>f
 nmap <C-A-m> <leader>m
 nmap <C-A-b> <leader>b
 nmap <F12>   <leader>b
+" 1}}}
 
+" Plugin: VimCompletesMe  {{{1
 if Have('VimCompletesMe')
 	if Have('vim-lift') || Have('vim-ucf')
 		let b:vcm_tab_complete = 'user'
@@ -275,8 +300,30 @@ if Have('VimCompletesMe')
 		endfunction
 		autocmd vimrc FileType * call s:update_vcm_settings()
 	endif
-endif
+endif " 1}}}
 
+" Plugin: Deoplete  {{{1
+if Have('deoplete.nvim')
+	let g:deoplete#enable_at_startup = v:true
+	call deoplete#custom#option({
+				\   'auto_complete_delay': 250,
+				\   'min_pattern_length': 3,
+				\   'smart_case': v:true,
+				\ })
+
+	function! s:check_back_space() abort
+		let col = col('.') - 1
+		return !col || getline('.')[col - 1] =~ '\s'
+	endfunction
+
+	inoremap <silent><expr> <Tab>
+				\ pumvisible() ? "\<C-n>" : <sid>check_back_space() ? "\<Tab>" : deoplete#mappings#manual_complete()
+	inoremap <silent><expr> <S-Tab>
+				\ pumvisible() ? "\<C-p>" : "\<S-Tab>"
+endif
+" 1}}}
+
+" Utilities: Language Servers support  {{{1
 function! s:lsp(langs, ...)
 	let aidx = 0
 	while aidx < a:0
@@ -295,7 +342,7 @@ function! s:lsp(langs, ...)
 	endwhile
 endfunction
 
-function s:cmdlist_to_string(cmdlist)
+function! s:cmdlist_to_string(cmdlist)
 	let cmd = ''
 	let rest = 0
 	for item in a:cmdlist
@@ -311,8 +358,9 @@ endfunction
 
 function! s:lsp_set_server(lang, cmd)
 endfunction
+" 1}}}
 
-" Plugin: lsc
+" Plugin: lsc  {{{1
 if Have('vim-lsc')
 	let g:lsc_server_commands = {}
 	let g:lsc_auto_map = v:false
@@ -335,9 +383,9 @@ if Have('vim-lsc')
 		endfunction
 		call lining#right(s:lsc_lining_item)
 	endif
-endif
+endif " 1}}}
 
-" Plugin: LanguageClient-neovim
+" Plugin: LanguageClient-neovim  {{{1
 if Have('LanguageClient-neovim')
 	let g:LanguageClient_autoStart = v:true
 	let g:LanguageClient_serverCommands = {}
@@ -353,11 +401,37 @@ if Have('LanguageClient-neovim')
 		function s:LanguageClient_lining_item.format(item, active)
 			return a:active ? (LanguageClient#serverStatus() ? 'busy' : 'idle') : ''
 		endfunction
-		" call lining#right(s:LanguageClient_lining_item)
+		call lining#right(s:LanguageClient_lining_item)
 	endif
-endif
 
-call s:lsp(['c', 'cpp'], 'clangd', [])
+	if Have('VimCompletesMe')
+		autocmd! vimrc User LanguageClientStarted setlocal omnifunc=LanguageClient#complete | call s:update_vcm_settings()
+		autocmd! vimrc User LanguageClientStopped setlocal omnifunc= | call s:update_vcm_settings()
+	endif
+endif " 1}}}
+
+" Plugin: grepper  {{{1
+if Have('vim-grepper')
+	let s:tools = ['grep']
+	if executable('git') | let s:tools = ['git'] + s:tools | endif
+	if executable('rg')  | let s:tools = ['rg' ] + s:tools | endif
+	let g:grepper = {
+				\ 'dir': 'repo,file',
+				\ 'tools': s:tools,
+				\ 'simple_prompt': 1,
+				\ 'quickfix': 0,
+				\ }
+	unlet s:tools
+
+	nmap gs  <Plug>(GrepperOperator)
+	xmap gs  <Plug>(GrepperOperator)
+	nnoremap <leader>* :Grepper -tool rg -cword -noprompt<cr>
+	nnoremap <leader>g :Grepper -tool rg<cr>
+	nnoremap <leader>G :Grepper -tool git<cr>
+endif " 1}}}
+
+call s:lsp(['c', 'cpp', 'objc'], 'ccls', ['ccls', '--init={"cacheDirectory":"/home/aperez/.cache/ccls"}', '--log-file=/dev/null'], 'clangd', [])
+" call s:lsp(['c', 'cpp'], 'clangd', [])
 call s:lsp(['d'], 'serve-d', [])
 call s:lsp(['lua'], 'lua-lsp', [])
 call s:lsp(['python'], 'pyls', [])

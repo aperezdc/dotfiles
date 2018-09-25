@@ -60,7 +60,8 @@ function s:plugx(repo, ...)
 endfunction
 
 function Have(name)
-	return has_key(g:, 'plugs') && has_key(get(g:, 'plugs'), a:name)
+	return has_key(g:, 'plugs') && has_key(get(g:, 'plugs'), a:name) &&
+				\ isdirectory(get(get(get(g:, 'plugs'), a:name), 'dir', '/dev/null'))
 endfunction
 
 
