@@ -11,6 +11,7 @@
 	logl = log --abbrev-commit --pretty=oneline --decorate
 	logp = log --abbrev-commit --patch-with-stat --decorate
 	logg = log --abbrev-commit --pretty=oneline --all --decorate --graph
+	svnr = svn find-rev
 	todo = grep -E '(FIXME|TODO) '
 	diffs = diff --patch-with-stat
 	format-patch = -M -C
