@@ -66,6 +66,7 @@ Plugin 'tpope/vim-fugitive'
 " Plugin 'unblevable/quick-scope'
 Plugin 'vim-scripts/a.vim'
 Plugin 'wellle/visual-split.vim'
+Plugin 'vim-pandoc/vim-pandoc-syntax'
 Plugin 'yssl/QFEnter'
 PluginEnd  " 1}}}
 
@@ -127,7 +128,7 @@ endif
 
 
 " Section: Terminal shenanigans  {{{1
-if &term =~# '^screen' || &term =~# '^tmux'
+if &term =~# '^screen' || &term =~# '^tmux' || &term ==# 'linux'
     map  <silent> [1;5D <C-Left>
     map  <silent> [1;5C <C-Right>
     lmap <silent> [1;5D <C-Left>
@@ -310,6 +311,8 @@ if Have('deoplete.nvim')
 				\   'min_pattern_length': 3,
 				\   'smart_case': v:true,
 				\ })
+
+	call deoplete#custom#source('_', 'converters', ['converter_remove_paren'])
 
 	function! s:check_back_space() abort
 		let col = col('.') - 1
