@@ -31,6 +31,7 @@ zz-top zdharma/fast-syntax-highlighting
 zz-top zsh-users/zsh-completions
 zz-top zsh-users/zsh-autosuggestions
 zz-top Tarrasch/zsh-autoenv
+zz-top aperezdc/zsh-fzy --local ~/devel/zsh-fzy
 zz-top aperezdc/zsh-notes --local ~/devel/zsh-notes
 zz-top aperezdc/virtualz --local ~/devel/virtualz
 zz-top aperezdc/rockz --local ~/devel/rockz
@@ -125,9 +126,12 @@ zle -N transpose-words transpose-words-match
 # zsh-fzy
 if zz-top --loco zsh-fzy ; then
 	zstyle ':fzy:*' lines 18
-	bindkey '\ec' fzy-cd-widget
-	bindkey '^T'  fzy-file-widget
-	bindkey '^R'  fzy-history-widget
+	zstyle ':fzy:file' command fd --type f
+	zstyle ':fzy:cd'   command fd --type d
+	bindkey '^F' fzy-cd-widget
+	bindkey '^T' fzy-file-widget
+	bindkey '^R' fzy-history-widget
+	bindkey '^P' fzy-proc-widget
 fi
 
 # zsh-notes
@@ -514,27 +518,8 @@ fi
 # Syntax highlighting settings. Set those only if the plugin has been
 # loaded successfully, otherwise assigning to the associate array will
 # cause errors and the shell will exit during startup.
-if [[ ${ZSH_HIGHLIGHT_VERSION:+set} = set ]] ; then
-	ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
-	ZSH_HIGHLIGHT_STYLES[dollar-double-quoted-argument]='fg=magenta,bold'
-	ZSH_HIGHLIGHT_STYLES[double-quoted-argument]='fg=magenta,bold'
-	ZSH_HIGHLIGHT_STYLES[single-quoted-argument]='fg=magenta,bold'
-	ZSH_HIGHLIGHT_STYLES[single-hyphen-option]='fg=cyan'
-	ZSH_HIGHLIGHT_STYLES[double-hyphen-option]='fg=cyan'
-	ZSH_HIGHLIGHT_STYLES[back-quoted-argument]='fg=magenta'
-	ZSH_HIGHLIGHT_STYLES[commandseparator]='fg=red,bold'
-	ZSH_HIGHLIGHT_STYLES[hashed-command]='fg=yellow,bold'
-	ZSH_HIGHLIGHT_STYLES[reserved-word]='fg=bold'
-	ZSH_HIGHLIGHT_STYLES[unknown-token]='bg=brown'
-	ZSH_HIGHLIGHT_STYLES[precommand]='fg=yellow,bold,underline'
-	ZSH_HIGHLIGHT_STYLES[function]='fg=yellow,bold'
-	ZSH_HIGHLIGHT_STYLES[globbing]='fg=cyan,bold'
-	ZSH_HIGHLIGHT_STYLES[command]='fg=yellow,bold'
-	ZSH_HIGHLIGHT_STYLES[builtin]='fg=yellow,bold'
-	ZSH_HIGHLIGHT_STYLES[alias]='fg=yellow,bold'
-	ZSH_HIGHLIGHT_STYLES[path]='fg=underline'
-fi
-if [[ ${FAST_HIGHLIGHT:+set} = set ]] ; then
+if zz-top --loco fast-syntax-highlighting && [[ ${FAST_HIGHLIGHT:+set} = set ]]
+then
 	FAST_HIGHLIGHT_STYLES[dollar-double-quoted-argument]='fg=magenta,bold'
 	FAST_HIGHLIGHT_STYLES[double-quoted-argument]='fg=magenta,bold'
 	FAST_HIGHLIGHT_STYLES[single-quoted-argument]='fg=magenta,bold'
@@ -554,13 +539,18 @@ if [[ ${FAST_HIGHLIGHT:+set} = set ]] ; then
 	FAST_HIGHLIGHT_STYLES[path]='fg=underline'
 fi
 
-# Source the fzf helpers last, to make sure its keybindings prevail
-if [[ -r /etc/profile.d/fzf.zsh ]] ; then
+if zz-top --loco zsh-fzy ; then
+	:	
+elif [[ -r /usr/share/skim/key-bindings.zsh ]] ; then
+	source /usr/share/skim/key-bindings.zsh
+	SKIM_DEFAULT_OPTIONS='--reverse'
+elif [[ -r /etc/profile.d/fzf.zsh ]] ; then
 	source /etc/profile.d/fzf.zsh
+	FZF_DEFAULT_OPTS='--reverse --inline-info'
 elif [[ -r /usr/share/fzf/key-bindings.zsh ]] ; then
 	source /usr/share/fzf/key-bindings.zsh
+	FZF_DEFAULT_OPTS='--reverse --inline-info'
 fi
-FZF_DEFAULT_OPTS='--reverse --inline-info'
 
 if [[ -S ~/.mpd/socket ]] ; then
 	export MPD_HOST="${HOME}/.mpd/socket"
