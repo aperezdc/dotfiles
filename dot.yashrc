@@ -1,0 +1,65 @@
+# Firstly, load the common customization script.
+# If you don't like settings applied in this script, remove this line.
+. --autoload --no-alias initialization/common
+
+# These are additional aliases that are not defined in the common script.
+# Uncomment to enable them.
+#alias g='grep'
+#alias l='$PAGER'
+#alias --global L='|$PAGER'
+#alias --global N='>/dev/null 2>&1' N1='>/dev/null' N2='2>/dev/null'
+
+# Uncomment to enable direnv support. (jq required)
+#_update_direnv() {
+#  eval "$(
+#    direnv export json |
+#    jq -r 'to_entries | .[] |
+#    if .value == null then
+#      @sh "unset \(.key)"
+#    else
+#      @sh "export \(.key)=\(.value)"
+#    end'
+#  )"
+#}
+#_update_direnv
+#YASH_AFTER_CD=("$YASH_AFTER_CD" '_update_direnv')
+
+# And add your own customization below.
+
+# This is in a function to be able to use local variables.
+function yashrc_do_bindkeys {
+  typeset mode M
+  for mode in vi emacs ; do
+    M=${mode[1]}
+    #
+    # Bind Ctrl-Left and Ctrl-Right key sequences to jump around words, and
+    # make Ctrl-W kill a normal word, which allows to use it for removing
+    # path components and matches the behaviour of Ctrl-Left / Ctrl-Right.
+    # The predefined behaviour (killing a "big" word) is moved to Alt-W.
+    #
+    bindkey -$M '\^[[1;5D' backward-${mode}word 
+    bindkey -$M '\^[[1;5C' forward-${mode}word
+    bindkey -$M '\^W'      backward-kill-${mode}word
+    bindkey -$M '\^[w'     backward-kill-bigword
+
+    # Bind Home/End/Delete for some funky terminals.
+    bindkey -$M '\^[OH'    beginning-of-line
+    bindkey -$M '\^[[H'    beginning-of-line
+    bindkey -$M '\^A'      beginning-of-line
+    bindkey -$M '\^[[1~'   beginning-of-line
+    bindkey -$M '\^[OF'    end-of-line
+    bindkey -$M '\^[[F'    end-of-line
+    bindkey -$M '\^E'      end-of-line
+    bindkey -$M '\^[[4~'   end-of-line
+    bindkey -$M '\^[[3~'   delete-char
+
+    # The following are just for convenience.
+    bindkey -$M '\^L'      clear-and-redraw-all
+  done
+}
+yashrc_do_bindkeys
+unset -f yashrc_do_bindkeys
+
+set --no-lepredictempty 2>&1 > /dev/null
+
+# vim: set et sw=2 sts=2 tw=78 ft=sh:
