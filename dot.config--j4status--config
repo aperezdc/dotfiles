@@ -1,0 +1,21 @@
+[Plugins]
+Input=nl;upower;pulseaudio;time;
+Order=nl;upower;pulseaudio;time;
+
+[Netlink]
+Interfaces=wlp2s0;
+
+[Netlink Formats]
+UpWiFi= ${ssid} 📡 ${strength}${strength:+%} 
+DownWiFi= 📡 (${aps}) 
+
+[UPower]
+Format=${status:[;0;1;2;3;⚠️;;⚡;⚡;🔋]} ${time(t%H:%M )}
+
+[PulseAudio]
+Format=${port:[;0;1;🔈;🎧]} ${volume[@% ]}% 
+Actions=mouse:1 mute toggle;mouse:4 raise;mouse:5 lower;
+
+[Time]
+Format= 📅 %d.%m ⌚ %H:%M
+Interval=10
