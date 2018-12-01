@@ -1,6 +1,20 @@
 # vim: ft=conf
 
-set $font Iosevka 11
+# set $fontname PragmataPro, FontAwesome
+# set $fontname Iosevka, FontAwesome
+# set $fontname Terminus Re33, FontAwesome
+set $fontname mononoki, FontAwesome
+# set $fontname Hack, FontAwesome
+# set $fontname PT Mono, FontAwesome
+# set $fontname Inter UI, FontAwesome
+# set $fontname Hasklig, FontAwesome
+# set $fontname xos4 Terminus, FontAwesome Bold
+
+set $normalfont 9
+set $biggerfont 11
+
+set $font $fontname $normalfont
+
 set $mod  Mod4
 
 font $font
@@ -8,8 +22,10 @@ font $font
 floating_modifier $mod
 focus_follows_mouse yes
 mouse_warping output
+default_border pixel 2
 
 bindsym $mod+Shift+q kill
+bindsym $mod+Shift+F12 exit
 
 bindsym $mod+h focus left
 bindsym $mod+j focus down
@@ -49,6 +65,7 @@ bindsym $mod+e layout toggle split
 
 # toggle tiling / floating
 bindsym $mod+Shift+space floating toggle
+bindsym $mod+Shift+f floating toggle
 
 # change focus between tiling / floating windows
 bindsym $mod+space focus mode_toggle
@@ -86,23 +103,17 @@ bindsym $mod+Shift+0 move container to workspace 10
 # Switch and move to previosly active workspace
 workspace_auto_back_and_forth yes
 bindsym $mod+Tab workspace back_and_forth
-bindsym $mod+Shift+Tab move container to workspace back_and_forth; workspace back_and_forth
 
 # Scratchpad management
 bindsym $mod+minus scratchpad show
 bindsym $mod+Shift+minus move scratchpad
 
 # Media keys
-bindsym XF86AudioRaiseVolume  exec pactl set-sink-volume 0 +15%
-bindsym XF86AudioLowerVolume  exec pactl set-sink-volume 0 -15%
-bindsym XF86AudioToggle       exec pactl set-sink-mute   0 toggle
+bindsym XF86AudioRaiseVolume  exec ponymix increase 10
+bindsym XF86AudioLowerVolume  exec ponymix decrease 10
+bindsym XF86AudioMute         exec ponymix toggle
 bindsym XF86MonBrightnessDown exec light -U 10
 bindsym XF86MonBrightnessUp   exec light -A 10
-
-# reload the configuration file
-bindsym $mod+Shift+c reload
-# restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
-bindsym $mod+Shift+r restart
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
@@ -129,26 +140,39 @@ mode "resize" {
 }
 
 bindsym $mod+r mode "resize"
+bindsym $mod+u border toggle
 
-bindsym $mod+Return exec dwt -N
-bindsym $mod+d exec dmenu_run -fn 'PragmataPro Mono:size=12'
+bindsym $mod+Return exec termite
+bindsym $mod+d exec bemenu-run -i -p 'exec:' --fn '$fontname $biggerfont'
+bindsym $mod+Shift+d exec j4-dmenu-desktop --term='termite -e' --dmenu='bemenu -i -p "apps:" --fn "$fontname $biggerfont"'
+bindsym $mod+F10 exec swaylock -c 181818
+bindsym $mod+Shift+F10 exec sh -c 'swaylock -c 181818 -f && systemctl suspend'
+bindsym $mod+Shift+n exec makoctl dismiss
 
 bar {
-	status_command i3status
-	position bottom
+	status_command j4status -o i3bar
+	# status_command i3status
+	# status_command i3status-rs ~/.config/sway/status.toml
+	position top
+	font $font
 }
 
-output "*" bg /usr/share/sway/Sway_Wallpaper_Blue_1920x1080.png fill
+for_window [app_id="epiphany"] border none
+for_window [app_id="revolt"] border none
+for_window [app_id="nm-connection-editor"] floating enable
+
+output "*" bg ~/Pictures/Wallpapers/japan-city-wallpaper-wallpaper-1.jpg fill
+output "eDP-1" scale 2
 
 input "2:7:SynPS/2_Synaptics_TouchPad" {
 	middle_emulation enabled
-	natural_scroll disabled
+	natural_scroll enabled
 	tap enabled
 	dwt enabled
 }
 input "2:8:AlpsPS/2_ALPS_GlidePoint" {
 	middle_emulation enabled
-	natural_scroll disabled
+	natural_scroll enabled
 	tap enabled
 	dwt enabled
 }
@@ -156,3 +180,5 @@ input "3823:41225.eGalax_Inc._eGalaxTouch_EXC7910_1032_11" {
 	natural_scroll enabled
 	tap enabled
 }
+
+exec_always mako
