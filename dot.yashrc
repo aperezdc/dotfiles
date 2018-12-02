@@ -28,18 +28,17 @@
 
 # This is in a function to be able to use local variables.
 function yashrc_do_bindkeys {
-  typeset mode M
-  for mode in vi emacs ; do
-    M=${mode[1]}
+  typeset M
+  for M in v e ; do
     #
     # Bind Ctrl-Left and Ctrl-Right key sequences to jump around words, and
     # make Ctrl-W kill a normal word, which allows to use it for removing
     # path components and matches the behaviour of Ctrl-Left / Ctrl-Right.
     # The predefined behaviour (killing a "big" word) is moved to Alt-W.
     #
-    bindkey -$M '\^[[1;5D' backward-${mode}word 
-    bindkey -$M '\^[[1;5C' forward-${mode}word
-    bindkey -$M '\^W'      backward-kill-${mode}word
+    bindkey -$M '\^[[1;5D' backward-emacsword
+    bindkey -$M '\^[[1;5C' forward-emacsword
+    bindkey -$M '\^W'      backward-kill-emacsword
     bindkey -$M '\^[w'     backward-kill-bigword
 
     # Bind Home/End/Delete for some funky terminals.
