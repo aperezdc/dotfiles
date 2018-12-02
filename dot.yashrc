@@ -54,11 +54,20 @@ function yashrc_do_bindkeys {
 
     # The following are just for convenience.
     bindkey -$M '\^L'      clear-and-redraw-all
+    bindkey -$M '\^['      accept-prediction  # Alt-Enter
   done
 }
 yashrc_do_bindkeys
 unset -f yashrc_do_bindkeys
 
-set --no-lepredictempty 2>&1 > /dev/null
+alias -- '-'=popd
+
+function '+' {
+  if [ $# -eq 0 ] ; then
+    cd -
+  else
+    pushd "$@"
+  fi
+}
 
 # vim: set et sw=2 sts=2 tw=78 ft=sh:
