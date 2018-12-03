@@ -70,4 +70,61 @@ function '+' {
   fi
 }
 
+
+# Colourful ls
+if ls --version | grep GNU ; then
+  alias ls='ls --color=auto -F'
+else
+  # In BSD systems, usually setting this maks "ls" use colors.
+  export CLICOLOR=1
+  export LSCOLORS=ExGxFxdxCxDxDxhbabacae
+  if [ -n "$(which colorls)" ] ; then
+    alias ls='colorls -F'
+  else
+    alias ls='ls -F'
+  fi
+fi 2> /dev/null 1>&2
+
+
+# Weather report, in the console
+function meteo {
+  curl -s "http://meteo.connectical.com/${1:-}"
+}
+
+
+# Rust
+export RUSTFLAGS='-C target-cpu=native'
+
+
+# PATH additions
+function yashrc_path_add {
+  if [ -d "$1" ] ; then
+    typeset item
+    for item in ${PATH} ; do
+      # Item is already in $PATH, skip.
+      if [ "${item}" = "$1" ] ; then
+        return
+      fi
+    done
+    PATH="$1:${PATH}"
+  fi
+}
+
+function yashrc_do_paths {
+  typeset item
+  typeset saved_ifs=${IFS}
+  IFS=:
+  for item in "$@" ; do
+    yashrc_path_add "${item}"
+  done
+  IFS=${saved_ifs}
+}
+
+yashrc_do_paths \
+  "${HOME}/.cargo/bin" \
+  "${HOME}/.local/bin" \
+  "${HOME}/.dotfiles/bin"
+
+unset -f yashrc_do_paths yashrc_path_add
+
 # vim: set et sw=2 sts=2 tw=78 ft=sh:
