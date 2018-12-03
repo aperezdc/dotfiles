@@ -127,4 +127,9 @@ yashrc_do_paths \
 
 unset -f yashrc_do_paths yashrc_path_add
 
+export GPG_TTY=$(tty)
+if [ -x "$(which gpg-connect-agent 2> /dev/null)" ] ; then
+  gpg-connect-agent -q updatestartuptty /bye > /dev/null
+fi
+
 # vim: set et sw=2 sts=2 tw=78 ft=sh:
