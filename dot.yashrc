@@ -54,7 +54,8 @@ function yashrc_do_bindkeys {
 
     # The following are just for convenience.
     bindkey -$M '\^L'      clear-and-redraw-all
-    bindkey -$M '\^['      accept-prediction  # Alt-Enter
+    bindkey -$M '\^[.'     vi-append-last-bigword  # Alt-.
+    bindkey -$M '\^['      accept-prediction       # Alt-Enter
   done
 }
 yashrc_do_bindkeys
