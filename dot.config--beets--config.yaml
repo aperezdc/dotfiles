@@ -35,6 +35,9 @@ play:
 
 replaygain:
   backend: gstreamer
+  method: ebu
+  overwrite: yes
+  auto: yes
 
 zero:
   update_database: true

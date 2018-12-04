@@ -71,6 +71,7 @@ Plugin 'yssl/QFEnter'
 PluginEnd  " 1}}}
 
 " Section: Options  {{{1
+set clipboard+=unnamedplus
 set complete=.,w,b,u,i,d,t
 set completeopt-=preview
 set completeopt-=menuone
@@ -241,6 +242,7 @@ endif
 " Per-filetype settings
 autocmd vimrc BufReadPost Config.in setlocal filetype=kconfig
 autocmd vimrc FileType mkdc,markdown setlocal expandtab tabstop=2 shiftwidth=2 conceallevel=2
+autocmd vimrc FileType scheme setlocal tabstop=2 shiftwidth=2 expandtab
 autocmd vimrc FileType yaml setlocal tabstop=2 shiftwidth=2 expandtab
 autocmd vimrc FileType dirvish call fugitive#detect(@%)
 
@@ -439,3 +441,4 @@ call s:lsp(['d'], 'serve-d', [])
 call s:lsp(['lua'], 'lua-lsp', [])
 call s:lsp(['python'], 'pyls', [])
 call s:lsp(['rust'], 'rls', [], 'rustup', ['rustup', 'run', 'rls'])
+call s:lsp(['sh'], 'bash-language-server', ['bash-language-server', 'start'])

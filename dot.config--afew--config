@@ -1,6 +1,7 @@
 # vim:ft=cfg
 
 [SpamFilter]
+#[ClassifyingFilter]
 [KillThreadsFilter]
 [ListMailsFilter]
 
@@ -27,6 +28,12 @@ tags = +myrddin
 #query = subject:/^\[Buildroot\] \[PATCH/ or subject:/\[PATCH/
 #query = subject:/^\[Buildroot\] \[PATCH/
 #tags = +patch
+
+[HeaderMatchingFilter.1]
+message = Mark patches sent by git-send-email
+header = X-Mailer
+pattern = ^git-send-email\s
+tags = +patch
 
 [SentMailsFilter]
 sent_tag = sent

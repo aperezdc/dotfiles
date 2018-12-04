@@ -22,6 +22,7 @@ font $font
 floating_modifier $mod
 focus_follows_mouse yes
 mouse_warping output
+default_floating_border none
 default_border pixel 2
 
 bindsym $mod+Shift+q kill

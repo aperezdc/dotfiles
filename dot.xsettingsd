@@ -1,9 +1,9 @@
 Gtk/AutoMnemonics 1
-Gtk/CursorTheme "OpenZone_Ice"
+Gtk/CursorTheme "Hackneyed"
 Gtk/DialogsUseHeader 0
 Gtk/EnableAnimations 1
 Gtk/EnablePrimaryPaste 1
-Gtk/FontName "Roboto 11"
+Gtk/FontName "Inter UI 11"
 Gtk/DecorationLayout "menu:close"
 Gtk/ShellShowsAppMenu 0
 Gtk/ShellShowsDesktop 0
@@ -11,8 +11,8 @@ Net/CursorBlink 0
 Net/EnableEventSounds 0
 Net/EnableInputFeedbackSounds 0
 Net/FallbackIconTheme "hicolor"
-Net/IconThemeName "Paper"
+Net/IconThemeName "Luv"
 Net/SoundThemeName "freedesktop"
-Net/ThemeName "Arc-Flatabulous-Darker"
+Net/ThemeName "Arc-Darker"
 Xft/HintStyle "hintslight"
 Xft/RGBA "rgb"

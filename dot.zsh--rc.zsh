@@ -137,6 +137,7 @@ fi
 # zsh-notes
 if zz-top --loco zsh-notes ; then
 	bindkey '^N' notes-edit-widget
+	zstyle :notes:widget once yes
 fi
 
 # Bind Ctrl-Left and Ctrl-Right key sequences, and AvPag/RePag for history
@@ -205,8 +206,6 @@ zstyle ':completion:*' matcher-list '' \
 zstyle ':completion:*:match:*' original only
 zstyle ':completion:*:approximate:*' max-errors 'reply=($((($#PREFIX+$#SUFFIX)/5))numeric)'
 zstyle ':completion:*:functions' ignored-patterns '_*'
-
-
 zstyle ':completion:*:descriptions' format '%U%B%d%b%u'
 zstyle ':completion:*:warnings' format '%BNo matching %b%d'
 
@@ -494,7 +493,7 @@ for i in less most more ; do
 done
 
 if [[ ${PAGER} = */less ]] ; then
-	export LESS=RSM
+	export LESS=RSMF
 fi
 
 

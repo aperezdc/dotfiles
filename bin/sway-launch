@@ -1,8 +1,16 @@
 #! /bin/bash
 set -eu -o pipefail
+# export GDK_BACKEND=wayland
+export CLUTTER_BACKEND=wayland
+export SDL_VIDEODRIVER=wayland
+export QT_QPA_PLATFORM=wayland-egl
+export QT_QPA_PLATFORMTHEME=qt5ct
+export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
 export BEMENU_BACKEND=wayland
 export XKB_DEFAULT_OPTIONS=ctrl:nocaps
 export XKB_DEFAULT_LAYOUT=es
 export WLC_REPEAT_DELAY=500
 export WLC_REPEAT_RATE=200
-exec sway
+export SWAY_CURSOR_THEME=Hackneyed
+export SWAY_CURSOR_SIZE=16
+exec "${WLC:-sway}" "$@"
