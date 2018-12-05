@@ -138,7 +138,14 @@ fi
 if zz-top --loco zsh-notes ; then
 	bindkey '^N' notes-edit-widget
 	zstyle :notes:widget once yes
-fi
+	if whence -p sk ; then
+		zstyle :notes:widget picker skim
+	elif whence -p fzf ; then
+		zstyle :notes:widget picker fzf
+	else
+		zstyle :notes:widget picker fzy
+	fi
+fi &> /dev/null
 
 # Bind Ctrl-Left and Ctrl-Right key sequences, and AvPag/RePag for history
 bindkey "^[[1;5C" forward-word
@@ -191,11 +198,31 @@ alias sudo='nocorrect sudo'
 alias exec='nocorrect exec'
 alias mkdir='nocorrect mkdir'
 
+# Bring up ${LS_COLORS}
+if [ -x /usr/bin/dircolors ] ; then
+	local dircolors_TERM=${TERM}
+	if [[ ${TERM} = xterm-termite ]] ; then
+		dircolors_TERM=xterm-color
+	fi
+	if [ -r "${HOME}/.dir_colors" ] ; then
+		eval $(TERM=${dircolors_TERM} dircolors -b "${HOME}/.dir_colors")
+	elif [ -r /etc/DIRCOLORS ] ; then
+		eval $(TERM=${dircolors_TERM} dircolors -b /etc/DIRCOLORS)
+	else
+		eval $(TERM=${dircolors_TERM} dircolors)
+	fi
+fi
+
 # Make completion faster: use cache and do not do partial matches
 [[ -d ~/.zsh/cache ]] && mkdir -p ~/.zsh/cache
+zstyle ':completion:*' menu select
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path ~/.zsh/cache
+zstyle ':completion:*' insert-tab pending=1
+zstyle ':completion:*' squeeze-slashes true
+zstyle ':completion:*' accept-exact-dirs true
 zstyle ':completion:*' accept-exact '*(N)'
+zstyle ':completion:*' special-dirs ..
 
 # Fuzzy completion
 zstyle ':completion:*' completer _complete _match _approximate
@@ -214,38 +241,20 @@ zstyle ':completion:*:(all-|)files' ignored-patterns '(|*/)CVS' '*.py[cod]' '__p
 zstyle ':completion:*:cd:*' ignored-patterns '(*/)#CVS'
 zstyle ':completion:*:cd:*' noignore-parents noparent pwd
 
-# Bring up ${LS_COLORS}
-if [ -x /usr/bin/dircolors ] ; then
-	local dircolors_TERM=${TERM}
-	if [[ ${TERM} = xterm-termite ]] ; then
-		dircolors_TERM=xterm-color
-	fi
-	if [ -r "${HOME}/.dir_colors" ] ; then
-		eval $(TERM=${dircolors_TERM} dircolors -b "${HOME}/.dir_colors")
-	elif [ -r /etc/DIRCOLORS ] ; then
-		eval $(TERM=${dircolors_TERM} dircolors -b /etc/DIRCOLORS)
-	else
-		eval $(TERM=${dircolors_TERM} dircolors)
-	fi
-fi
-
-if [ "${LS_COLORS}" ] ; then
-	zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
-	unsetopt list_types
-else
-	zstyle ':completion:*' list-colors ""
-	setopt list_types
-fi
-
-# Some fine-tuning
-zstyle ':completion:*' squeeze-slashes true
-zstyle ':completion:*' menu select
 zstyle ':completion:*:processes' command 'ps -au$USER -o pid,user,args'
 zstyle ':completion:*:processes-names' command 'ps -au$USER -o command'
 zstyle ':completion:*:*:(^rm):*:*files' ignored-patterns '*?.o' '*?.c~' '*?.old'
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
 zstyle ':completion:*:killall:*' force-list always
 zstyle ':completion:*:kill:*' force-list always
+
+if [[ -n ${LS_COLORS} ]] ; then
+	zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+	unsetopt list_types
+else
+	zstyle ':completion:*' list-colors ""
+	setopt list_types
+fi
 
 FMT_BRANCH="%{$fg[cyan]%}%b%u%c%{$fg[default]%}" # e.g. master¹²
 FMT_ACTION="·%{$fg[green]%}%a%{$fg[default]%}"   # e.g. (rebase)
@@ -297,6 +306,11 @@ bindkey "\eOB" down-line-or-local-history
 # Search in history using the current input as prefix
 [[ -n "${key[PageUp]}"   ]] && bindkey "${key[PageUp]}"   history-beginning-search-backward
 [[ -n "${key[PageDown]}" ]] && bindkey "${key[PageDown]}" history-beginning-search-forward
+
+# Quote stuff that looks like URLs automatically.
+autoload -U url-quote-magic
+zstyle ':urlglobber' url-other-schema ftp git gopher http https magnet
+zstyle ':url-quote-magic:*' url-metas '*?[]^(|)~#='  # dropped { }
 
 # Disable Git automatic file completion -- it is slow.
 #__git_files(){}
