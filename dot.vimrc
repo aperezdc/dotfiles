@@ -28,18 +28,11 @@ Plugin 'aperezdc/vim-elrond', '~/devel/vim-elrond'
 Plugin 'aperezdc/vim-lining', '~/devel/vim-lining'
 Plugin 'aperezdc/vim-template', '~/devel/vim-template'
 " Plugin 'aperezdc/vim-lift', '~/devel/vim-lift'
-if has('nvim')
-	Plugin 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-else
-	Plugin 'Shougo/deoplete.nvim'
-	Plugin 'roxma/nvim-yarp'
-	Plugin 'roxma/vim-hug-neovim-rpc'
-endif
-Plugin 'wellle/tmux-complete.vim'
-Plugin 'zchee/deoplete-zsh'
-Plugin 'Shougo/neco-vim'
+Plugin 'ajh17/VimCompletesMe'
+" Plugin 'wellle/tmux-complete.vim'
 Plugin 'bounceme/remote-viewer'
 Plugin 'docunext/closetag.vim', { 'for': ['html', 'xml'] }
+Plugin 'IngoHeimbach/neco-vim'
 Plugin 'fcpg/vim-shore'
 if executable('fzf')
 	Plugin 'junegunn/fzf'
@@ -47,12 +40,13 @@ else
 	Plugin 'junegunn/fzf', { 'do': './install --all' }
 endif
 " Plugin 'natebosch/vim-lsc'
-if has('nvim') && (executable('rustup') || executable('cargo'))
+if has('nvim')
 	Plugin 'autozimu/LanguageClient-neovim', {'branch': 'next', 'do': 'make release' }
 endif
 Plugin 'junegunn/fzf.vim'
 Plugin 'justinmk/vim-dirvish'
 Plugin 'ledger/vim-ledger'
+Plugin 'lluchs/vim-wren'
 Plugin 'mhinz/vim-grepper'
 Plugin 'pbrisbin/vim-mkdir'
 Plugin 'romainl/vim-qf'
@@ -63,11 +57,10 @@ Plugin 'tmux-plugins/vim-tmux'
 Plugin 'tpope/vim-commentary'
 Plugin 'tpope/vim-eunuch'
 Plugin 'tpope/vim-fugitive'
-" Plugin 'unblevable/quick-scope'
 Plugin 'vim-scripts/a.vim'
-Plugin 'wellle/visual-split.vim'
 Plugin 'vim-pandoc/vim-pandoc-syntax'
 Plugin 'yssl/QFEnter'
+Plugin 'ziglang/zig.vim'
 PluginEnd  " 1}}}
 
 " Section: Options  {{{1
@@ -118,8 +111,6 @@ if executable('rg')
 	set grepprg=rg\ --vimgrep
 endif
 " 1}}}
-
-inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 
 if Have('vim-elrond')
 	colorscheme elrond
@@ -303,30 +294,8 @@ if Have('VimCompletesMe')
 		endfunction
 		autocmd vimrc FileType * call s:update_vcm_settings()
 	endif
+	set completeopt+=longest
 endif " 1}}}
-
-" Plugin: Deoplete  {{{1
-if Have('deoplete.nvim')
-	let g:deoplete#enable_at_startup = v:true
-	call deoplete#custom#option({
-				\   'auto_complete_delay': 250,
-				\   'min_pattern_length': 3,
-				\   'smart_case': v:true,
-				\ })
-
-	call deoplete#custom#source('_', 'converters', ['converter_remove_paren'])
-
-	function! s:check_back_space() abort
-		let col = col('.') - 1
-		return !col || getline('.')[col - 1] =~ '\s'
-	endfunction
-
-	inoremap <silent><expr> <Tab>
-				\ pumvisible() ? "\<C-n>" : <sid>check_back_space() ? "\<Tab>" : deoplete#mappings#manual_complete()
-	inoremap <silent><expr> <S-Tab>
-				\ pumvisible() ? "\<C-p>" : "\<S-Tab>"
-endif
-" 1}}}
 
 " Utilities: Language Servers support  {{{1
 function! s:lsp(langs, ...)
@@ -392,7 +361,7 @@ endif " 1}}}
 
 " Plugin: LanguageClient-neovim  {{{1
 if Have('LanguageClient-neovim')
-	let g:LanguageClient_autoStart = v:true
+	let g:LanguageClient_autoStart = v:false
 	let g:LanguageClient_serverCommands = {}
 	function! s:lsp_set_server(lang, cmd)
 		let g:LanguageClient_serverCommands[a:lang] = a:cmd
@@ -435,8 +404,8 @@ if Have('vim-grepper')
 	nnoremap <leader>G :Grepper -tool git<cr>
 endif " 1}}}
 
-call s:lsp(['c', 'cpp', 'objc'], 'ccls', ['ccls', '--init={"cacheDirectory":"/home/aperez/.cache/ccls"}', '--log-file=/dev/null'], 'clangd', [])
-" call s:lsp(['c', 'cpp'], 'clangd', [])
+" call s:lsp(['c', 'cpp', 'objc'], 'ccls', ['ccls', '--init={"cacheDirectory":"/home/aperez/.cache/ccls"}', '--log-file=/dev/null'], 'clangd', [])
+call s:lsp(['c', 'cpp'], 'clangd', [])
 call s:lsp(['d'], 'serve-d', [])
 call s:lsp(['lua'], 'lua-lsp', [])
 call s:lsp(['python'], 'pyls', [])
