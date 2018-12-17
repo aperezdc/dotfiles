@@ -28,7 +28,7 @@ Plugin 'aperezdc/vim-elrond', '~/devel/vim-elrond'
 Plugin 'aperezdc/vim-lining', '~/devel/vim-lining'
 Plugin 'aperezdc/vim-template', '~/devel/vim-template'
 " Plugin 'aperezdc/vim-lift', '~/devel/vim-lift'
-Plugin 'ajh17/VimCompletesMe'
+" Plugin 'ajh17/VimCompletesMe'
 " Plugin 'wellle/tmux-complete.vim'
 Plugin 'bounceme/remote-viewer'
 Plugin 'docunext/closetag.vim', { 'for': ['html', 'xml'] }
@@ -295,6 +295,60 @@ if Have('VimCompletesMe')
 		autocmd vimrc FileType * call s:update_vcm_settings()
 	endif
 	set completeopt+=longest
+else  " 1}}}  Poor man's tab-completion  {{{1
+	function! s:check_backspace() abort
+		let l:column = col('.') - 1
+		return !l:column || getline('.')[l:column - 1] =~ '\s'
+	endfunction
+
+	function! s:smart_complete_next() abort
+		let l:last = get(b:, 'smart_complete_last_mode', 'keyword')
+		if l:last ==# 'omni'
+			if &completefunc !=# ''
+				return 'user'
+			else
+				return 'keyword'
+			endif
+		elseif l:last ==# 'user'
+			return 'keyword'
+		elseif l:last ==# 'keyword'
+			if &omnifunc !=# ''
+				return 'omni'
+			elseif &completefunc !=# ''
+				return 'user'
+			else
+				return 'keyword'
+			endif
+		endif
+	endfunction
+
+	function! s:smart_complete() abort
+		" If the menu is already visible, try the next completion method.
+		" Order is: omni -> user -> keyword
+		let l:result = ''
+		if pumvisible()
+			let b:smart_complete_last_mode = ''
+			let l:result = "\<C-e>"
+		endif
+		let l:next = s:smart_complete_next()
+		if l:next ==# 'omni'
+			let l:result .= "\<C-x>\<C-o>"
+		elseif l:next ==# 'user'
+			let l:result .= "\<C-x>\<c-u>"
+		else
+			let l:result .= "\<C-p>"
+		endif
+		return l:result
+	endfunction
+
+	inoremap <silent><expr> <Tab>
+				\ pumvisible() ? "\<C-p>" :
+				\ <sid>check_backspace() ? "\<Tab>" :
+				\ "\<C-p>"
+	inoremap <silent><expr> <S-Tab>
+				\ pumvisible() ? "\<C-n>" : "\<C-h>"
+
+	inoremap <silent><expr><C-Space> <sid>smart_complete()
 endif " 1}}}
 
 " Utilities: Language Servers support  {{{1
