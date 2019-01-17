@@ -13,10 +13,13 @@ args=(
 	--exclude=/home/aperez/tmp
 	--exclude=/home/aperez/nobackup
 	--exclude=/home/aperez/devel/WebKit
+	--exclude=/home/aperez/devel/WebKit-ContentBlocking
 	--exclude=/home/aperez/devel/v8
 	--exclude=/home/aperez/devel/epiphany
 	--exclude=/home/aperez/devel/gobby
 	--exclude=/home/aperez/devel/mozilla-central
+	--exclude=/home/aperez/devel/wpe/WebKit
+	--exclude=/home/aperez/devel/wpe/buildroot
 	--exclude=/home/aperez/nobackup
 	--exclude=/home/aperez/.dotfiles
 	--exclude=/home/aperez/.ccache
@@ -26,6 +29,8 @@ args=(
 	--exclude=/home/aperez/.thumbnails
 	--exclude=/home/aperez/.local
 	--exclude=/home/aperez/.mail
+	--exclude=/home/aperez/.prefix
+	--exclude=/home/aperez/archbuild
 	--exclude='*.flv'
 	--exclude='*.wmv'
 	--exclude='*.avi'
@@ -46,6 +51,6 @@ args=(
 : ${BACKUP_NAME:=${HOST}-$(date '+%Y-%m-%d')}
 
 echo "Backing up to ${REPO}::${BACKUP_NAME}"
-ionice -c 3 attic create --stats "${REPO}::${BACKUP_NAME}" "${args[@]} --do-not-cross-mountpoints"
+ionice -c 3 borg create --compression auto,zstd,10 --stats "${REPO}::${BACKUP_NAME}" "${args[@]} --do-not-cross-mountpoints"
 echo "Pruning old backups..."
-ionice -c 3 attic prune -v "${REPO}" --keep-daily=7 --keep-weekly=4 --keep-monthly=6
+ionice -c 3 borg prune -v "${REPO}" --keep-daily=7 --keep-weekly=4 --keep-monthly=6
