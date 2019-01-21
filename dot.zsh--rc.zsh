@@ -30,11 +30,11 @@ zz-top RobSis/zsh-reentry-hook
 zz-top zdharma/fast-syntax-highlighting
 zz-top zsh-users/zsh-completions
 zz-top zsh-users/zsh-autosuggestions
-zz-top Tarrasch/zsh-autoenv
 zz-top aperezdc/zsh-fzy --local ~/devel/zsh-fzy
 zz-top aperezdc/zsh-notes --local ~/devel/zsh-notes
 zz-top aperezdc/virtualz --local ~/devel/virtualz
 zz-top aperezdc/rockz --local ~/devel/rockz
+zz-top Tarrasch/zsh-autoenv
 
 
 if [[ ! -d ~/.tmux/plugins/tpm ]] ; then
