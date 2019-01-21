@@ -133,7 +133,7 @@ if &term =~# '^screen' || &term =~# '^tmux' || &term ==# 'linux'
     set t_Co=16
 endif
 
-if $TERM =~ "xterm-256color" || $TERM =~ "screen-256color" || $TERM =~ "xterm-termite" || $TERM =~ "gnome-256color" || $COLORTERM =~ "gnome-terminal"
+if $TERM =~ "xterm-256color" || $TERM =~ "screen-256color" || $TERM =~ "xterm-termite" || $TERM =~ "gnome-256color" || $TERM =~ "fbterm" || $COLORTERM =~ "gnome-terminal"
     set t_Co=256
     set t_AB=[48;5;%dm
     set t_AF=[38;5;%dm
@@ -171,6 +171,7 @@ command! -nargs=0 B b#
 map <C-t> <C-]>
 map <C-p> :pop<cr>
 map <Space> /
+map __ ZZ
 
 vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
