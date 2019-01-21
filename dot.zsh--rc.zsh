@@ -327,13 +327,15 @@ fi
 # http://sourceforge.net/p/tmux/mailman/message/32751663/ by Nicholas Marriott.
 if [[ -n ${TMUX} && -n ${commands[tmux]} ]];then
 	case ${REAL_TERM} in
-		*256color | xterm-termite) ;&
-		TERM=fbterm)
+		*256color | xterm-termite)
 			if infocmp tmux-256color &> /dev/null ; then
 				TERM=tmux-256color
 			else
 				TERM=screen-256color
 			fi
+			;;
+		fbterm)
+			TERM=screen-256color
 			;;
 		*)
 			if infocmp tmux &> /dev/null ; then
