@@ -1,16 +1,16 @@
 # vim: ft=conf
 
 # set $fontname PragmataPro, FontAwesome
-# set $fontname Iosevka, FontAwesome
+set $fontname Iosevka, FontAwesome
 # set $fontname Terminus Re33, FontAwesome
-set $fontname mononoki, FontAwesome
+# set $fontname mononoki, FontAwesome
 # set $fontname Hack, FontAwesome
 # set $fontname PT Mono, FontAwesome
 # set $fontname Inter UI, FontAwesome
 # set $fontname Hasklig, FontAwesome
 # set $fontname xos4 Terminus, FontAwesome Bold
 
-set $normalfont 9
+set $normalfont 9.5
 set $biggerfont 11
 
 set $font $fontname $normalfont
@@ -24,6 +24,7 @@ focus_follows_mouse yes
 mouse_warping output
 default_floating_border none
 default_border pixel 2
+smart_borders on
 
 bindsym $mod+Shift+q kill
 bindsym $mod+Shift+F12 exit
@@ -146,8 +147,8 @@ bindsym $mod+u border toggle
 bindsym $mod+Return exec termite
 bindsym $mod+d exec bemenu-run -i -p 'exec:' --fn '$fontname $biggerfont'
 bindsym $mod+Shift+d exec j4-dmenu-desktop --term='termite -e' --dmenu='bemenu -i -p "apps:" --fn "$fontname $biggerfont"'
-bindsym $mod+F10 exec swaylock -c 181818
-bindsym $mod+Shift+F10 exec sh -c 'swaylock -c 181818 -f && systemctl suspend'
+bindsym $mod+F10 exec swaylock -e -c 181818
+bindsym $mod+Shift+F10 exec systemctl suspend
 bindsym $mod+Shift+n exec makoctl dismiss
 
 bar {
@@ -158,8 +159,6 @@ bar {
 	font $font
 }
 
-for_window [app_id="epiphany"] border none
-for_window [app_id="revolt"] border none
 for_window [app_id="nm-connection-editor"] floating enable
 
 output "*" bg ~/Pictures/Wallpapers/japan-city-wallpaper-wallpaper-1.jpg fill
@@ -183,3 +182,8 @@ input "3823:41225.eGalax_Inc._eGalaxTouch_EXC7910_1032_11" {
 }
 
 exec_always mako
+exec_always swayidle \
+				timeout 300 'swaylock -e -c 181818' \
+				timeout 600 'swaymsg "output * dpms off"' \
+				resume 'swaymsg "output * dpms on scale 2"' \
+				before-sleep 'swaylock -e -c 181818'
