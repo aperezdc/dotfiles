@@ -201,7 +201,7 @@ alias mkdir='nocorrect mkdir'
 # Bring up ${LS_COLORS}
 if [ -x /usr/bin/dircolors ] ; then
 	local dircolors_TERM=${TERM}
-	if [[ ${TERM} = xterm-termite ]] ; then
+	if [[ ${TERM} = xterm-termite || ${TERM} = alacritty ]] ; then
 		dircolors_TERM=xterm-color
 	fi
 	if [ -r "${HOME}/.dir_colors" ] ; then
@@ -327,7 +327,7 @@ fi
 # http://sourceforge.net/p/tmux/mailman/message/32751663/ by Nicholas Marriott.
 if [[ -n ${TMUX} && -n ${commands[tmux]} ]];then
 	case ${REAL_TERM} in
-		*256color | xterm-termite)
+		*256color | xterm-termite | alacritty)
 			if infocmp tmux-256color &> /dev/null ; then
 				TERM=tmux-256color
 			else
