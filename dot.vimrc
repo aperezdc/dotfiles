@@ -232,6 +232,7 @@ endif
 " 1}}}
 
 " Per-filetype settings
+autocmd vimrc BufReadPost,BufNewFile *.bst setlocal filetype=yaml
 autocmd vimrc BufReadPost Config.in setlocal filetype=kconfig
 autocmd vimrc FileType mkdc,markdown setlocal expandtab tabstop=2 shiftwidth=2 conceallevel=2
 autocmd vimrc FileType scheme setlocal tabstop=2 shiftwidth=2 expandtab
