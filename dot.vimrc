@@ -238,6 +238,8 @@ autocmd vimrc FileType mkdc,markdown setlocal expandtab tabstop=2 shiftwidth=2 c
 autocmd vimrc FileType scheme setlocal tabstop=2 shiftwidth=2 expandtab
 autocmd vimrc FileType yaml setlocal tabstop=2 shiftwidth=2 expandtab
 autocmd vimrc FileType dirvish call fugitive#detect(@%)
+autocmd vimrc FileType help wincmd L
+autocmd vimrc FileType git wincmd L | wincmd x
 
 " Open location/quickfix window whenever a command is executed and the
 " list gets populated with at least one valid location.
