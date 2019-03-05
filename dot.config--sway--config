@@ -9,9 +9,10 @@ set $fontname Iosevka, FontAwesome
 # set $fontname Inter UI, FontAwesome
 # set $fontname Hasklig, FontAwesome
 # set $fontname xos4 Terminus, FontAwesome Bold
+set $fontname iA Writer Duospace, FontAwesome
 
-set $normalfont 9.5
-set $biggerfont 11
+set $normalfont 9.25
+set $biggerfont 10
 
 set $font $fontname $normalfont
 
@@ -19,12 +20,15 @@ set $mod  Mod4
 
 font $font
 
+xwayland enabled
+
 floating_modifier $mod
 focus_follows_mouse yes
 mouse_warping output
-default_floating_border none
 default_border pixel 2
+titlebar_padding 4 1
 smart_borders on
+popup_during_fullscreen smart
 
 bindsym $mod+Shift+q kill
 bindsym $mod+Shift+F12 exit
@@ -151,39 +155,48 @@ bindsym $mod+F10 exec swaylock -e -c 181818
 bindsym $mod+Shift+F10 exec systemctl suspend
 bindsym $mod+Shift+n exec makoctl dismiss
 
+bindsym $mod+Shift+s mode screenshot
+mode screenshot {
+	bindsym a exec grim exec "$(xdg-user-dir PICTURES)/Screenshots/all-$(date +'%Y%m%dT%H%M%S.png').png" ; mode default
+	bindsym r exec slurp | grim -g - "$(xdg-user-dir PICTURES)/Screenshots/region-$(date +'%Y%m%dT%H%M%S').png" ; mode default
+
+	bindsym Escape mode default
+	bindsym q      mode default
+}
+
 bar {
 	status_command j4status -o i3bar
-	# status_command i3status
-	# status_command i3status-rs ~/.config/sway/status.toml
-	position top
+	position bottom
 	font $font
+	mode hide
+	icon_theme Arc
+	colors {
+		background #0F0E0E
+	}
 }
 
 for_window [app_id="nm-connection-editor"] floating enable
 
-output "*" bg ~/Pictures/Wallpapers/japan-city-wallpaper-wallpaper-1.jpg fill
-output "eDP-1" scale 2
+output "*" {
+	scale 2
+	background ~/Pictures/Wallpapers/japan-city-wallpaper-wallpaper-1.jpg fill #000000
+}
 
-input "2:7:SynPS/2_Synaptics_TouchPad" {
+input "*" {
+	xkb_layout es
+	xkb_options ctrl:nocaps
+	repeat_delay 500
+	accel_profile adaptive
 	middle_emulation enabled
 	natural_scroll enabled
 	tap enabled
 	dwt enabled
-}
-input "2:8:AlpsPS/2_ALPS_GlidePoint" {
-	middle_emulation enabled
-	natural_scroll enabled
-	tap enabled
-	dwt enabled
-}
-input "3823:41225.eGalax_Inc._eGalaxTouch_EXC7910_1032_11" {
-	natural_scroll enabled
-	tap enabled
 }
 
 exec_always mako
 exec_always swayidle \
 				timeout 300 'swaylock -e -c 181818' \
-				timeout 600 'swaymsg "output * dpms off"' \
-				resume 'swaymsg "output * dpms on scale 2"' \
-				before-sleep 'swaylock -e -c 181818'
+				timeout 600 'swaymsg "output eDP-1 dpms off"' \
+				     resume 'swaymsg "output eDP-1 dpms on"' \
+				before-sleep 'swaylock -f -e -c 181818'
+
