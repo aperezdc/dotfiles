@@ -184,13 +184,20 @@ output "*" {
 
 input "*" {
 	xkb_layout es
-	xkb_options ctrl:nocaps
+	xkb_options ctrl:nocaps,compose:menu
 	repeat_delay 500
 	accel_profile adaptive
 	middle_emulation enabled
+}
+
+input "2:7:SynPS/2_Synaptics_TouchPad" {
 	natural_scroll enabled
 	tap enabled
 	dwt enabled
+}
+
+input "1149:8257:Kensington_Kensington_Slimblade_Trackball" {
+	middle_emulation disabled
 }
 
 exec_always mako
