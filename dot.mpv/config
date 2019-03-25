@@ -12,4 +12,4 @@ sub-ass-hinting=native
 screenshot-format=png
 #vo=vaapi,xv,wayland,opengl-hq,opengl,sdl,x11
 #vo=wayland,gpu,vaapi,xv,sdl,x11
-hwdec=vaapi
+hwdec=vaapi-copy
