@@ -1,0 +1,10 @@
+#! /bin/sh
+set -e
+for tool in sk fzf ; do
+	X=$(command -v "$tool" 2>/dev/null)
+	if [ -n "$X" ] && [ -x "$X" ] ; then
+		exec "$X" "$@"
+	fi
+done
+echo 'Skim or Fzf not found' 1>&2
+exit 1

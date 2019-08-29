@@ -3,6 +3,7 @@
 	st = status
 	ci = commit
 	co = checkout
+	b = !git branch -a | sk-or-fzf -n 2 --prompt='(branch) ' --no-multi --reverse | xargs git checkout
 	br = branch -vv
 	cp = cherry-pick
 	ff = merge --ff-only
@@ -14,6 +15,7 @@
 	svnr = svn find-rev
 	todo = grep -E '(FIXME|TODO) '
 	diffs = diff --patch-with-stat
+	mrproper = clean -xdff
 	format-patch = -M -C
 	br-format-patch = format-patch -M -n -s
 
@@ -75,3 +77,5 @@
 	helper = cache --timeout=3600
 [diff-so-fancy]
 	useUnicodeRuler = false
+[tar "tar.xz"]
+	command = xz -9c
