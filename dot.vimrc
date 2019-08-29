@@ -28,7 +28,6 @@ Plugin 'aperezdc/vim-elrond', '~/devel/vim-elrond'
 Plugin 'aperezdc/vim-lining', '~/devel/vim-lining'
 Plugin 'aperezdc/vim-template', '~/devel/vim-template'
 " Plugin 'aperezdc/vim-lift', '~/devel/vim-lift'
-" Plugin 'ajh17/VimCompletesMe'
 " Plugin 'wellle/tmux-complete.vim'
 Plugin 'bounceme/remote-viewer'
 Plugin 'docunext/closetag.vim', { 'for': ['html', 'xml'] }
@@ -39,13 +38,11 @@ if executable('fzf')
 else
 	Plugin 'junegunn/fzf', { 'do': './install --all' }
 endif
-" Plugin 'natebosch/vim-lsc'
-if has('nvim')
-	Plugin 'autozimu/LanguageClient-neovim', {'branch': 'next', 'do': 'make release' }
-endif
+Plugin 'dense-analysis/ale'
 Plugin 'junegunn/fzf.vim'
 Plugin 'justinmk/vim-dirvish'
 Plugin 'ledger/vim-ledger'
+Plugin 'nelstrom/vim-visual-star-search'
 Plugin 'lluchs/vim-wren'
 Plugin 'mhinz/vim-grepper'
 Plugin 'pbrisbin/vim-mkdir'
@@ -61,14 +58,13 @@ Plugin 'vim-scripts/a.vim'
 Plugin 'vim-pandoc/vim-pandoc-syntax'
 Plugin 'yssl/QFEnter'
 Plugin 'ziglang/zig.vim'
+Plugin 'godlygeek/tabular'
+Plugin 'plasticboy/vim-markdown'
 PluginEnd  " 1}}}
 
 " Section: Options  {{{1
 set clipboard+=unnamedplus
-set complete=.,w,b,u,i,d,t
-set completeopt-=preview
-set completeopt-=menuone
-set completeopt+=longest
+set completeopt=menu,longest
 set shiftwidth=4
 set tabstop=4
 set nobomb
@@ -86,16 +82,19 @@ set encoding=utf-8
 set scrolloff=3
 set sidescrolloff=5
 set nowrap
-set whichwrap+=[,],<,>                                                                                                                                                                
-set wildignore+=*.o,*.a,a.out                                                    
+set whichwrap+=[,],<,>
+set wildignore+=*.o,*.a,a.out
 set shortmess+=c
-" set showmode
-" set statusline=%<\ %f\ %m%r%y%w%=\ L:\ \%l\/\%L\ C:\ \%c\ 
 set ruler
 set timeout           " for mappings
 set timeoutlen=1000   " default value
 set ttimeout          " for key codes
 set ttimeoutlen=10    " unnoticeable small value
+set guicursor=
+
+if !has('nvim')
+	set ttymouse=sgr
+endif
 
 " Persistent undo!
 if !isdirectory(expand('~/.cache/vim/undo'))
@@ -120,44 +119,49 @@ endif
 
 
 " Section: Terminal shenanigans  {{{1
-if &term =~# '^screen' || &term =~# '^tmux' || &term ==# 'linux'
-    map  <silent> [1;5D <C-Left>
-    map  <silent> [1;5C <C-Right>
-    lmap <silent> [1;5D <C-Left>
-    lmap <silent> [1;5C <C-Right>
-    imap <silent> [1;5D <C-Left>
-    imap <silent> [1;5C <C-Right>
+for mapmode in ['n', 'vnore', 'i', 'c', 'l', 't']
+	execute mapmode.'map <silent> [1;5A <C-Up>'
+	execute mapmode.'map <silent> [1;5B <C-Down>'
+	execute mapmode.'map <silent> [1;5C <C-Right>'
+	execute mapmode.'map <silent> [1;5D <C-Left>'
+	execute mapmode.'map <silent> [1;3A <M-Up>'
+	execute mapmode.'map <silent> [1;3B <M-Down>'
+	execute mapmode.'map <silent> [1;3C <M-Right>'
+	execute mapmode.'map <silent> [1;3D <M-Left>'
+endfor
+unlet mapmode
 
+if &term =~# '^screen' || &term =~# '^tmux' || &term ==# 'linux'
     set t_ts=k
     set t_fs=\
     set t_Co=16
 endif
 
-if $TERM =~ "xterm-256color" || $TERM =~ "screen-256color" || $TERM =~ "xterm-termite" || $TERM =~ "gnome-256color" || $TERM =~ "fbterm" || $COLORTERM =~ "gnome-terminal"
+if $TERM ==# 'tmux-256color' || $TERM ==# 'xterm-256color' || $TERM ==# 'screen-256color' || $TERM ==# 'xterm-termite' || $TERM ==# 'gnome-256color' || $TERM ==# 'fbterm' || $COLORTERM ==# 'gnome-terminal'
     set t_Co=256
     set t_AB=[48;5;%dm
     set t_AF=[38;5;%dm
     set t_ZH=[3m
     set t_ZR=[23m
 else
-    if $TERM =~ "st-256color"
+    if $TERM =~# 'st-256color'
         set t_Co=256
     endif
 endif
 
 " Configure Vim I-beam/underline cursor for insert/replace mode.
 " From http://vim.wikia.com/wiki/Change_cursor_shape_in_different_modes
-if !has('nvim') && exists('&t_SR')
-	if empty($TMUX)
-		let &t_SI = "\<Esc>[6 q"
-		let &t_SR = "\<Esc>[4 q"
-		let &t_EI = "\<Esc>[2 q"
-	else
-		let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>[6 q\<Esc>\\"
-		let &t_SR = "\<Esc>Ptmux;\<Esc>\<Esc>[4 q\<Esc>\\"
-		let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>[2 q\<Esc>\\"
-	endif
-endif
+" if !has('nvim') && exists('&t_SR')
+" 	if empty($TMUX)
+" 		let &t_SI = "\<Esc>[6 q"
+" 		let &t_SR = "\<Esc>[4 q"
+" 		let &t_EI = "\<Esc>[2 q"
+" 	else
+" 		let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>[6 q\<Esc>\\"
+" 		let &t_SR = "\<Esc>Ptmux;\<Esc>\<Esc>[4 q\<Esc>\\"
+" 		let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>[2 q\<Esc>\\"
+" 	endif
+" endif
 " 1}}}
 
 " Section: Mappings  {{{1
@@ -211,7 +215,13 @@ nnoremap <expr> N 'nN'[v:searchforward]
 cnoremap <c-n> <down>
 cnoremap <c-p> <up>
 
-" Jump to the last edited position in the file being loaded (if available) 
+" https://vim.fandom.com/wiki/Make_C-Left_C-Right_behave_as_in_Windows
+nnoremap <C-Left>  b
+nnoremap <C-Right> w
+nnoremap <C-Up>    [[
+nnoremap <C-Down>  ]]
+
+" Jump to the last edited position in the file being loaded (if available)
 autocmd vimrc BufReadPost *
 	\ if line("'\"") > 0 && line("'\"") <= line("$") |
 	\       execute "normal g'\"" |
@@ -229,12 +239,15 @@ if exists(':terminal')
     tnoremap <silent> <M-Up>    <C-\><C-n><C-w><C-k>
     tnoremap <silent> <M-Right> <C-\><C-n><C-w><C-l>
 endif
+
+" Ctrl-C does not trigger InsertLeave, remap it through Escape.
+inoremap <C-c> <Esc>
+
 " 1}}}
 
 " Per-filetype settings
 autocmd vimrc BufReadPost,BufNewFile *.bst setlocal filetype=yaml
 autocmd vimrc BufReadPost Config.in setlocal filetype=kconfig
-autocmd vimrc FileType mkdc,markdown setlocal expandtab tabstop=2 shiftwidth=2 conceallevel=2
 autocmd vimrc FileType scheme setlocal tabstop=2 shiftwidth=2 expandtab
 autocmd vimrc FileType yaml setlocal tabstop=2 shiftwidth=2 expandtab
 autocmd vimrc FileType dirvish call fugitive#detect(@%)
@@ -257,103 +270,68 @@ let g:editorconfig_blacklist = {
 	\ }
 " }}}1
 
+" Plugin: markdown  {{{1
+if Have('vim-markdown')
+	let g:vim_markdown_folding_disabled = v:true
+	let g:vim_markdown_override_foldtext = v:false
+	let g:vim_markdown_conceal_code_blocks = v:false
+	let g:vim_markdown_fromtmatter = v:true
+	let g:vim_markdown_strikethrough = v:true
+	let g:vim_markdown_new_list_item_indent = 2
+endif " 1}}}
+
+" Plugin: polyglot  {{{1
+if Have('vim-polyglot')
+	let g:polyglot_disabled = ['markdown']
+endif " 1}}}
+
 " Plugin: shore  {{{1
 let g:shore_stayonfront = 1
 " 1}}}
 
-" Section: Fuzzy finders galore  {{{1
-if Have('vim-picker')
-	" Plugin: picker
-	nmap <unique> <Leader>f    <Plug>PickerEdit
-	nmap <unique> <Leader>b    <Plug>PickerBuffer
-	nmap <unique> <Leader><F1> <Plug>PickerHelp
-elseif Have('fzf.vim')
-	" Plugin: fzf
+" Plugin: fzf  {{{1
+if Have('fzf.vim')
 	nnoremap <silent> <Leader>f :<C-u>Files<cr>
 	nnoremap <silent> <Leader>F :<C-u>GitFiles<cr>
 	nnoremap <silent> <Leader>m :<C-u>History<cr>
 	nnoremap <silent> <Leader>b :<C-u>Buffers<cr>
 	nnoremap <silent> <Leader><F1> :<C-u>Helptags<cr>
+	nmap <C-A-p> <leader>f
+	nmap <C-A-m> <leader>m
+	nmap <C-A-b> <leader>b
+	nmap <F12>   <leader>b
 endif
 
-nmap <C-A-p> <leader>f
-nmap <C-A-m> <leader>m
-nmap <C-A-b> <leader>b
-nmap <F12>   <leader>b
 " 1}}}
 
-" Plugin: VimCompletesMe  {{{1
-if Have('VimCompletesMe')
-	if Have('vim-lift') || Have('vim-ucf')
-		let b:vcm_tab_complete = 'user'
+" Tab-completion  {{{1
+function! s:check_backspace() abort
+	let l:column = col('.') - 1
+	return !l:column || getline('.')[l:column - 1] =~# '\s'
+endfunction
+
+function! s:trigger_completion() abort
+	if &omnifunc !=# ''
+		return "\<C-x>\<C-o>"
+	elseif &completefunc !=# ''
+		return "\<C-x>\<C-u>"
 	else
-		function! s:update_vcm_settings()
-			if &omnifunc !=# ''
-				let b:vcm_tab_complete = 'omni'
-			elseif &completefunc !=# ''
-				let b:vcm_tab_complete = 'user'
-			elseif exists('b:vcm_tab_complete')
-				unlet b:vcm_tab_complete
-			endif
-		endfunction
-		autocmd vimrc FileType * call s:update_vcm_settings()
+		return "\<C-x>\<C-p>"
 	endif
-	set completeopt+=longest
-else  " 1}}}  Poor man's tab-completion  {{{1
-	function! s:check_backspace() abort
-		let l:column = col('.') - 1
-		return !l:column || getline('.')[l:column - 1] =~ '\s'
-	endfunction
+endfunction
 
-	function! s:smart_complete_next() abort
-		let l:last = get(b:, 'smart_complete_last_mode', 'keyword')
-		if l:last ==# 'omni'
-			if &completefunc !=# ''
-				return 'user'
-			else
-				return 'keyword'
-			endif
-		elseif l:last ==# 'user'
-			return 'keyword'
-		elseif l:last ==# 'keyword'
-			if &omnifunc !=# ''
-				return 'omni'
-			elseif &completefunc !=# ''
-				return 'user'
-			else
-				return 'keyword'
-			endif
-		endif
-	endfunction
+inoremap <silent><expr> <Tab>
+			\ pumvisible() ? "\<C-p>" :
+			\ <sid>check_backspace() ? "\<Tab>" :
+			\ "\<C-p>"
+inoremap <silent><expr> <C-Space>
+			\ <sid>trigger_completion()
+inoremap <silent><expr> <CR>
+			\ pumvisible() ? "\<C-y>" : "\<CR>"
 
-	function! s:smart_complete() abort
-		" If the menu is already visible, try the next completion method.
-		" Order is: omni -> user -> keyword
-		let l:result = ''
-		if pumvisible()
-			let b:smart_complete_last_mode = ''
-			let l:result = "\<C-e>"
-		endif
-		let l:next = s:smart_complete_next()
-		if l:next ==# 'omni'
-			let l:result .= "\<C-x>\<C-o>"
-		elseif l:next ==# 'user'
-			let l:result .= "\<C-x>\<c-u>"
-		else
-			let l:result .= "\<C-p>"
-		endif
-		return l:result
-	endfunction
-
-	inoremap <silent><expr> <Tab>
-				\ pumvisible() ? "\<C-p>" :
-				\ <sid>check_backspace() ? "\<Tab>" :
-				\ "\<C-p>"
-	inoremap <silent><expr> <S-Tab>
-				\ pumvisible() ? "\<C-n>" : "\<C-h>"
-
-	inoremap <silent><expr><C-Space> <sid>smart_complete()
-endif " 1}}}
+inoremap <silent><expr> <S-Tab>
+			\ pumvisible() ? "\<C-n>" : "\<C-h>"
+" 1}}}
 
 " Utilities: Language Servers support  {{{1
 function! s:lsp(langs, ...)
@@ -392,66 +370,96 @@ function! s:lsp_set_server(lang, cmd)
 endfunction
 " 1}}}
 
-" Plugin: lsc  {{{1
-if Have('vim-lsc')
-	let g:lsc_server_commands = {}
-	let g:lsc_auto_map = v:false
-	let g:lsc_enable_autocomplete = v:false
-	function! s:lsp_set_server(lang, cmd)
-		let g:lsc_server_commands[a:lang] = {
-					\   'name': a:lang,
-					\   'command': s:cmdlist_to_string(a:cmd),
-					\   'suppress_stderr': v:true,
-					\ }
-		execute 'autocmd vimrc FileType ' . a:lang .
-					\ ' setlocal omnifunc=lsc#complete#complete'
-	endfunction
+" Plugin: ale  {{{1
+if Have('ale')
+	" set completeopt=menu,menuone,preview,noselect,noinsert
+	let g:ale_echo_msg_format = '[%linter%] %code: %%s'
+	let g:ale_completion_enabled = v:false
+	let g:ale_set_quickfix = v:false
+	let g:ale_set_loclist = v:false
+	let g:ale_set_balloons = v:true
+
+	let s:c_cpp_linters = ['flawfinder']
+	" let s:c_cpp_linters = ['clangtidy', 'flawfinder']
+	" for program in ['ccls', 'clangd', 'clang', 'gcc']
+	for program in ['clangd', 'ccls', 'clang', 'gcc']
+		if executable(program)
+			call insert(s:c_cpp_linters, program)
+			break
+		endif
+	endfor
+
+	let g:ale_linters = {
+				\ 'c': s:c_cpp_linters, 'cpp': s:c_cpp_linters,
+				\ }
+	unlet s:c_cpp_linters
+
+	nmap <silent> <C-k>      <Plug>(ale_previous_wrap)
+	nmap <silent> <C-j>      <Plug>(ale_next_wrap)
+	nmap <silent> <Leader>d  <Plug>(ale_detail)
+	nmap <silent> <Leader>h  <Plug>(ale_hover)
+	nmap <silent> <Leader>D  <Plug>(ale_go_to_definition)
+	nmap <silent> <Leader>r  <Plug>(ale_find_references)
+	nmap <silent> <Leader>x  <Plug>(ale_fix)
+	imap <silent> <C-Space>  <Plug>(ale_complete)
 
 	if Have('vim-lining')
-		let s:lsc_lining_item = {}
-		function s:lsc_lining_item.format(item, active)
-			let status = LSCServerStatus()
-			return (a:active && status !=# '') ? status : ''
+		function s:linting_done()
+			let buffer = bufnr('')
+			return get(g:, 'ale_enabled')
+						\ && getbufvar(buffer, 'ale_linted', v:false)
+						\ && !ale#engine#IsCheckingBuffer(buffer)
 		endfunction
-		call lining#right(s:lsc_lining_item)
-	endif
-endif " 1}}}
 
-" Plugin: LanguageClient-neovim  {{{1
-if Have('LanguageClient-neovim')
-	let g:LanguageClient_autoStart = v:false
-	let g:LanguageClient_serverCommands = {}
-	function! s:lsp_set_server(lang, cmd)
-		let g:LanguageClient_serverCommands[a:lang] = a:cmd
-		execute 'autocmd vimrc FileType ' . a:lang .
-					\ ' setlocal omnifunc=LanguageClient#complete'
-					\ ' formatexpr=LanguageClient#textDocument_rangeFormatting_sync'
-	endfunction
-
-	if Have('vim-lining')
-		let s:LanguageClient_lining_item = {}
-		function s:LanguageClient_lining_item.format(item, active)
-			return a:active ? (LanguageClient#serverStatus() ? 'busy' : 'idle') : ''
+		let s:ale_lining_warnings_item = {}
+		function s:ale_lining_warnings_item.format(item, active)
+			if a:active && s:linting_done()
+				let counts = ale#statusline#Count(bufnr(''))
+				let warnings = counts.total - counts.error - counts.style_error
+				if warnings > 0
+					return warnings
+				endif
+			endif
+			return ''
 		endfunction
-		call lining#right(s:LanguageClient_lining_item)
-	endif
+		call lining#right(s:ale_lining_warnings_item, 'Warn')
 
-	if Have('VimCompletesMe')
-		autocmd! vimrc User LanguageClientStarted setlocal omnifunc=LanguageClient#complete | call s:update_vcm_settings()
-		autocmd! vimrc User LanguageClientStopped setlocal omnifunc= | call s:update_vcm_settings()
+		let s:ale_lining_errors_item = {}
+		function s:ale_lining_errors_item.format(item, active)
+			if a:active && s:linting_done()
+				let counts = ale#statusline#Count(bufnr(''))
+				let errors = counts.error + counts.style_error
+				if errors > 0
+					return errors
+				endif
+			endif
+			return ''
+		endfunction
+		call lining#right(s:ale_lining_errors_item, 'Error')
+
+		let s:ale_status_item = {}
+		function s:ale_status_item.format(item, active)
+			return (a:active && ale#engine#IsCheckingBuffer(bufnr(''))) ? 'linting' : ''
+		endfunction
+		call lining#right(s:ale_status_item)
+
+		autocmd vimrc User ALEJobStarted call lining#refresh()
+		autocmd vimrc User ALELintPost   call lining#refresh()
+		autocmd vimrc User ALEFixPost    call lining#refresh()
 	endif
 endif " 1}}}
 
 " Plugin: grepper  {{{1
 if Have('vim-grepper')
 	let s:tools = ['grep']
-	if executable('git') | let s:tools = ['git'] + s:tools | endif
-	if executable('rg')  | let s:tools = ['rg' ] + s:tools | endif
+	if executable('git') | call insert(s:tools, 'git') | endif
+	if executable('rg')  | call insert(s:tools, 'rg' ) | endif
 	let g:grepper = {
 				\ 'dir': 'repo,file',
 				\ 'tools': s:tools,
 				\ 'simple_prompt': 1,
 				\ 'quickfix': 0,
+				\ 'prompt_quote': 1,
 				\ }
 	unlet s:tools
 
@@ -462,10 +470,3 @@ if Have('vim-grepper')
 	nnoremap <leader>G :Grepper -tool git<cr>
 endif " 1}}}
 
-" call s:lsp(['c', 'cpp', 'objc'], 'ccls', ['ccls', '--init={"cacheDirectory":"/home/aperez/.cache/ccls"}', '--log-file=/dev/null'], 'clangd', [])
-call s:lsp(['c', 'cpp'], 'clangd', [])
-call s:lsp(['d'], 'serve-d', [])
-call s:lsp(['lua'], 'lua-lsp', [])
-call s:lsp(['python'], 'pyls', [])
-call s:lsp(['rust'], 'rls', [], 'rustup', ['rustup', 'run', 'rls'])
-call s:lsp(['sh'], 'bash-language-server', ['bash-language-server', 'start'])
