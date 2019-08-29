@@ -7,29 +7,31 @@ allow_bold = true
 dynamic_title = true
 urgent_on_bell = true
 clickable_url = true
+hyperlinks = true
 ### 0Oo I1l ←↓↑→ {} [] ()
-# font = Inconsolata LGC, FontAwesome 9.25
-# font = Inconsolata, FontAwesome 10.75
-# font = PragmataPro, FontAwesome 10.85
-# font = mononoki, CamingoCode, FontAwesome 10.85
-# font = mononoki, CamingoCode 12
-# font = xos4 Terminus, FontAwesome 11
-# font = UW Ttyp0, FontAwesome 13
-# font = Iosevka, FontAwesome 10.85
-font = Iosevka Term, FontAwesome 10.85
-# font = Iosevka Term, FontAwesome 11.5
-# font = Code New Roman, FontAwesome 10.15
-# font = Fira Code 10.1
-# font = Fira Mono, FontAwesome 10.5
-# font = SF Mono, FontAwesome 10.125
-# font = SF Mono, FontAwesome 9.25
+# font = Inconsolata, FontAwesome 11.2
+font = Inconsolata LGC, FontAwesome 9.25
+# font = PragmataPro, FontAwesome 10.855
+# font = Iosevka, FontAwesome 10.75
+# font = mononoki, CamingoCode, FontAwesome 10
+# font = CamingoCode, FontAwesome 10
+# font = PT Mono, FontAwesome 9.25
+# font = Sudo, FontAwesome 12.85
+# font = Sudo, FontAwesome 13.75
+# font = Fira Code, FontAwesome 9.375
+# font = Code New Roman, FontAwesome 10.2
+# font = SF Mono, FontAwesome 9
 # font = Source Code Pro 10.5
-# font = Hasklig 10.0
-# font = Fantasque Sans Mono 10.75
-# font = Roboto Mono, SF Mono 10.25
-# font = Office Code Pro 10.5
-# font = Hack, FontAwesome 9.25
-# font = IBM Plex Mono 10.5
+# font = Fantasque Sans Mono, FontAwesome 10.85
+# font = Roboto Mono, SF Mono 9.25
+# font = Office Code Pro, FontAwesome 9.375
+# font = IBM Plex Mono, FontAwesome 9.3686
+# font = iA Writer Mono S, FontAwesome 9.375
+# font = Droid Sans Mono Slashed, FontAwesome 9.35
+
+# cell_width_scale = 1.0
+# cell_height_scale = 1.0
+
 scrollback_lines = 1000
 search_wrap = true
 icon_name = terminal
@@ -51,10 +53,12 @@ size_hints = true
 filter_unmatched_urls = true
 
 # emit escape sequences for extra modified keys
-#modify_other_keys = false
+modify_other_keys = true
 
 [colors]
 cursor = #aa0033
+cursor_foreground = #fddddd
+# cursor = #7700aa
 foreground = #dcdcdc
 foreground_bold = #ffffff
 background = #040404
