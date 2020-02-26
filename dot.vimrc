@@ -185,6 +185,11 @@ vnoremap > >gv
 nnoremap H :bprevious<CR>
 nnoremap L :bnext<CR>
 
+" Highlight word below the cursor.
+" https://stackoverflow.com/questions/6876850/how-to-highlight-all-occurrences-of-a-word-in-vim-on-double-clicking
+nnoremap <silent> <leader>+ :execute 'highlight DoubleClick ctermbg=green ctermfg=black<bar>match DoubleClick /\V\<'.escape(expand('<cword>'), '\').'\>/'<cr>
+nnoremap <silent> <leader>- :match none<cr>
+
 " Manually re-format a paragraph of text
 nnoremap <silent> Q gwip
 
@@ -243,6 +248,10 @@ endif
 " Ctrl-C does not trigger InsertLeave, remap it through Escape.
 inoremap <C-c> <Esc>
 
+" Alternate mapping for increasing/decreasing numbers.
+nnoremap <S-Up>   <C-x>
+nnoremap <S-Down> <C-a>
+
 " 1}}}
 
 " Per-filetype settings
@@ -250,7 +259,7 @@ autocmd vimrc BufReadPost,BufNewFile *.bst setlocal filetype=yaml
 autocmd vimrc BufReadPost Config.in setlocal filetype=kconfig
 autocmd vimrc FileType scheme setlocal tabstop=2 shiftwidth=2 expandtab
 autocmd vimrc FileType yaml setlocal tabstop=2 shiftwidth=2 expandtab
-autocmd vimrc FileType dirvish call fugitive#detect(@%)
+autocmd vimrc FileType dirvish call FugitiveDetect(@%)
 autocmd vimrc FileType help wincmd L
 autocmd vimrc FileType git wincmd L | wincmd x
 
