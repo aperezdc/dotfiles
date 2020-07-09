@@ -283,11 +283,11 @@ let g:editorconfig_blacklist = {
 
 " Plugin: markdown  {{{1
 if Have('vim-markdown')
-	let g:vim_markdown_folding_disabled = v:true
-	let g:vim_markdown_override_foldtext = v:false
-	let g:vim_markdown_conceal_code_blocks = v:false
-	let g:vim_markdown_fromtmatter = v:true
-	let g:vim_markdown_strikethrough = v:true
+	let g:vim_markdown_folding_disabled = 1
+	let g:vim_markdown_override_foldtext = 0
+	let g:vim_markdown_conceal_code_blocks = 0
+	let g:vim_markdown_fromtmatter = 1
+	let g:vim_markdown_strikethrough = 1
 	let g:vim_markdown_new_list_item_indent = 2
 endif " 1}}}
 
@@ -386,10 +386,10 @@ endfunction
 if Have('ale')
 	" set completeopt=menu,menuone,preview,noselect,noinsert
 	let g:ale_echo_msg_format = '[%linter%] %code: %%s'
-	let g:ale_completion_enabled = v:false
-	let g:ale_set_quickfix = v:false
-	let g:ale_set_loclist = v:false
-	let g:ale_set_balloons = v:true
+	let g:ale_completion_enabled = 0
+	let g:ale_set_quickfix = 0
+	let g:ale_set_loclist = 0
+	let g:ale_set_balloons = 0
 
 	let s:c_cpp_linters = ['flawfinder']
 	" let s:c_cpp_linters = ['clangtidy', 'flawfinder']
@@ -419,7 +419,7 @@ if Have('ale')
 		function s:linting_done()
 			let buffer = bufnr('')
 			return get(g:, 'ale_enabled')
-						\ && getbufvar(buffer, 'ale_linted', v:false)
+						\ && getbufvar(buffer, 'ale_linted', 0)
 						\ && !ale#engine#IsCheckingBuffer(buffer)
 		endfunction
 
