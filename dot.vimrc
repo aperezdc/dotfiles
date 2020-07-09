@@ -1,5 +1,3 @@
-" vim:foldmethod=marker:
-
 set nocompatible
 
 " Disable some built-in plug-ins which I never use.
@@ -243,6 +241,9 @@ if exists(':terminal')
     tnoremap <silent> <M-Down>  <C-\><C-n><C-w><C-j>
     tnoremap <silent> <M-Up>    <C-\><C-n><C-w><C-k>
     tnoremap <silent> <M-Right> <C-\><C-n><C-w><C-l>
+
+    " Make Ctrl-Shift-q exit insert mode.
+    tnoremap <silent> <C-S-q>   <C-\><C-n>
 endif
 
 " Ctrl-C does not trigger InsertLeave, remap it through Escape.
@@ -258,6 +259,7 @@ nnoremap <S-Down> <C-a>
 autocmd vimrc BufReadPost,BufNewFile *.bst setlocal filetype=yaml
 autocmd vimrc BufReadPost Config.in setlocal filetype=kconfig
 autocmd vimrc FileType scheme setlocal tabstop=2 shiftwidth=2 expandtab
+autocmd vimrc FileType meson setlocal tabstop=4 shiftwidth=4 noexpandtab
 autocmd vimrc FileType yaml setlocal tabstop=2 shiftwidth=2 expandtab
 autocmd vimrc FileType dirvish call FugitiveDetect(@%)
 autocmd vimrc FileType help wincmd L
@@ -306,6 +308,7 @@ if Have('fzf.vim')
 	nnoremap <silent> <Leader>b :<C-u>Buffers<cr>
 	nnoremap <silent> <Leader><F1> :<C-u>Helptags<cr>
 	nmap <C-A-p> <leader>f
+	nmap <C-A-g> <leader>F
 	nmap <C-A-m> <leader>m
 	nmap <C-A-b> <leader>b
 	nmap <F12>   <leader>b
@@ -479,3 +482,4 @@ if Have('vim-grepper')
 	nnoremap <leader>G :Grepper -tool git<cr>
 endif " 1}}}
 
+" vim:foldmethod=marker:
