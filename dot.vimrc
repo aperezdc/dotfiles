@@ -324,16 +324,19 @@ endfunction
 
 function! s:trigger_completion() abort
 	if &omnifunc !=# ''
+		let b:complete_p = 0
 		return "\<C-x>\<C-o>"
 	elseif &completefunc !=# ''
+		let b:complete_p = 1
 		return "\<C-x>\<C-u>"
 	else
+		let b:complete_p = 1
 		return "\<C-x>\<C-p>"
 	endif
 endfunction
 
 inoremap <silent><expr> <Tab>
-			\ pumvisible() ? "\<C-p>" :
+			\ pumvisible() ? (get(b:, 'complete_p', 1) ? "\<C-p>" : "\<C-n>") :
 			\ <sid>check_backspace() ? "\<Tab>" :
 			\ "\<C-p>"
 inoremap <silent><expr> <C-Space>
