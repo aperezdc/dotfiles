@@ -145,6 +145,13 @@ if zz-top --loco zsh-notes ; then
 	else
 		zstyle :notes:widget picker fzy
 	fi
+	if whence -p lowdown ; then
+		zstyle :notes:widget:preview enabled yes
+		zstyle :notes:widget:preview command lowdown -Tterm
+	elif whence -p mdcat ; then
+		zstyle :notes:widget:preview enabled yes
+		zstyle :notes:widget:preview command mdcat -l
+	fi
 fi &> /dev/null
 
 # Bind Ctrl-Left and Ctrl-Right key sequences, and AvPag/RePag for history
