@@ -53,11 +53,12 @@ Plugin 'tpope/vim-commentary'
 Plugin 'tpope/vim-eunuch'
 Plugin 'tpope/vim-fugitive'
 Plugin 'vim-scripts/a.vim'
+Plugin 'rhysd/clever-f.vim'
 Plugin 'vim-pandoc/vim-pandoc-syntax'
 Plugin 'yssl/QFEnter'
 Plugin 'ziglang/zig.vim'
+Plugin 'ollykel/v-vim'
 Plugin 'godlygeek/tabular'
-Plugin 'plasticboy/vim-markdown'
 PluginEnd  " 1}}}
 
 " Section: Options  {{{1
@@ -289,11 +290,6 @@ if Have('vim-markdown')
 	let g:vim_markdown_fromtmatter = 1
 	let g:vim_markdown_strikethrough = 1
 	let g:vim_markdown_new_list_item_indent = 2
-endif " 1}}}
-
-" Plugin: polyglot  {{{1
-if Have('vim-polyglot')
-	let g:polyglot_disabled = ['markdown']
 endif " 1}}}
 
 " Plugin: shore  {{{1
