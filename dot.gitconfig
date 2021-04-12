@@ -26,6 +26,10 @@
 
 	# apple-pick taken from http://joeshaw.org/2010/06/22/667
 	apple-pick = !sh -c 'git rev-list --reverse "$@" | xargs -n1 git cherry-pick' -
+	apple-pickx = !sh -c 'git rev-list --reverse "$@" | xargs -n1 git cherry-pick -x' -
+
+	# wip taken from https://carolynvanslyck.com/blog/2020/12/git-wip/
+	wip = for-each-ref --sort='authordate:iso8601' --format=' %(color:green)%(authordate:relative)%09%(color:white)%(refname:short)' refs/heads
 
 	# snapshot/assume/unassume/assumed taken from
 	# http://blog.apiaxle.com/post/handy-git-tips-to-stop-you-getting-fired/
@@ -33,6 +37,9 @@
 	assume   = update-index --assume-unchanged
 	unassume = update-index --no-assume-unchanged
 	assumed  = "!git ls-files -v | grep ^h | cut -c 3-"
+
+	# From https://davidwalsh.name/awesome-git-aliases
+	force-push = push --force-with-lease
 
 [color]
 	ui = auto
