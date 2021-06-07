@@ -561,6 +561,15 @@ then
 	FAST_HIGHLIGHT_STYLES[path]='fg=underline'
 fi
 
+if zz-top --loco zsh-autosuggestions
+then
+	if [[ ${TERM} != xterm-termite && ${TERM} != *-256color ]]
+	then
+		ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE=fg=black,bold
+	fi
+	ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+fi
+
 if zz-top --loco zsh-fzy ; then
 	:	
 elif [[ -r /usr/share/skim/key-bindings.zsh ]] ; then
