@@ -28,6 +28,7 @@ zz-top jreese/zsh-titles
 zz-top RobSis/zsh-completion-generator
 zz-top RobSis/zsh-reentry-hook
 zz-top zdharma/fast-syntax-highlighting
+zz-top zsh-users/zsh-history-substring-search
 zz-top zsh-users/zsh-completions
 zz-top zsh-users/zsh-autosuggestions
 zz-top aperezdc/zsh-fzy --local ~/devel/zsh-fzy
@@ -305,10 +306,17 @@ up-line-or-local-history() {
 }
 zle -N up-line-or-local-history
 
-bindkey "\e[A" up-line-or-local-history
-bindkey "\eOA" up-line-or-local-history
-bindkey "\e[B" down-line-or-local-history
-bindkey "\eOB" down-line-or-local-history
+if zz-top --loco zsh-history-substring-search ; then
+	bindkey "\e[A" history-substring-search-up
+	bindkey "\eOA" history-substring-search-up
+	bindkey "\e[B" history-substring-search-down
+	bindkey "\eOB" history-substring-search-down
+else
+	bindkey "\e[A" up-line-or-local-history
+	bindkey "\eOA" up-line-or-local-history
+	bindkey "\e[B" down-line-or-local-history
+	bindkey "\eOB" down-line-or-local-history
+fi
 
 # Search in history using the current input as prefix
 [[ -n "${key[PageUp]}"   ]] && bindkey "${key[PageUp]}"   history-beginning-search-backward
