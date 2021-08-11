@@ -78,6 +78,8 @@ function cmd-completion () {
 }
 
 cmd-completion rustup completions zsh
+cmd-completion csview completion zsh
+cmd-completion gh completion --shell zsh
 
 unfunction cmd-completion  # Not needed anymore
 
@@ -293,30 +295,36 @@ zstyle ':vcs_info:*:prompt:*' nvcsformats   ""
 # Up/down arrow.
 # I want shared history for ^R, but I don't want another shell's activity to
 # mess with up/down.  This does that.
-down-line-or-local-history() {
-	zle set-local-history 1
-	zle down-line-or-history
-	zle set-local-history 0
-}
+if zz-top --loco zsh-history-substring-search ; then
+	down-line-or-local-history() {
+		zle set-local-history 1
+		zle history-substring-search-down
+		zle set-local-history 0
+	}
+	up-line-or-local-history() {
+		zle set-local-history 1
+		zle history-substring-search-up
+		zle set-local-history 0
+	}
+else
+	down-line-or-local-history() {
+		zle set-local-history 1
+		zle down-line-or-history
+		zle set-local-history 0
+	}
+	up-line-or-local-history() {
+		zle set-local-history 1
+		zle up-line-or-history
+		zle set-local-history 0
+	}
+fi
 zle -N down-line-or-local-history
-up-line-or-local-history() {
-	zle set-local-history 1
-	zle up-line-or-history
-	zle set-local-history 0
-}
 zle -N up-line-or-local-history
 
-if zz-top --loco zsh-history-substring-search ; then
-	bindkey "\e[A" history-substring-search-up
-	bindkey "\eOA" history-substring-search-up
-	bindkey "\e[B" history-substring-search-down
-	bindkey "\eOB" history-substring-search-down
-else
-	bindkey "\e[A" up-line-or-local-history
-	bindkey "\eOA" up-line-or-local-history
-	bindkey "\e[B" down-line-or-local-history
-	bindkey "\eOB" down-line-or-local-history
-fi
+bindkey "\e[A" up-line-or-local-history
+bindkey "\eOA" up-line-or-local-history
+bindkey "\e[B" down-line-or-local-history
+bindkey "\eOB" down-line-or-local-history
 
 # Search in history using the current input as prefix
 [[ -n "${key[PageUp]}"   ]] && bindkey "${key[PageUp]}"   history-beginning-search-backward
