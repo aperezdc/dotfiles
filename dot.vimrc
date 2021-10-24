@@ -49,6 +49,8 @@ Plugin 'romainl/vim-qlist'
 Plugin 'sgur/vim-editorconfig'
 Plugin 'sheerun/vim-polyglot'
 Plugin 'tmux-plugins/vim-tmux'
+Plugin 'roxma/vim-tmux-clipboard'
+Plugin 'weakish/rcshell.vim'
 Plugin 'tpope/vim-commentary'
 Plugin 'tpope/vim-eunuch'
 Plugin 'tpope/vim-fugitive'
@@ -59,6 +61,8 @@ Plugin 'yssl/QFEnter'
 Plugin 'ziglang/zig.vim'
 Plugin 'ollykel/v-vim'
 Plugin 'godlygeek/tabular'
+Plugin 'janet-lang/janet.vim'
+Plugin 'kergoth/vim-bitbake'
 PluginEnd  " 1}}}
 
 " Section: Options  {{{1
@@ -258,6 +262,7 @@ nnoremap <S-Down> <C-a>
 
 " Per-filetype settings
 autocmd vimrc BufReadPost,BufNewFile *.bst setlocal filetype=yaml
+autocmd vimrc BufReadPost,BufNewFile *.mm setlocal filetype=objcpp
 autocmd vimrc BufReadPost Config.in setlocal filetype=kconfig
 autocmd vimrc FileType scheme setlocal tabstop=2 shiftwidth=2 expandtab
 autocmd vimrc FileType meson setlocal tabstop=4 shiftwidth=4 noexpandtab
@@ -265,6 +270,7 @@ autocmd vimrc FileType yaml setlocal tabstop=2 shiftwidth=2 expandtab
 autocmd vimrc FileType dirvish call FugitiveDetect(@%)
 autocmd vimrc FileType help wincmd L
 autocmd vimrc FileType git wincmd L | wincmd x
+autocmd vimrc BufReadPost ~/Notes/*.md setlocal colorcolumn=0 textwidth=0
 
 " Open location/quickfix window whenever a command is executed and the
 " list gets populated with at least one valid location.

@@ -1,7 +1,9 @@
 let g:python3_host_prog = '/usr/bin/python3'
 let g:python_host_prog = '/usr/bin/python2'
 
-if filereadable(expand('~/.vimrc'))
+if has('nvim') && filereadable(expand('~/.nvimrc')) && v:false
+	source ~/.nvimrc
+elseif filereadable(expand('~/.vimrc'))
 	source ~/.vimrc
 else
 	" Minimal configuration
