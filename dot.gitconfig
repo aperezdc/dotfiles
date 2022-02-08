@@ -19,11 +19,6 @@
 	format-patch = -M -C
 	br-format-patch = format-patch -M -n -s
 
-	# "Fancy" versions, which use diff-so-fancy, so we force --color
-	flogp = log --abbrev-commit --patch-with-stat --decorate --color
-	fshow = show --color --patch-with-stat
-	fdiff = diff --color
-
 	# apple-pick taken from http://joeshaw.org/2010/06/22/667
 	apple-pick = !sh -c 'git rev-list --reverse "$@" | xargs -n1 git cherry-pick' -
 	apple-pickx = !sh -c 'git rev-list --reverse "$@" | xargs -n1 git cherry-pick -x' -
@@ -50,8 +45,7 @@
 	status = auto
 [merge]
 	stat = true
-	tool = wiggle
-	#conflictstyle = diff3
+	conflictstyle = diff3
 [pack]
 	threads = 0
 [sendemail]
@@ -72,33 +66,16 @@
 	stat = true
 [core]
 	autocrlf = false
-	excludesfile = /home/aperez/.gitignore-global
 [rerere]
 	enabled = true
 [pull]
 	rebase = true
-[pager]
-	flogp = diff-so-fancy | less --tabs=4 -RFX
-	fshow = diff-so-fancy | less --tabs=4 -RFX
-	fdiff = diff-so-fancy | less --tabs=4 -RFX
 [diff]
 	algorithm = histogram
 [commit]
 	gpgsign = on
 [credential]
 	helper = libsecret
-[diff-so-fancy]
-	useUnicodeRuler = false
-[merge "wiggle"]
-	name = "Wiggle flexible merging"
-	driver = wiggle -o %A %A %O %B
-	recursive = binary
-[mergetool "wiggle"]
-	cmd = wiggle -B -o $MERGED $LOCAL $BASE $REMOTE
-[difftool "wiggle"]
-	cmd = wiggle -Bd $LOCAL $REMOTE
-[http]
-	cookiefile = /home/aperez/.gitcookies
 [tar "tar.xz"]
 	command = xz -9c
 [init]
