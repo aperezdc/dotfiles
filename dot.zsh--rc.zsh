@@ -27,7 +27,7 @@ zz-top chrissicool/zsh-256color
 zz-top jreese/zsh-titles
 zz-top RobSis/zsh-completion-generator
 zz-top RobSis/zsh-reentry-hook
-zz-top zdharma/fast-syntax-highlighting
+zz-top z-shell/fast-syntax-highlighting
 zz-top zsh-users/zsh-history-substring-search
 zz-top zsh-users/zsh-completions
 zz-top zsh-users/zsh-autosuggestions
@@ -128,7 +128,7 @@ zle -N transpose-words transpose-words-match
 
 # zsh-fzy
 if zz-top --loco zsh-fzy ; then
-	zstyle ':fzy:*' lines 18
+	zstyle ':fzy:*' lines min:12
 	zstyle ':fzy:file' command fd --type f
 	zstyle ':fzy:cd'   command fd --type d
 	bindkey '^F' fzy-cd-widget
@@ -207,6 +207,7 @@ alias man='nocorrect man'
 alias sudo='nocorrect sudo'
 alias exec='nocorrect exec'
 alias mkdir='nocorrect mkdir'
+alias toot='nocorrect madonctl toot'
 
 # Bring up ${LS_COLORS}
 if [ -x /usr/bin/dircolors ] ; then
@@ -546,7 +547,7 @@ if [[ -x /usr/bin/ccache ]] ; then
 fi
 
 # Settings for zsh-completion-generator
-GENCOMPL_PY=python2
+GENCOMPL_PY=python3
 
 # VirtualZ settings
 if [[ -d /devel/.virtualenvs ]] ; then

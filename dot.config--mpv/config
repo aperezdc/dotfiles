@@ -2,7 +2,7 @@
 [default]
 msg-color=yes
 msg-module=yes
-framedrop=vo
+framedrop=decoder+vo
 use-filedir-conf=yes
 embeddedfonts=yes
 sub-ass=yes
@@ -12,4 +12,3 @@ sub-ass-hinting=native
 screenshot-format=png
 #vo=vaapi,xv,wayland,opengl-hq,opengl,sdl,x11
 #vo=wayland,gpu,vaapi,xv,sdl,x11
-hwdec=vaapi-copy

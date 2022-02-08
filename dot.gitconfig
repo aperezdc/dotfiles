@@ -41,6 +41,8 @@
 	# From https://davidwalsh.name/awesome-git-aliases
 	force-push = push --force-with-lease
 
+[branch]
+	sort = committerdate
 [color]
 	ui = auto
 	branch = auto
@@ -48,12 +50,15 @@
 	status = auto
 [merge]
 	stat = true
-	tool = vimdiff
+	tool = wiggle
+	#conflictstyle = diff3
 [pack]
 	threads = 0
 [sendemail]
 	chainreplyto = false
 	suppressfrom = true
+	verify = off
+	annotate = true
 [format]
 	numbered = auto
 [push]
@@ -77,12 +82,26 @@
 	fshow = diff-so-fancy | less --tabs=4 -RFX
 	fdiff = diff-so-fancy | less --tabs=4 -RFX
 [diff]
-	algorithm = patience
+	algorithm = histogram
 [commit]
 	gpgsign = on
 [credential]
-	helper = cache --timeout=3600
+	helper = libsecret
 [diff-so-fancy]
 	useUnicodeRuler = false
+[merge "wiggle"]
+	name = "Wiggle flexible merging"
+	driver = wiggle -o %A %A %O %B
+	recursive = binary
+[mergetool "wiggle"]
+	cmd = wiggle -B -o $MERGED $LOCAL $BASE $REMOTE
+[difftool "wiggle"]
+	cmd = wiggle -Bd $LOCAL $REMOTE
+[http]
+	cookiefile = /home/aperez/.gitcookies
 [tar "tar.xz"]
 	command = xz -9c
+[init]
+	defaultBranch = main
+[tig "bind"]
+	generic = C !git cherry-pick %(commit)

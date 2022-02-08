@@ -96,6 +96,7 @@ add -p OBJC_INCLUDE_PATH  - include
 add -p CPLUS_INCLUDE_PATH - include
 
 add -p LD_LIBRARY_PATH - lib
+add -p LIBRARY_PATH - lib
 
 add -p PERL5LIB - lib/perl5
 

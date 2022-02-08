@@ -7,6 +7,7 @@ allow_bold = true
 dynamic_title = true
 urgent_on_bell = true
 clickable_url = true
+clickable_url_ctrl = true
 hyperlinks = true
 ### 0Oo I1l ←↓↑→ {} [] ()
 # font = Inconsolata, FontAwesome 11.2
@@ -32,7 +33,7 @@ font = Inconsolata LGC, FontAwesome 9.25
 # cell_width_scale = 1.0
 # cell_height_scale = 1.0
 
-scrollback_lines = 1000
+scrollback_lines = 300
 search_wrap = true
 icon_name = terminal
 #geometry = 640x480
@@ -54,6 +55,8 @@ filter_unmatched_urls = true
 
 # emit escape sequences for extra modified keys
 modify_other_keys = true
+
+gtk_dark_theme = true
 
 [colors]
 cursor = #aa0033
@@ -105,8 +108,6 @@ color14 = #55ffff
 color15 = #ffffff
 
 [hints]
-# font = PragmataPro 13
-# font = PragmataPro 11.25
 #foreground = #dcdccc
 #background = #3f3f3f
 #active_foreground = #e68080

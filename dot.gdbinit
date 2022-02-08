@@ -1,4 +1,3 @@
-
 set history save
 set history size 2500
 set history filename ~/.gdb_history

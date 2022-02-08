@@ -32,7 +32,7 @@ Plugin 'lluchs/vim-wren'
 Plugin 'sgur/vim-editorconfig'
 Plugin 'sheerun/vim-polyglot'
 Plugin 'tmux-plugins/vim-tmux'
-Plugin 'roxma/vim-tmux-clipboard'
+" Plugin 'roxma/vim-tmux-clipboard'
 Plugin 'weakish/rcshell.vim'
 Plugin 'tpope/vim-commentary'
 Plugin 'tpope/vim-fugitive'
@@ -44,9 +44,6 @@ Plugin 'folke/lsp-colors.nvim'
 Plugin 'mhinz/vim-grepper'
 Plugin 'janet-lang/janet.vim'
 Plugin 'kergoth/vim-bitbake'
-Plugin 'ap/vim-you-keep-using-that-word'
-Plugin 'psliwka/vim-smoothie'
-Plugin 'rhysd/git-messenger.vim'
 PluginEnd
 
 colorscheme elrond
@@ -233,12 +230,6 @@ let g:editorconfig_blacklist = {
 let g:shore_stayonfront = 1
 " 1}}}
 
-" Plugin: gitsigns  {{{1
-if Have('gitsigns.nvim')
-	lua require("gitsigns").setup()
-endif
-" 1}}}
-
 " Plugin: telescope {{{1
 if Have('telescope.nvim')
 	nnoremap <silent> <leader>f    <cmd>Telescope find_files<cr>
@@ -273,61 +264,47 @@ EOS
 endif " 1}}}
 
 " Plugin: vale  {{{1
-if Have('vim-lint')
+if Have('nvim-lint')
 	autocmd vimrc BufWritePost <buffer> lua require("lint").try_lint()
 endif
 " 1}}}
 
+lua <<EOS
+vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+  vim.lsp.diagnostic.on_publish_diagnostics, {
+    virtual_text = false,
+    signs = true,
+    update_in_insert = false,
+  }
+)
+EOS
+
 " Plugin: lspconfig  {{{1
 if Have('nvim-lspconfig')
 lua <<EOS
-	local ok, lsp_status = pcall(require, "lsp-status")
-	if ok then
-		lsp_status.register_progress()
-		lsp_status.config {
-			indicator_errors = 'E',
-			indicator_warnings = 'W',
-			indicator_info = 'i',
-			indicator_hint = '?',
-			indicator_ok = 'Ok',
-			select_symbol = function (cursor_pos, symbol)
-				if symbol.valueRange then
-					local value_range = {
-						["start"] = {
-							character = 0,
-							line = vim.fn.byte2line(symbol.valueRange[1])
-							},
-						["end"] = {
-							character = 0,
-							line = vim.fn.byte2line(symbol.valueRange[2])
-							}
-						}
-
-					return require("lsp-status.util").in_range(cursor_pos, value_range)
-				end
-			end,
-		}
-	else
-		local dummy_extension_table = {
-			setup = function (...) return nil end,
-		}
-		lsp_status = {
-			on_attach = function (...) end,
-			extensions = setmetatable({}, {__index = function (...) return dummy_extension_table end}),
-		}
-	end
-
 	local lsp_attach = function (client, bufnr)
 		local set_keymap = function (...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
 		local set_option = function (...) vim.api.nvim_buf_set_option(bufnr, ...) end
 		local opts = {noremap = true, silent = true}
 
-		set_keymap("n", "K",  "<cmd>lua vim.lsp.buf.hover()<CR>", opts)
+		local use_telescope, _ = pcall(require, "telescope")
+		if use_telescope then
+			set_keymap("n", "gT", "<cmd>Telescope lsp_type_definitions<CR>", opts)
+			set_keymap("n", "gd", "<cmd>Telescope lsp_definitions<CR>", opts)
+			set_keymap("n", "gR", "<cmd>Telescope lsp_references<CR>", opts)
+			set_keymap("n", "gi", "<cmd>Telescope lsp_implementations<CR>", opts)
+			set_keymap("n", "la", "<cmd>Telescope lsp_code_actions<CR>", opts)
+			set_keymap("n", "ld", "<cmd>Telescope lsp_document_diagnostics<CR>", opts)
+			set_keymap("n", "ls", "<cmd>Telescope lsp_document_symbols<CR>", opts)
+			set_keymap("n", "Wd", "<cmd>Telescope lsp_workspace_diagnostics<CR>", opts)
+			set_keymap("n", "Ws", "<cmd>Telescope lsp_workspace_symbols<CR>", opts)
+		else
+			set_keymap("n", "gT", "<cmd>lua vim.lsp.buf.type_definition()<CR>", opts)
+			set_keymap("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", opts)
+			set_keymap("n", "gR", "<cmd>lua vim.lsp.buf.references()<CR>", opts)
+			set_keymap("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", opts)
+		end
 		set_keymap("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", opts)
-		set_keymap("n", "gT", "<cmd>lua vim.lsp.buf.type_definition()<CR>", opts)
-		set_keymap("n", "gR", "<cmd>lua vim.lsp.buf.references()<CR>", opts)
-		set_keymap("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", opts)
-		set_keymap("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", opts)
 		set_keymap("n", "<C-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", opts)
 		set_keymap("i", "<C-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", opts)
 
@@ -345,52 +322,42 @@ lua <<EOS
 	lspc.clangd.setup {
 		on_attach = lsp_attach,
 		cmd = {"clangd", "--background-index", "--enable-config", "--completion-style=detailed", "-j=2", "--log=error"},
-		handlers = lsp_status.extensions.clangd.setup(),
-		capabilities = lsp_status.capabilities,
 		init_options = {
 			clangdFileStatus =  true,
 		},
 	}
 
-	-- lspc.pyright.setup {on_attach = lsp_attach}
-	lspc.jedi_language_server.setup {on_attach = lsp_attach}
+	lspc.serve_d.setup {on_attach = lsp_attach}
+	lspc.pyright.setup {on_attach = lsp_attach}
+	-- lspc.jedi_language_server.setup {on_attach = lsp_attach}
 
 	lspc.cmake.setup {on_attach = lsp_attach}
 
 	lspc.sumneko_lua.setup {
-		_on_attach = lsp_attach,
+		on_attach = lsp_attach,
+		cmd = {"lua-language-server"},
 		settings = {
 			Lua = {
 				runtime = {
 					version = "LuaJIT",
-					path = vim.split(package.path, ";"),
+					path = (function ()
+						local rtp = vim.split(package.path, ";")
+						table.insert(rtp, "lua/?.lua")
+						table.insert(rtp, "lua/?/init.lua")
+						return rtp
+					end)(),
 				},
 				diagnostics = {
 					globals = {"vim"},
 				},
 				workspace = {
-					library = {
-						[vim.fn.expand("$VIMRUNTIME/lua")] = true,
-						[vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true,
-					},
+					library = vim.api.nvim_get_runtime_file("", true),
+				},
+				telemetry = {
+					enable = false,
 				},
 			},
 		},
-	}
-EOS
-endif
-" 1}}}
-
-" Plugin: lsp_signature  {{{1
-if Have('lsp_signature.nvim')
-lua <<EOS
-	require("lsp_signature").setup {
-		bind = true,
-		doc_lines = 0,
-		floating_window = true,
-		hint_enable = false,
-		hi_parameter = "ErrorMsg",
-		handler_opts = { border = "none" },
 	}
 EOS
 endif
@@ -412,8 +379,8 @@ lua <<EOS
 			vsnip = false,
 			ultisnips = false,
 			luasnip = false,
-			emoji = true,
-			spell = true,
+			emoji = false,
+			spell = false,
 			zsh = true,
 		},
 	}
@@ -495,35 +462,24 @@ else
 endif
 " 1}}}
 
-" Plugin: lspsaga  {{{1
-if Have('lspsaga.nvim')
+" Plugin: lsp-colors {{{1
+if Have('lsp-colors.nvim')
 lua <<EOS
-	local saga = require "lspsaga"
-	saga.init_lsp_saga {
-		error_sign = "E";
-		warn_sign = "W";
-		hint_sign = "?";
-		infor_sign = "i";
-	}
+	require("lsp-colors").setup({
+	  Error = "#db4b4b",
+	  Warning = "#e0af68",
+	  Information = "#0db9d7",
+	  Hint = "#10B981"
+	})
 EOS
-	nnoremap <silent> <C-j> :Lspsaga diagnostic_jump_next<CR>
-	nnoremap <silent> <C-k> :Lspsaga diagnostic_jump_prev<CR>
-	nnoremap <silent> <leader>cd :Lspsaga show_line_diagnostics<CR>
-endif
-" 1}}}
+endif " 1}}}
 
-" Plugin: lining  {{{1
-if Have('vim-lining') && Have('lsp-status.nvim')
-	let s:lsp_status_item = {}
-	function s:lsp_status_item.format(item, active)
-		if a:active && luaeval('#vim.lsp.buf_get_clients() > 0')
-			return luaeval("require('lsp-status').status()")
-		endif
-		return ''
-	endfunction
-	call lining#right(s:lsp_status_item)
-endif
-" 1}}}
-
+" Plugin: grepper {{{1
+if Have('vim-grepper')
+	let g:grepper = {
+				\   'dir': 'repo,filecwd,cwd',
+				\ }
+	nnoremap <leader>* :Grepper -cword -noprompt<cr>
+endif " 1}}}
 
 " vim:set fdm=marker:

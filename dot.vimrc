@@ -1,4 +1,4 @@
-set nocompatible
+" set nocompatible
 
 " Disable some built-in plug-ins which I never use.
 let g:loaded_2html_plugin = 1
@@ -26,7 +26,7 @@ Plugin 'aperezdc/vim-elrond', '~/devel/vim-elrond'
 Plugin 'aperezdc/vim-lining', '~/devel/vim-lining'
 Plugin 'aperezdc/vim-template', '~/devel/vim-template'
 " Plugin 'aperezdc/vim-lift', '~/devel/vim-lift'
-" Plugin 'wellle/tmux-complete.vim'
+Plugin 'wellle/tmux-complete.vim'
 Plugin 'bounceme/remote-viewer'
 Plugin 'docunext/closetag.vim', { 'for': ['html', 'xml'] }
 Plugin 'IngoHeimbach/neco-vim'
@@ -36,13 +36,14 @@ if executable('fzf')
 else
 	Plugin 'junegunn/fzf', { 'do': './install --all' }
 endif
+Plugin 'chrisbra/unicode.vim'
 Plugin 'dense-analysis/ale'
 Plugin 'junegunn/fzf.vim'
+Plugin 'junegunn/vim-peekaboo'
 Plugin 'justinmk/vim-dirvish'
 Plugin 'ledger/vim-ledger'
 Plugin 'nelstrom/vim-visual-star-search'
 Plugin 'lluchs/vim-wren'
-Plugin 'mhinz/vim-grepper'
 Plugin 'pbrisbin/vim-mkdir'
 Plugin 'romainl/vim-qf'
 Plugin 'romainl/vim-qlist'
@@ -54,20 +55,26 @@ Plugin 'weakish/rcshell.vim'
 Plugin 'tpope/vim-commentary'
 Plugin 'tpope/vim-eunuch'
 Plugin 'tpope/vim-fugitive'
+" Plugin 'tpope/vim-vinegar'
+Plugin 'christoomey/vim-conflicted'
 Plugin 'vim-scripts/a.vim'
 Plugin 'rhysd/clever-f.vim'
 Plugin 'vim-pandoc/vim-pandoc-syntax'
 Plugin 'yssl/QFEnter'
-Plugin 'ziglang/zig.vim'
-Plugin 'ollykel/v-vim'
+Plugin 'mtth/scratch.vim'
+Plugin 'mhinz/vim-grepper'
 Plugin 'godlygeek/tabular'
+" Plugin 'plasticboy/vim-markdown'
+" Plugin 'mzlogin/vim-smali'
 Plugin 'janet-lang/janet.vim'
 Plugin 'kergoth/vim-bitbake'
+Plugin 'mfukar/robotframework-vim'
 PluginEnd  " 1}}}
 
 " Section: Options  {{{1
 set clipboard+=unnamedplus
-set completeopt=menu,longest
+" set completeopt=menu,longest,noselect
+set completeopt=longest,menu
 set shiftwidth=4
 set tabstop=4
 set nobomb
@@ -78,6 +85,7 @@ set smartcase
 set ignorecase
 set noinfercase
 set nohlsearch
+set lazyredraw
 set linebreak
 set textwidth=78
 set colorcolumn=81
@@ -89,6 +97,7 @@ set whichwrap+=[,],<,>
 set wildignore+=*.o,*.a,a.out
 set shortmess+=c
 set ruler
+" set notimeout
 set timeout           " for mappings
 set timeoutlen=1000   " default value
 set ttimeout          " for key codes
@@ -264,6 +273,7 @@ nnoremap <S-Down> <C-a>
 autocmd vimrc BufReadPost,BufNewFile *.bst setlocal filetype=yaml
 autocmd vimrc BufReadPost,BufNewFile *.mm setlocal filetype=objcpp
 autocmd vimrc BufReadPost Config.in setlocal filetype=kconfig
+" autocmd vimrc FileType mkdc,markdown setlocal expandtab tabstop=2 shiftwidth=2 conceallevel=2
 autocmd vimrc FileType scheme setlocal tabstop=2 shiftwidth=2 expandtab
 autocmd vimrc FileType meson setlocal tabstop=4 shiftwidth=4 noexpandtab
 autocmd vimrc FileType yaml setlocal tabstop=2 shiftwidth=2 expandtab
@@ -350,6 +360,11 @@ inoremap <silent><expr> <S-Tab>
 			\ pumvisible() ? "\<C-n>" : "\<C-h>"
 " 1}}}
 
+" Grep facilities {{{1
+command -nargs=+ Grep execute 'silent grep! <args>' | copen
+command -nargs=0 Wrep execute 'silent grep! <cword>' | copen
+" 1}}}
+
 " Utilities: Language Servers support  {{{1
 function! s:lsp(langs, ...)
 	let aidx = 0
@@ -394,17 +409,24 @@ if Have('ale')
 	let g:ale_completion_enabled = 0
 	let g:ale_set_quickfix = 0
 	let g:ale_set_loclist = 0
-	let g:ale_set_balloons = 0
+	let g:ale_set_balloons = 1
 
-	let s:c_cpp_linters = ['flawfinder']
+	" let g:ale_yaml_yamllint_options = ''
+
+	" let s:c_cpp_linters = ['flawfinder']
 	" let s:c_cpp_linters = ['clangtidy', 'flawfinder']
-	" for program in ['ccls', 'clangd', 'clang', 'gcc']
+	" let s:c_cpp_linters = ['clangtidy']
+	let s:c_cpp_linters = ['clangtidy']
 	for program in ['clangd', 'ccls', 'clang', 'gcc']
+	" for program in ['ccls', 'clangd', 'clang', 'gcc']
 		if executable(program)
 			call insert(s:c_cpp_linters, program)
 			break
 		endif
 	endfor
+
+	let g:ale_cpp_clangd_options = '--completion-style=detailed --header-insertion=iwyu --enable-config --pch-storage=memory -j=2'
+	let g:ale_c_clangd_options = g:ale_cpp_clangd_options
 
 	let g:ale_linters = {
 				\ 'c': s:c_cpp_linters, 'cpp': s:c_cpp_linters,
@@ -418,7 +440,7 @@ if Have('ale')
 	nmap <silent> <Leader>D  <Plug>(ale_go_to_definition)
 	nmap <silent> <Leader>r  <Plug>(ale_find_references)
 	nmap <silent> <Leader>x  <Plug>(ale_fix)
-	imap <silent> <C-Space>  <Plug>(ale_complete)
+	imap <silent> <A-cr>     <Plug>(ale_complete)
 
 	if Have('vim-lining')
 		function s:linting_done()
@@ -466,25 +488,17 @@ if Have('ale')
 	endif
 endif " 1}}}
 
-" Plugin: grepper  {{{1
-if Have('vim-grepper')
-	let s:tools = ['grep']
-	if executable('git') | call insert(s:tools, 'git') | endif
-	if executable('rg')  | call insert(s:tools, 'rg' ) | endif
-	let g:grepper = {
-				\ 'dir': 'repo,file',
-				\ 'tools': s:tools,
-				\ 'simple_prompt': 1,
-				\ 'quickfix': 0,
-				\ 'prompt_quote': 1,
-				\ }
-	unlet s:tools
+" Plugin: Conflicted  {{{1
+if Have('vim-conflicted') && Have('vim-lining')
+	let s:conflicted_version_item = {}
+	function s:conflicted_version_item.format(item, active)
+		return ConflictedVersion()
+	endfunction
+	call lining#right(s:conflicted_version_item)
+endif " 1}}}
 
-	nmap gs  <Plug>(GrepperOperator)
-	xmap gs  <Plug>(GrepperOperator)
-	nnoremap <leader>* :Grepper -tool rg -cword -noprompt<cr>
-	nnoremap <leader>g :Grepper -tool rg<cr>
-	nnoremap <leader>G :Grepper -tool git<cr>
+if Have('scratch.vim')  " Plugin: Scratch {{{1
+	let g:scratch_persistence_file = expand('~/.vim/scratch')
 endif " 1}}}
 
 " vim:foldmethod=marker:

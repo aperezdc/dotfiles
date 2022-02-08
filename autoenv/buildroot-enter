@@ -35,5 +35,5 @@ send-patch () {
 }
 
 check-package () {
-	python2 "${BUILDROOT_SRCDIR}/utils/check-package" "$@"
+	python "${BUILDROOT_SRCDIR}/utils/check-package" "$@"
 }

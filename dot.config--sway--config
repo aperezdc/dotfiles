@@ -149,11 +149,14 @@ bindsym $mod+r mode "resize"
 bindsym $mod+u border toggle
 
 bindsym $mod+Return exec termite
-bindsym $mod+d exec bemenu-run -i -p 'exec:' --fn '$fontname $biggerfont'
-bindsym $mod+Shift+d exec j4-dmenu-desktop --term='termite -e' --dmenu='bemenu -i -p "apps:" --fn "$fontname $biggerfont"'
+# bindsym $mod+d exec bemenu-run -i -p 'exec:' --fn '$fontname $biggerfont'
+bindsym $mod+p exec rofi -show run
+# bindsym $mod+Shift+d exec j4-dmenu-desktop --term='termite -e' --dmenu='bemenu -i -p "apps:" --fn "$fontname $biggerfont"'
+bindsym $mod+Shift+p exec j4-dmenu-desktop --term='termite -e' --dmenu='rofi -dmenu -i'
 bindsym $mod+F10 exec swaylock -e -c 181818
 bindsym $mod+Shift+F10 exec systemctl suspend
 bindsym $mod+Shift+n exec makoctl dismiss
+bindsym $mod+Shift+Return exec synapse
 
 bindsym $mod+Shift+s mode screenshot
 mode screenshot {
@@ -175,7 +178,10 @@ bar {
 	}
 }
 
+# for_window [app_id="epiphany"] border none
+# for_window [app_id="revolt"] border none
 for_window [app_id="nm-connection-editor"] floating enable
+for_window [app_id="synapse"] border none
 
 output "*" {
 	scale 2
@@ -196,14 +202,18 @@ input "2:7:SynPS/2_Synaptics_TouchPad" {
 	dwt enabled
 }
 
+input "1133:16495:Logitech_MX_Ergo" {
+	natural_scroll enabled
+}
+
 input "1149:8257:Kensington_Kensington_Slimblade_Trackball" {
 	middle_emulation disabled
 }
 
+exec_always kanshi
 exec_always mako
 exec_always swayidle \
 				timeout 300 'swaylock -e -c 181818' \
 				timeout 600 'swaymsg "output eDP-1 dpms off"' \
 				     resume 'swaymsg "output eDP-1 dpms on"' \
 				before-sleep 'swaylock -f -e -c 181818'
-

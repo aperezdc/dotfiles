@@ -1,15 +1,28 @@
 ! vim: ft=xdefaults
 
-Xcursor.theme: Hackneyed
-!Xcursor.size: 16
+! Xcursor.theme: Adwaita
+! Xcursor.theme: Bluecurve
+! Xcursor.theme: Hackneyed
+! Xcursor.theme: Hackneyed-Dark
+! Xcursor.theme: Vanilla-DMZ
+! Xcursor.theme: DMZ-White
+! Xcursor.theme: cz-Viator-rotor-white
+! Xcursor.theme: cz-Viator-ring-black
+! Xcursor.theme: cz-Viator-ring-white
+! Xcursor.theme: elementary
+! Xcursor.theme: Qogir-dark
+! Xcursor.theme: We10XOS-cursors
+! Xcursor.theme: WhiteSur-cursors
+! Xcursor.size: 24
 
-Xft.autohint: 0
-Xft.lcdfilter: lcdlight
-Xft.hintstyle: hintslight
-Xft.hinting: true
-Xft.antialias: 1
-Xft.rgba: rgb
+! Xft.autohint: 0
+! Xft.lcdfilter: lcdlight
+! Xft.hintstyle: hintslight
+! Xft.hinting: 0
+! Xft.antialias: 1
+! Xft.rgba: rgb
 
+XTerm*decTerminalID: vt340
 XTerm*vt100.utf8: true
 XTerm*bellIsUrgent: true
 XTerm*visualBell: true
@@ -21,16 +34,20 @@ XTerm*vt100.allowBoldFonts: true
 XTerm*vt100.background: black
 XTerm*vt100.foreground: grey80
 XTerm*vt100.cursorColor: #ff7a7a
-XTerm*vt100.faceName: Iosevka Term
-!XTerm*vt100.font: -*-terminus-bold-*-*-*-14-*-*-*-*-*-iso10646-1
-XTerm*vt100.faceSize: 11
-XTerm*vt100.faceNameDoublesize: VL Gothic
+XTerm*vt100.faceName: DM Mono
+! XTerm*vt100.faceName: Inconsolata LGC
+! XTerm*vt100.faceSize: 9.875
+! XTerm*vt100.faceName: xos4 Terminus
+XTerm*vt100.faceSize: 10
+XTerm*vt100.font: -*-terminus-bold-*-*-*-28-*-*-*-*-*-iso10646-1
+XTerm*vt100.faceNameDoublesize: Koruri
 XTerm*vt100.deleteIsDEL: true
 !XTerm*vt100.faceSize: 12
 !XTerm*vt100.faceName: unifont
 XTerm*termName: xterm-256color
 XTerm*charClass: 33:48,35-38:48,39:43,42-47:48,58-59:48,61:48,63-64:48,126:48
 
+UXTerm*decTerminalID: vt340
 UXTerm*vt100.utf8: true
 UXTerm*bellIsUrgent: true
 UXTerm*visualBell: true
@@ -42,13 +59,10 @@ UXTerm*vt100.allowBoldFonts: true
 UXTerm*vt100.background: black
 UXTerm*vt100.foreground: grey80
 UXTerm*vt100.cursorColor: #aa0033
-UXTerm*vt100.faceName: Iosevka Term
-!UXTerm*vt100.faceName: PragmataPro Mono
-!UXTerm*vt100.font: -*-ttyp0-medium-r-*-*-17-*-*-*-*-*-iso10646-1
-!UXTerm*vt100.boldFont: -*-ttyp0-bold-r-*-*-17-*-*-*-*-*-iso10646-1
+UXTerm*vt100.faceName: PragmataPro Mono
 UXTerm*vt100.font: -*-gohufont-medium-r-normal-*-14-*-*-*-c-80-iso10646-1
 UXTerm*vt100.boldFont: -*-gohufont-bold-r-normal-*-14-*-*-*-c-80-iso10646-1
-UXTerm*vt100.faceSize: 11
+UXTerm*vt100.faceSize: 10
 !UXTerm*vt100.faceNameDoublesize: VL Gothic
 UXTerm*vt100.deleteIsDEL: false
 UXTerm*charClass: 33:48,35-38:48,39:43,42-47:48,58-59:48,61:48,63-64:48,126:48
@@ -110,18 +124,55 @@ URxvt.color14 : #55ffff
 URxvt.color7  : #aaaaaa
 URxvt.color15 : #ffffff
 
-rofi.modi:                           window,run,ssh
-rofi.font:                           Iosevka 15
-! rofi.color-normal:                   #fdf6e3,#002b36,#eee8d5,#586e75,#eee8d5
-rofi.color-normal:                   #222222,#888888,#2A2B2B,#285577,#ffffff
-rofi.color-urgent:                   #fdf6e3,#dc322f,#eee8d5,#dc322f,#fdf6e3
-rofi.color-active:                   #fdf6e3,#268bd2,#eee8d5,#268bd2,#fdf6e3
-! rofi.color-window:                   #fdf6e3,#002b36
-rofi.color-window:                   #222222,#3A3A3A
-rofi.bw:                             1
-rofi.terminal:                       rofi-sensible-terminal
-rofi.levenshtein-sort:               true
-rofi.fuzzy:                          true
-rofi.separator-style:                solid
-rofi.threads:                        2
-rofi.scroll-method:                  1
+! st.font          : xos4 Terminus:size=12
+! st.font          : JetBrains Mono:size=11.5
+st.font          : PragmataPro Mono:size=11
+st.xfps          : 120
+st.borderpx      : 4
+st.cwscale       : 0.9
+st.cursor        : #aa0033
+st.reverseCursor : #fddddd
+st.foreground    : #dcdcdc
+st.background    : #040404
+st.color0        : #000000
+st.color8        : #555555
+st.color1        : #aa0000
+st.color9        : #ff5555
+st.color2        : #00aa00
+st.color10       : #55ff55
+st.color3        : #aa5500
+st.color11       : #ffff55
+st.color4        : #0000aa
+st.color12       : #5555ff
+st.color5        : #aa00aa
+st.color13       : #ff55ff
+st.color6        : #00aaaa
+st.color14       : #55ffff
+st.color7        : #aaaaaa
+st.color15       : #ffffff
+ 
+Zutty.font:       JetBrainsMono
+Zutty.dwfont:     wqy-microhei
+Zutty.fontsize:   26
+Zutty.fontpath:   /home/aperez/.local/share/fonts:/usr/share/fonts
+Zutty.boldColors: true
+Zutty.quiet:      true
+Zutty.cr:         #9922bb
+Zutty.fg:         #dcdcdc
+Zutty.bg:         #040404
+Zutty.color0:     #000000
+Zutty.color1:     #aa0000
+Zutty.color2:     #00aa00
+Zutty.color3:     #aa5500
+Zutty.color4:     #2244ff
+Zutty.color5:     #aa00aa
+Zutty.color6:     #00aaaa
+Zutty.color7:     #bbbbbb
+Zutty.color8:     #777777
+Zutty.color9:     #ff5555
+Zutty.color10:    #55ff55
+Zutty.color11:    #ffff55
+Zutty.color12:    #5599ff
+Zutty.color13:    #ff55ff
+Zutty.color14:    #55ffff
+Zutty.color15:    #ffffff

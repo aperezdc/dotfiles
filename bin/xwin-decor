@@ -12,7 +12,9 @@ declare -a xprop_args=(
 	-set _MOTIF_WM_HINTS "0x2,0x0,0x${bit},0x0,0x0"
 )
 
-if [[ -n $2 ]] ; then
+if [[ $2 = choose ]] ; then
+	:
+elif [[ -n $2 ]] ; then
 	xprop_args+=( -id "$2" )
 elif [[ -n ${WINDOWID} ]] ; then
 	xprop_args+=( -id "${WINDOWID}" )

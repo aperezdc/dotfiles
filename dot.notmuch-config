@@ -10,6 +10,7 @@
 # Notmuch will store its database within a sub-directory of the path
 # configured here named ".notmuch".
 #
+
 [database]
 path=/home/aperez/.mail
 
@@ -28,6 +29,7 @@ path=/home/aperez/.mail
 # recipient list of replies, and will set the From address based on the
 # address to which the original email was addressed.
 #
+
 [user]
 name=Adrian Perez de Castro
 primary_email=aperez@igalia.com
@@ -39,6 +41,7 @@ primary_email=aperez@igalia.com
 #	tags	A list (separated by ';') of the tags that will be
 #		added to all messages incorporated by "notmuch new".
 #
+
 [new]
 tags=new
 
@@ -63,6 +66,8 @@ tags=new
 #	and update tags, while the "notmuch tag" and "notmuch restore"
 #	commands will notice tag changes and update flags in filenames
 #
+ignore=
+
 [maildir]
 synchronize_flags=true
 
@@ -75,5 +80,6 @@ synchronize_flags=true
 #		search results by default.  Using an excluded tag in a
 #		query will override that exclusion.
 #
+
 [search]
 exclude_tags=deleted;ignored;killed

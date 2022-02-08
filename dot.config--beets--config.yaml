@@ -16,7 +16,11 @@ paths:
   default: '${albumartist}/${album}%if{%aunique{}, %aunique{}}/${disc_and_track}${title}'
   compilation: 'Various Artists/${album}%if{%aunique{}, %aunique{}}/${disc_and_track}${artist} - ${title}'
 
-plugins: discogs duplicates edit fetchart fromfilename fuzzy info inline lastgenre mbsync missing permissions play random replaygain scrub the web zero chroma acousticbrainz mbsubmit
+# discogs
+plugins: duplicates edit fetchart fromfilename fuzzy info inline lastgenre mbsync missing permissions play random replaygain scrub the web zero chroma acousticbrainz mbsubmit
+
+acoustid:
+  apikey: 'm35mx1Wr'
 
 fetchart:
   minwidth: 250
@@ -27,7 +31,7 @@ item_fields:
   disc_and_track: u'%02i. %02i. ' % (disc, track) if disctotal > 1 else u'%02i. ' % (track)
 
 chroma:
-  auto: no
+  auto: yes
 
 play:
   command: gst-play-1.0
@@ -46,3 +50,5 @@ zero:
     - EAC
     - LAME
     - from.+collection
+    - '[nN]ew[Aa]lbum[Rr]eleases'
+    - 'ripped by'
