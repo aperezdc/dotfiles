@@ -19,9 +19,12 @@ Plugin 'nvim-lua/plenary.nvim'
 Plugin 'nvim-telescope/telescope.nvim'
 Plugin 'gbrlsnchs/telescope-lsp-handlers.nvim'
 Plugin 'seblj/nvim-echo-diagnostics'
-Plugin 'hrsh7th/nvim-compe'
-Plugin 'mfussenegger/nvim-lint'
-Plugin 'tamago324/compe-zsh'
+Plugin 'hrsh7th/cmp-nvim-lsp'
+Plugin 'hrsh7th/cmp-nvim-lsp-signature-help'
+Plugin 'hrsh7th/cmp-buffer'
+Plugin 'hrsh7th/cmp-path'
+Plugin 'hrsh7th/nvim-cmp'
+Plugin 'tamago324/cmp-zsh'
 Plugin 'docunext/closetag.vim', { 'for': ['html', 'xml'] }
 Plugin 'ledger/vim-ledger'
 Plugin 'justinmk/vim-dirvish'
@@ -32,6 +35,7 @@ Plugin 'lluchs/vim-wren'
 Plugin 'sgur/vim-editorconfig'
 Plugin 'sheerun/vim-polyglot'
 Plugin 'tmux-plugins/vim-tmux'
+Plugin 'clinstid/eink.vim'
 " Plugin 'roxma/vim-tmux-clipboard'
 Plugin 'weakish/rcshell.vim'
 Plugin 'tpope/vim-commentary'
@@ -50,7 +54,7 @@ colorscheme elrond
 filetype indent plugin on
 syntax on
 
-set completeopt=menuone,noselect
+set completeopt=menu,menuone,noselect
 set clipboard+=unnamedplus
 set exrc
 set shiftwidth=4
@@ -94,7 +98,7 @@ if executable('rg')
 endif
 
 " Persistent undo!
-if !isdirectory(expand('~/.cache/vim/undo'))
+if !isdirectory(expand('~/.cache/nvim/undo'))
 	call system('mkdir -p ' . shellescape(expand('~/.cache/vim/undo')))
 endif
 set undodir=~/.cache/vim/undo
@@ -308,33 +312,47 @@ lua <<EOS
 		set_keymap("n", "<C-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", opts)
 		set_keymap("i", "<C-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", opts)
 
-		set_keymap("n", "[d", "<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>", opts)
-		set_keymap("n", "]d", "<cmd>lua vim.lsp.diagnostic.goto_next()<CR>", opts)
-		set_keymap("n", "sd", "<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>", opts)
-		set_keymap("n", "fd", "<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>", opts)
+		set_keymap("n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<CR>", opts)
+		set_keymap("n", "]d", "<cmd>lua vim.diagnostic.goto_next()<CR>", opts)
+		set_keymap("n", "sd", "<cmd>lua vim.diagnostic.open_float()<CR>", opts)
+		set_keymap("n", "fd", "<cmd>lua vim.diagnostic.setloclist()<CR>", opts)
 
+		set_option("formatexpr", "v:lua.vim.lsp.formatexpr()")
 		set_option("omnifunc", "v:lua.vim.lsp.omnifunc")
 	end
 
+	local capabilities = vim.lsp.protocol.make_client_capabilities()
+	local has_cmp_lsp, cmp_lsp = pcall(require, "cmp_nvim_lsp")
+	if has_cmp_lsp then
+		capabilities = cmp_lsp.update_capabilities(capabilities)
+	end
+
 	local lspc = require "lspconfig"
-	-- lspc.clangd.setup {on_attach = lsp_attach}
-	-- lspc.ccls.setup {on_attach = lsp_attach, cmd = {"ccls", "-v=0"}}
+
+	--[[
+	lspc.ccls.setup {
+		on_attach = lsp_attach,
+		capabilities = capabilities,
+		cmd = {"ccls", "-v=0"},
+	}
+	]]
+
 	lspc.clangd.setup {
 		on_attach = lsp_attach,
+		capabilities = capabilities,
 		cmd = {"clangd", "--background-index", "--enable-config", "--completion-style=detailed", "-j=2", "--log=error"},
 		init_options = {
 			clangdFileStatus =  true,
 		},
 	}
 
-	lspc.serve_d.setup {on_attach = lsp_attach}
-	lspc.pyright.setup {on_attach = lsp_attach}
-	-- lspc.jedi_language_server.setup {on_attach = lsp_attach}
-
-	lspc.cmake.setup {on_attach = lsp_attach}
+	lspc.serve_d.setup {on_attach = lsp_attach, capabilities = capabilities}
+	lspc.pyright.setup {on_attach = lsp_attach, capabilities = capabilities}
+	lspc.cmake.setup {on_attach = lsp_attach, capabilities = capabilities}
 
 	lspc.sumneko_lua.setup {
 		on_attach = lsp_attach,
+		capabilities = capabilities,
 		cmd = {"lua-language-server"},
 		settings = {
 			Lua = {
@@ -363,70 +381,99 @@ EOS
 endif
 " 1}}}
 
-" Plugin: compe + fallback  {{{1
-if Have('nvim-compe')
+" Plugin: cmp + fallback  {{{1
+if Have('nvim-cmp')
 lua <<EOS
-	local compe = require "compe"
-	compe.setup {
-		autocomplete = false,
-		min_length = 3,
-		source = {
-			path = true,
-			buffer = true,
-			calc = false,
-			nvim_lsp = true,
-			nvim_lua = true,
-			vsnip = false,
-			ultisnips = false,
-			luasnip = false,
-			emoji = false,
-			spell = false,
-			zsh = true,
+	local has_words_before = function()
+		local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+		return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+	end
+
+	local cmp = require "cmp"
+	cmp.setup {
+		completion = {
+			-- autocomplete = false,
+			keyword_length = 3,
+		},
+		mapping = {
+			["<Tab>"] = cmp.mapping(function(fallback)
+				if not cmp.select_next_item() then
+					if vim.bo.buftype ~= "prompt" and has_words_before() then
+						cmp.complete()
+					else
+						fallback()
+					end
+				end
+			end, {"i", "s"}),
+
+			["<S-Tab>"] = cmp.mapping(function()
+				if not cmp.select_prev_item() then
+					if vim.bo.buftype ~= "prompt" and has_words_before() then
+						cmp.complete()
+					else
+						fallback()
+					end
+				end
+			end, {"i", "s"}),
+
+			["<CR>"] = cmp.mapping {
+				i = cmp.mapping.confirm {
+					behavior = cmp.ConfirmBehavior.Replace,
+					select = false,
+				},
+				c = function(fallback)
+					if cmp.visible() then
+						cmp.confirm { behavior = cmp.ConfirmBehavior.Replace, select = false }
+					else
+						fallback()
+					end
+				end,
+			},
+		},
+		sources = cmp.config.sources({
+			{ name = "nvim_lsp_signature_help" },
+			{ name = "nvim_lsp" },
+			{ name = "zsh" },
+			{ name = "path" },
+		}, {
+			{ name = "buffer" },
+		}),
+		view = {
+			entries = {
+				name = "custom",
+				selection_order = "near_cursor",
+			},
 		},
 	}
 
-	local t = function(str)
-	  return vim.api.nvim_replace_termcodes(str, true, true, true)
+	--[[
+	for _, cmd_type in ipairs {"/", "?"} do
+		cmp.setup.cmdline(cmd_type, {
+			mapping = cmp.mapping.preset.cmdline(),
+			sources = cmp.config.sources({
+				{ name = "nvim_lsp_document_symbol" },
+				{ name = "cmdline_history" },
+			})
+		})
 	end
+	for _, cmd_type in ipairs {":", "@"} do
+		cmp.setup.cmdline(cmd_type, {
+			mapping = cmp.mapping.preset.cmdline(),
+			sources = cmp.config.sources({
+				{ name = "cmdline_history" },
+				{ name = "cmdline" },
+			})
+		})
+	end
+	]]
 
-	local check_back_space = function()
-		local col = vim.fn.col('.') - 1
-		return col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') ~= nil
+	-- Zsh completion
+	local has_cmp_zsh, cmp_zsh = pcall(require, "cmp_zsh")
+	if has_cmp_zsh then
+		cmp_zsh.setup {
+			filetypes = {"zsh"},
+		}
 	end
-
-	-- Use (s-)tab to:
-	--- move to prev/next item in completion menuone
-	--- jump to prev/next snippet's placeholder
-	_G.tab_complete = function()
-	  if vim.fn.pumvisible() == 1 then
-		return t "<C-n>"
-	  -- elseif vim.fn['vsnip#available'](1) == 1 then
-	  --  return t "<Plug>(vsnip-expand-or-jump)"
-	  elseif check_back_space() then
-		return t "<Tab>"
-	  else
-		return vim.fn['compe#complete']()
-	  end
-	end
-	_G.s_tab_complete = function()
-	  if vim.fn.pumvisible() == 1 then
-		return t "<C-p>"
-	  -- elseif vim.fn['vsnip#jumpable'](-1) == 1 then
-	  --  return t "<Plug>(vsnip-jump-prev)"
-	  else
-		-- If <S-Tab> is not working in your terminal, change it to <C-h>
-		return t "<S-Tab>"
-	  end
-	end
-
-	vim.api.nvim_set_keymap("i", "<Tab>", "v:lua.tab_complete()", {expr = true})
-	vim.api.nvim_set_keymap("s", "<Tab>", "v:lua.tab_complete()", {expr = true})
-	vim.api.nvim_set_keymap("i", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
-	vim.api.nvim_set_keymap("s", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
-	vim.api.nvim_set_keymap("i", "<CR>", "compe#confirm('<CR>')", {expr = true, noremap = true})
-	vim.api.nvim_set_keymap("i", "<C-e>", "compe#close('<C-e>')", {expr = true, noremap = true})
-	vim.api.nvim_set_keymap("i", "<C-f>", "compe#scroll({'delta': +4})", {expr = true, noremap = true})
-	vim.api.nvim_set_keymap("i", "<C-d>", "compe#scroll({'delta': -4})", {expr = true, noremap = true})
 EOS
 else
 	function! s:check_backspace() abort
