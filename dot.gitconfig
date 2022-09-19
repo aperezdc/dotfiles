@@ -6,6 +6,9 @@
 	b = !git branch -a | sk-or-fzf -n 2 --prompt='(branch) ' --no-multi --reverse | xargs git checkout
 	br = branch -vv
 	cp = cherry-pick
+	cpx = cherry-pick -x
+	cpa = cherry-pick --abort
+	cpc = cherry-pick --continue
 	ff = merge --ff-only
 	rup = !git remote update && git --no-pager branch -vv
 	logs = log --stat --decorate
