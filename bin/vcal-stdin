@@ -1,0 +1,6 @@
+#! /bin/sh
+set -e
+tmpfile="${TMPDIR:-/tmp}/vcal-$$-${RANDOM}.ics"
+trap "rm -rf '${tmpfile}'" EXIT
+cat > "${tmpfile}"
+vcal "$@" "${tmpfile}"
