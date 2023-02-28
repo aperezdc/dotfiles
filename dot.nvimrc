@@ -14,17 +14,8 @@ PluginBegin
 Plugin 'aperezdc/vim-elrond', '~/devel/vim-elrond'
 Plugin 'aperezdc/vim-lining', '~/devel/vim-lining'
 Plugin 'aperezdc/vim-template', '~/devel/vim-template'
-Plugin 'nvim-lua/popup.nvim'
-Plugin 'nvim-lua/plenary.nvim'
-Plugin 'nvim-telescope/telescope.nvim'
-Plugin 'gbrlsnchs/telescope-lsp-handlers.nvim'
 Plugin 'seblj/nvim-echo-diagnostics'
-Plugin 'hrsh7th/cmp-nvim-lsp'
-Plugin 'hrsh7th/cmp-nvim-lsp-signature-help'
-Plugin 'hrsh7th/cmp-buffer'
-Plugin 'hrsh7th/cmp-path'
-Plugin 'hrsh7th/nvim-cmp'
-Plugin 'tamago324/cmp-zsh'
+Plugin 'ibhagwan/fzf-lua', { 'branch': 'main' }
 Plugin 'docunext/closetag.vim', { 'for': ['html', 'xml'] }
 Plugin 'ledger/vim-ledger'
 Plugin 'justinmk/vim-dirvish'
@@ -35,7 +26,6 @@ Plugin 'lluchs/vim-wren'
 Plugin 'sgur/vim-editorconfig'
 Plugin 'sheerun/vim-polyglot'
 Plugin 'tmux-plugins/vim-tmux'
-Plugin 'clinstid/eink.vim'
 " Plugin 'roxma/vim-tmux-clipboard'
 Plugin 'weakish/rcshell.vim'
 Plugin 'tpope/vim-commentary'
@@ -54,7 +44,7 @@ colorscheme elrond
 filetype indent plugin on
 syntax on
 
-set completeopt=menu,menuone,noselect
+set completeopt=longest,menu,menuone
 set clipboard+=unnamedplus
 set exrc
 set shiftwidth=4
@@ -99,9 +89,9 @@ endif
 
 " Persistent undo!
 if !isdirectory(expand('~/.cache/nvim/undo'))
-	call system('mkdir -p ' . shellescape(expand('~/.cache/vim/undo')))
+	call system('mkdir -p ' . shellescape(expand('~/.cache/nvim/undo')))
 endif
-set undodir=~/.cache/vim/undo
+set undodir=~/.cache/nvim/undo
 set undofile
 
 for mapmode in ['n', 'vnore', 'i', 'c', 'l', 't']
@@ -230,6 +220,24 @@ let g:editorconfig_blacklist = {
 	\ }
 " }}}1
 
+" Plugin: fzf-lua  {{{1
+if Have('fzf-lua')
+    nnoremap <silent> <leader>f    <cmd>FzfLua files<cr>
+    nnoremap <silent> <leader>F    <cmd>FzfLua git_files<cr>
+    nnoremap <silent> <leader>m    <cmd>FzfLua oldfiles<cr>
+    nnoremap <silent> <leader>b    <cmd>FzfLua buffers<cr>
+    nnoremap <silent> <leader>t    <cmd>FzfLua builtin<cr>
+    nnoremap <silent> <leader><F1> <cmd>FzfLua help_tags<cr>
+    nnoremap <silent> <leader>R    <cmd>FzfLua resume<cr>
+    nmap <C-A-p>  <leader>f
+    nmap <C-A-g>  <leader>F
+    nmap <A-cr>   <leader>m
+    nmap <C-A-b>  <leader>b
+    nmap <F12>    <leader>b
+    nmap <C-A-cr> <leader>t
+endif
+" 1}}}
+
 " Plugin: shore  {{{1
 let g:shore_stayonfront = 1
 " 1}}}
@@ -324,7 +332,7 @@ lua <<EOS
 	local capabilities = vim.lsp.protocol.make_client_capabilities()
 	local has_cmp_lsp, cmp_lsp = pcall(require, "cmp_nvim_lsp")
 	if has_cmp_lsp then
-		capabilities = cmp_lsp.update_capabilities(capabilities)
+		capabilities = cmp_lsp.default_capabilities()
 	end
 
 	local lspc = require "lspconfig"
@@ -350,7 +358,7 @@ lua <<EOS
 	lspc.pyright.setup {on_attach = lsp_attach, capabilities = capabilities}
 	lspc.cmake.setup {on_attach = lsp_attach, capabilities = capabilities}
 
-	lspc.sumneko_lua.setup {
+	lspc.lua_ls.setup {
 		on_attach = lsp_attach,
 		capabilities = capabilities,
 		cmd = {"lua-language-server"},
@@ -483,13 +491,10 @@ else
 
 	function! s:trigger_completion() abort
 		if &omnifunc !=# ''
-			let b:complete_p = 0
 			return "\<C-x>\<C-o>"
 		elseif &completefunc !=# ''
-			let b:complete_p = 1
 			return "\<C-x>\<C-u>"
 		else
-			let b:complete_p = 1
 			return "\<C-x>\<C-p>"
 		endif
 	endfunction
@@ -498,12 +503,13 @@ else
 				\ pumvisible() ? "\<C-p>" : "\<C-h>"
 
 	inoremap <silent><expr> <Tab>
-				\ pumvisible() ? (get(b:, 'complete_p', 1) ? "\<C-p>" : "\<C-n>") :
+				\ pumvisible() ? "\<C-n>" :
 				\ <sid>check_backspace() ? "\<Tab>" :
-				\ "\<C-p>"
-
-	inoremap <silent><expr> <C-Space>
 				\ <sid>trigger_completion()
+				" \ "\<C-p>"
+
+	" inoremap <silent><expr> <C-Space>
+	" 			\ <sid>trigger_completion()
 	inoremap <silent><expr> <CR>
 				\ pumvisible() ? "\<C-y>" : "\<CR>"
 endif
