@@ -16,6 +16,8 @@ Plugin 'aperezdc/vim-lining', '~/devel/vim-lining'
 Plugin 'aperezdc/vim-template', '~/devel/vim-template'
 Plugin 'seblj/nvim-echo-diagnostics'
 Plugin 'ibhagwan/fzf-lua', { 'branch': 'main' }
+Plugin 'j-hui/fidget.nvim'
+
 Plugin 'docunext/closetag.vim', { 'for': ['html', 'xml'] }
 Plugin 'ledger/vim-ledger'
 Plugin 'justinmk/vim-dirvish'
@@ -242,38 +244,6 @@ endif
 let g:shore_stayonfront = 1
 " 1}}}
 
-" Plugin: telescope {{{1
-if Have('telescope.nvim')
-	nnoremap <silent> <leader>f    <cmd>Telescope find_files<cr>
-	nnoremap <silent> <leader>F    <cmd>Telescope git_files<cr>
-	nnoremap <silent> <leader>m    <cmd>Telescope oldfiles<cr>
-	nnoremap <silent> <leader>b    <cmd>Telescope buffers<cr>
-	nnoremap <silent> <leader>t    <cmd>Telescope builtin<cr>
-	nnoremap <silent> <leader><F1> <cmd>Telescope help_tags<cr>
-	nmap <C-A-p>  <leader>f
-	nmap <C-A-g>  <leader>F
-	nmap <A-cr>   <leader>m
-	nmap <C-A-b>  <leader>b
-	nmap <F12>    <leader>b
-	nmap <C-A-cr> <leader>t
-lua <<EOS
-require("telescope").setup {
-	defaults = {
-		previewer = false,
-	},
-	extensions = {
-		lsp_handlers = {
-			code_action = {
-					telescope = require("telescope.themes").get_dropdown {},
-				},
-			},
-		},
-	}
-EOS
-	if Have('telescope-lsp-handlers.nvim')
-		lua require('telescope').load_extension('lsp_handlers')
-	endif
-endif " 1}}}
 
 " Plugin: vale  {{{1
 if Have('nvim-lint')
@@ -299,17 +269,21 @@ lua <<EOS
 		local set_option = function (...) vim.api.nvim_buf_set_option(bufnr, ...) end
 		local opts = {noremap = true, silent = true}
 
-		local use_telescope, _ = pcall(require, "telescope")
-		if use_telescope then
-			set_keymap("n", "gT", "<cmd>Telescope lsp_type_definitions<CR>", opts)
-			set_keymap("n", "gd", "<cmd>Telescope lsp_definitions<CR>", opts)
-			set_keymap("n", "gR", "<cmd>Telescope lsp_references<CR>", opts)
-			set_keymap("n", "gi", "<cmd>Telescope lsp_implementations<CR>", opts)
-			set_keymap("n", "la", "<cmd>Telescope lsp_code_actions<CR>", opts)
-			set_keymap("n", "ld", "<cmd>Telescope lsp_document_diagnostics<CR>", opts)
-			set_keymap("n", "ls", "<cmd>Telescope lsp_document_symbols<CR>", opts)
-			set_keymap("n", "Wd", "<cmd>Telescope lsp_workspace_diagnostics<CR>", opts)
-			set_keymap("n", "Ws", "<cmd>Telescope lsp_workspace_symbols<CR>", opts)
+		local use_fzf_lua, _ = pcall(require, "fzf-lua")
+		if use_fzf_lua then
+			local key_action_map = {
+				gd = "typedefs",
+				gR = "references",
+				gi = "implementations",
+				la = "code_actions",
+				ld = "document_diagnostics",
+				ls = "document_symbols",
+				Wd = "workspace_diagnostics",
+				Ws = "workspace_symbols",
+			}
+			for keys, action in pairs(key_action_map) do
+				set_keymap("n", keys, "<cmd>FzfLua lsp_" .. action .. "<cr>", opts)
+			end
 		else
 			set_keymap("n", "gT", "<cmd>lua vim.lsp.buf.type_definition()<CR>", opts)
 			set_keymap("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", opts)
@@ -357,6 +331,7 @@ lua <<EOS
 	lspc.serve_d.setup {on_attach = lsp_attach, capabilities = capabilities}
 	lspc.pyright.setup {on_attach = lsp_attach, capabilities = capabilities}
 	lspc.cmake.setup {on_attach = lsp_attach, capabilities = capabilities}
+	lspc.prosemd_lsp.setup {on_attach = lsp_attach, capabilities = capabilities}
 
 	lspc.lua_ls.setup {
 		on_attach = lsp_attach,
@@ -489,6 +464,8 @@ else
 		return !l:column || getline('.')[l:column - 1] =~# '\s'
 	endfunction
 
+	set completeopt=longest,menu
+
 	function! s:trigger_completion() abort
 		if &omnifunc !=# ''
 			return "\<C-x>\<C-o>"
@@ -504,12 +481,10 @@ else
 
 	inoremap <silent><expr> <Tab>
 				\ pumvisible() ? "\<C-n>" :
-				\ <sid>check_backspace() ? "\<Tab>" :
-				\ <sid>trigger_completion()
-				" \ "\<C-p>"
+				\ <sid>check_backspace() ? "\<Tab>" : "\<C-n>"
 
-	" inoremap <silent><expr> <C-Space>
-	" 			\ <sid>trigger_completion()
+	inoremap <silent><expr> <C-Space>
+				\ <sid>trigger_completion()
 	inoremap <silent><expr> <CR>
 				\ pumvisible() ? "\<C-y>" : "\<CR>"
 endif
@@ -534,5 +509,9 @@ if Have('vim-grepper')
 				\ }
 	nnoremap <leader>* :Grepper -cword -noprompt<cr>
 endif " 1}}}
+
+if Have("fidget.nvim")
+	lua require "fidget".setup()
+endif
 
 " vim:set fdm=marker:
