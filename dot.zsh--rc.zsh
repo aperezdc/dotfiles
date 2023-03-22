@@ -580,7 +580,7 @@ fi
 
 if zz-top --loco zsh-autosuggestions
 then
-	if [[ ${TERM} != xterm-termite && ${TERM} != *-256color ]]
+	if [[ ${COLORTERM} != truecolor && ${TERM} != xterm-termite && ${TERM} != *-256color ]]
 	then
 		ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE=fg=black,bold
 	fi
