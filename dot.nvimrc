@@ -25,7 +25,6 @@ Plugin 'nelstrom/vim-visual-star-search'
 Plugin 'pbrisbin/vim-mkdir'
 Plugin 'fcpg/vim-shore'
 Plugin 'lluchs/vim-wren'
-Plugin 'sgur/vim-editorconfig'
 Plugin 'sheerun/vim-polyglot'
 Plugin 'tmux-plugins/vim-tmux'
 " Plugin 'roxma/vim-tmux-clipboard'
@@ -215,12 +214,6 @@ lua <<EOS
 EOS
 endif
 " 1}}}
-
-" Plugin: editorconfig  {{{1
-let g:editorconfig_blacklist = {
-	\ 	'filetype': ['git.*', 'fugitive']
-	\ }
-" }}}1
 
 " Plugin: fzf-lua  {{{1
 if Have('fzf-lua')
