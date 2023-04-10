@@ -27,7 +27,7 @@ zz-top chrissicool/zsh-256color
 zz-top jreese/zsh-titles
 zz-top RobSis/zsh-completion-generator
 zz-top RobSis/zsh-reentry-hook
-zz-top z-shell/fast-syntax-highlighting
+zz-top zdharma-continuum/fast-syntax-highlighting
 zz-top zsh-users/zsh-history-substring-search
 zz-top zsh-users/zsh-completions
 zz-top zsh-users/zsh-autosuggestions
@@ -80,6 +80,8 @@ function cmd-completion () {
 cmd-completion rustup completions zsh
 cmd-completion csview completion zsh
 cmd-completion gh completion --shell zsh
+cmd-completion poetry completions zsh
+cmd-completion himalaya completion zsh
 
 unfunction cmd-completion  # Not needed anymore
 
@@ -212,7 +214,7 @@ alias toot='nocorrect madonctl toot'
 # Bring up ${LS_COLORS}
 if [ -x /usr/bin/dircolors ] ; then
 	local dircolors_TERM=${TERM}
-	if [[ ${TERM} = xterm-termite || ${TERM} = alacritty ]] ; then
+	if [[ ${TERM} = xterm-termite || ${TERM} = alacritty || ${TERM} = foot ]] ; then
 		dircolors_TERM=xterm-color
 	fi
 	if [ -r "${HOME}/.dir_colors" ] ; then
@@ -351,7 +353,7 @@ fi
 # http://sourceforge.net/p/tmux/mailman/message/32751663/ by Nicholas Marriott.
 if [[ -n ${TMUX} && -n ${commands[tmux]} ]];then
 	case ${REAL_TERM} in
-		*256color | xterm-termite | alacritty)
+		*256color | xterm-termite | alacritty | foot)
 			if infocmp tmux-256color &> /dev/null ; then
 				TERM=tmux-256color
 			else
@@ -395,7 +397,7 @@ function precmd_bell {
 precmd_functions+=(precmd_bell)
 
 case ${REAL_TERM} in
-	xterm* | gnome*)
+	xterm* | gnome* | foot)
 		function precmd_xterm_title {
 			print -Pn "\e]0;%n@%m: %~\a"
 		}
