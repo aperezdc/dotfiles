@@ -68,20 +68,42 @@
 	autosquash = true
 	stat = true
 [core]
-	autocrlf = false
+	excludesfile = /home/aperez/.gitignore-global
+	pager = delta
 [rerere]
 	enabled = true
 [pull]
 	rebase = true
 [diff]
 	algorithm = histogram
+	colorMoved = default
 [commit]
 	gpgsign = on
 [credential]
 	helper = libsecret
-[tar "tar.xz"]
-	command = xz -9c
 [init]
 	defaultBranch = main
+[tar "tar.xz"]
+	command = xz -9c
+[http]
+	cookiefile = /home/aperez/.gitcookies
+[interactive]
+	diffFilter = delta --color-only --features=interactive
+[delta]
+	navigate = true
+	line-numbers = true
+	color-only = true
+	file-style = bold yellow italic
+	file-decoration-style = ul yellow
+	# hunk-header-decoration-style = ul grey dim
+	hunk-header-decoration-style = omit
+	hunk-header-style = line-number white blue
+	# hunk-header-line-number-style = white blue
+	hunk-label =
 [tig "bind"]
 	generic = C !git cherry-pick %(commit)
+[filter "lfs"]
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
