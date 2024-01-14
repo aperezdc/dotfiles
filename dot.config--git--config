@@ -54,7 +54,7 @@
 [sendemail]
 	chainreplyto = false
 	suppressfrom = true
-	verify = off
+	verify = false
 	annotate = true
 [format]
 	numbered = auto
@@ -75,10 +75,15 @@
 [pull]
 	rebase = true
 [diff]
+	tool = difftastic
 	algorithm = histogram
 	colorMoved = default
+[difftool]
+	prompt = false
+[difftool "difftastic"]
+	cmd = difft "$LOCAL" "$REMOTE"
 [commit]
-	gpgsign = on
+	gpgsign = true
 [credential]
 	helper = libsecret
 [init]
@@ -89,6 +94,8 @@
 	cookiefile = /home/aperez/.gitcookies
 [interactive]
 	diffFilter = delta --color-only --features=interactive
+[pager]
+	difftool = true
 [delta]
 	navigate = true
 	line-numbers = true
