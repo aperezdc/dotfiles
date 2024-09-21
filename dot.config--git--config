@@ -38,9 +38,17 @@
 
 	# From https://davidwalsh.name/awesome-git-aliases
 	force-push = push --force-with-lease
-
+[fetch]
+	fsckObjects = true
+[transfer]
+	fsckObjects = true
+[receive]
+	fsckObjects = true
+[fetch "fsck"]
+	zeroPaddedFilemode = ignore
+	badTimezone = ignore
 [branch]
-	sort = committerdate
+	sort = -committerdate
 [color]
 	ui = auto
 	branch = auto
@@ -49,6 +57,7 @@
 [merge]
 	stat = true
 	conflictstyle = diff3
+	guitool = meld
 [pack]
 	threads = 0
 [sendemail]
@@ -65,6 +74,7 @@
 	name = Adrian Perez de Castro
 	signingkey = E4C9123B
 [rebase]
+	updateRefs = true
 	autosquash = true
 	stat = true
 [core]
